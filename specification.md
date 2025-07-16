@@ -1,12 +1,3 @@
-### Component 2: Buffer Boards
-
-#### Buffer Board Navigation Control
-- **Board Scrolling** - Horizontal scroll to view extended time horizons
-- **Zoom Controls** - Adjust time slot width and detail level
-- **Time Range Selection** - Jump to specific time periods or buffer zones
-- **Full Board View** - Overview mode showing entire buffer system
-- **Focus Mode** - Concentrate on specific CCR rows# DBR Buffer Management System - Requirements Specification
-
 ## Executive Summary
 
 This specification defines a digital DBR (Drum Buffer Rope) buffer management system based on Theory of Constraints (TOC) principles. The system provides visual workflow management around Capacity Constrained Resources (CCR) to optimize flow and prevent resource starvation or overload.
@@ -21,6 +12,10 @@ In typical systems, "losses accumulate and gains get lost." DBR provides a visua
 
 ### Flow Direction
 Work items flow **right to left** through the system, mirroring the passage of time.
+
+### DBR Board visulisation
+
+![Pictures of BDR buffer boards from TOCICO Conference](<images/2025-07-15 mult-ccr buffer board.svg>)
 
 ## Work Item Data Structure
 
@@ -726,6 +721,7 @@ The Main DBR Buffer Board Interface is the central hub where daily standup meeti
 3. **Standby Work Items** - Work items ready for planning but not yet scheduled
 4. **CCR Status** - Current status and health indicators for each CCR
 
+
 ### Component 1: Controls
 
 #### Time Progression Controls
@@ -777,6 +773,13 @@ The Main DBR Buffer Board Interface is the central hub where daily standup meeti
 - **Work Item Details** - Access individual work item information
 - **Progress Updates** - Quick progress marking capabilities
 - **Comments/Notes** - Add notes to schedules or work items
+
+#### Buffer Board Navigation Control
+- **Board Scrolling** - Horizontal scroll to view extended time horizons
+- **Zoom Controls** - Adjust time slot width and detail level
+- **Time Range Selection** - Jump to specific time periods or buffer zones
+- **Full Board View** - Overview mode showing entire buffer system
+- **Focus Mode** - Concentrate on specific CCR rows# DBR Buffer Management System - Requirements Specification
 
 ### Component 3: Standby Work Items
 
