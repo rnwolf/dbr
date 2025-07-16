@@ -194,7 +194,7 @@ Throughput accounting focuses on maximizing value passing through the system's b
 **Example:**
 - Time Unit = 8 hours
 - Work Item A = 3 hours CCR time
-- Work Item B = 2 hours CCR time  
+- Work Item B = 2 hours CCR time
 - Work Item C = 2.5 hours CCR time
 - Total = 7.5 hours (within 8-hour capacity)
 - Cannot add Work Item D requiring 1+ hours
@@ -258,7 +258,7 @@ The one resource that limits flow through the entire system.
 **Purpose:** Ensure CCR never runs out of work
 
 - **Zone 1 (Green):** Safe - adequate work buffer
-- **Zone 2 (Yellow):** Warning - starting to run low on work  
+- **Zone 2 (Yellow):** Warning - starting to run low on work
 - **Zone 3 (Red):** Alarm - very close to running out (3 time units away)
 
 ### Post-Constraint Zones (Left of CCR)
@@ -308,7 +308,7 @@ Then split this overall buffer into Pre-Constraint and Post-Constraint portions.
 ### Numerical Scale
 - **Scale:** -6, -5, -4, -3, -2, -1, CCR, +1, +2, +3, +4, +5, +6
 - **Purpose:** Show how many time units ahead or behind schedule
-- **Visual Management:** 
+- **Visual Management:**
   - Shorter row = ahead of schedule
   - Longer row = behind schedule
   - Row length directly indicates schedule variance
@@ -481,6 +481,54 @@ Then split this overall buffer into Pre-Constraint and Post-Constraint portions.
 - Once in buffer zones, schedules move only via time progression
 - Maintains the "time never stops" principle
 - Prevents gaming the system through manual repositioning
+
+### Buffer Board Components
+
+Main DBR Buffer Board Interface structure with the four key components you identified. Each component now has detailed sub-elements defined.
+
+#### Controls Component:
+
+Time progression as primary operation (not drag-and-drop)
+Standup meeting optimization
+View management and configuration options
+
+#### Buffer Boards Component:
+
+- Visual buffer zone representation
+- Multi-CCR row display
+- Interactive schedule and work item access
+
+##### Detailed Buffer board features
+
+* Consists of multiple rows of cells which we can call a "Capability Channel"
+* The "Capability Channel" is in turn broken down into cells based on the buffer Zone configuration.
+* Each Cell has an indicator with a count of the number of incomplete Work-Items for the schedule that is currently allocated to that cell of the "Capability Channel"
+* By default the cell displays an overview of the highest incomplete Work Item in the allocated schedule.
+  - The work-item overview should display Work Item Number, Title, The count of work item tasks done and incomplete and work item status indicators.
+  - The "Cell WI count indicator" also servers a a navigation tool to display a list of the work items in the schedule. By navigating the list one can select the WI summary to display in the cell.
+  - It is possible to open up a panel or navigate to the work item displayed in the cell
+    + Via the work "item panel" it possible to edit the work item task status and add comments to the work item.
+
+* On the left hand side of the "Capability Channel"  there is a narrow column with key CCR status information.
+  - CCR should ideally be kept working all the time. The hight of the CCR Status bar represents the elapsed time of the "Unit of Time". The CCR will "Check in/out" to work on the work-item.  A vertical "hour glass view" of call background colour in red and green indicates how much of the time is spent working on a work item or not.
+
+* There can be only one Schedule per cell.
+* The background of the cell is coloured based on the configuration for a given Zone that the cell is in.  Buffer Board Navigation Controls
+* Vertical and horizontal navigation sliders enables user to slide view left/right and up/down if required
+* Zoom in Out and reset view of the cells
+
+#### Standby Work Items Component:
+
+- Planning queue management
+- Integration with Planning interface
+- Priority and dependency visualization
+
+#### CCR Status Component:
+
+- Real-time health indicators
+- Performance metrics
+- Alert and notification integration
+
 
 ## User Roles and Organizational Structure
 
@@ -825,7 +873,7 @@ The Main DBR Buffer Board Interface is the central hub where daily standup meeti
 ```
 User_WorkItem_Activity:
 - Work Item ID
-- User ID  
+- User ID
 - Last Viewed Timestamp
 - Last Edited Timestamp
 - View Count
@@ -1247,7 +1295,7 @@ The Planning interface is where Ready work items are assembled into time unit-si
 ### User Roles and Access (Future Consideration)
 - **Current assumption:** All users can see all work items
 - **Future requirement:** Role-based access control system
-- **Anticipated roles:** 
+- **Anticipated roles:**
   - Planners (can create/modify schedules)
   - Workers (can update progress)
   - Managers (can view all, configure system)
