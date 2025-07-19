@@ -1,0 +1,2605 @@
+openapi: 3.0.0
+info:
+  title: DBR Buffer Management System API
+  version: 1.0.0
+  description: API for managing Collections, Work Items, and Schedules within a Drum Buffer Rope (DBR) system based on Theory of Constraints. This API facilitates the visual workflow management around Capacity Constrained Resources (CCR) to optimize flow.
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Development Server
+
+tags:
+  - name: Organizations
+    description: Operations related to managing organizations (tenants).
+  - name: Users
+    description: Operations related to application users.
+  - name: Roles
+    description: Operations related to system-defined roles.
+  - name: Memberships
+    description: Operations related to user memberships within organizations and their assigned roles.
+  - name: Collections
+    description: Operations related to managing collections of work items (e.g., Projects, MOVEs, Epics, Releases).
+  - name: Work Items
+    description: Operations related to individual work items (tasks, features, etc.).
+  - name: Schedules
+    description: Operations related to time unit-sized bundles of work items.
+  - name: CCRs
+    description: Operations related to Capacity Constrained Resources.
+  - name: Board Configurations
+    description: Operations related to defining the layout and rules for DBR boards.
+  - name: System
+    description: Global system operations like time progression.
+
+paths:
+  /organizations:
+    get:
+      summary: Get all Organizations
+      tags:
+        - Organizations
+      responses:
+        '200':
+          description: A list of organizations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+    post:
+      summary: Create a new Organization
+      tags:
+        - Organizations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationCreate'
+      responses:
+        '201':
+          description: Organization created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (only Super Admin can create organizations).
+
+  /organizations/{organizationId}:
+    get:
+      summary: Get an Organization by ID
+      tags:
+        - Organizations
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+      responses:
+        '200':
+          description: Organization details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Organization not found.
+    put:
+      summary: Update an Organization by ID
+      tags:
+        - Organizations
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationUpdate'
+      responses:
+        '200':
+          description: Organization updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Organization not found.
+    delete:
+      summary: Delete an Organization by ID
+      tags:
+        - Organizations
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+      responses:
+        '204':
+          description: Organization deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Organization not found.
+        '409':
+          description: Conflict, cannot delete organization with associated data.
+
+  /users:
+    get:
+      summary: Get all Users
+      tags:
+        - Users
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          description: Filter users by their membership in a specific organization (requires Organization Admin or Super Admin).
+      responses:
+        '200':
+          description: A list of users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '403':
+          description: Forbidden (insufficient permissions to view all users or users outside of managed organization).
+    post:
+      summary: Create a new User
+      tags:
+        - Users
+      description: This endpoint is for self-registration or Super Admin creating a new user account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input (e.g., username/email already exists).
+
+  /users/{userId}:
+    get:
+      summary: Get a User by ID
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the user.
+      responses:
+        '200':
+          description: User details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Forbidden (cannot access other users' profiles without permission).
+        '404':
+          description: User not found.
+    put:
+      summary: Update a User by ID
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the user.
+      responses:
+        '200':
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: User not found.
+    delete:
+      summary: Delete a User by ID
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the user.
+      responses:
+        '204':
+          description: User deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: User not found.
+        '409':
+          description: Conflict, cannot delete user with active memberships or assigned work.
+
+  /roles:
+    get:
+      summary: Get all System Roles
+      tags:
+        - Roles
+      description: Retrieves all system-defined roles. Only Super Admin can manage these.
+      responses:
+        '200':
+          description: A list of system roles.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '403':
+          description: Forbidden (insufficient permissions).
+    post:
+      summary: Create a new System Role
+      tags:
+        - Roles
+      description: Creates a new system-wide role. Restricted to Super Admin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleCreate'
+      responses:
+        '201':
+          description: Role created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Invalid input (e.g., role name already exists).
+        '403':
+          description: Forbidden (only Super Admin can create roles).
+
+  /roles/{roleId}:
+    get:
+      summary: Get a System Role by ID
+      tags:
+        - Roles
+      parameters:
+        - in: path
+          name: roleId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the role.
+      responses:
+        '200':
+          description: Role details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Role not found.
+    put:
+      summary: Update a System Role by ID
+      tags:
+        - Roles
+      parameters:
+        - in: path
+          name: roleId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the role.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleUpdate'
+      responses:
+        '200':
+          description: Role updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Role not found.
+    delete:
+      summary: Delete a System Role by ID
+      tags:
+        - Roles
+      parameters:
+        - in: path
+          name: roleId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the role.
+      responses:
+        '204':
+          description: Role deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Role not found.
+        '409':
+          description: Conflict, cannot delete role that is currently assigned to users.
+
+  /organizations/{organizationId}/memberships:
+    get:
+      summary: Get all Memberships for an Organization
+      tags:
+        - Memberships
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+      responses:
+        '200':
+          description: A list of organization memberships.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganizationMembership'
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Organization not found.
+    post:
+      summary: Invite/Add a User to an Organization
+      tags:
+        - Memberships
+      description: An Organization Admin can invite an existing user or add a new user to their organization and assign an initial role. If the user does not exist, a new user account will be created.
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationMembershipCreate'
+      responses:
+        '201':
+          description: Membership created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationMembership'
+        '400':
+          description: Invalid input (e.g., user already a member, invalid role).
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Organization or Role not found.
+
+  /organizations/{organizationId}/memberships/{userId}:
+    get:
+      summary: Get a specific User's Membership in an Organization
+      tags:
+        - Memberships
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the user.
+      responses:
+        '200':
+          description: Organization membership details for the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationMembership'
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Membership not found.
+    put:
+      summary: Update a User's Role in an Organization
+      tags:
+        - Memberships
+      description: An Organization Admin can update a user's role within their organization.
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationMembershipUpdate'
+      responses:
+        '200':
+          description: Membership updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationMembership'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Membership or Role not found.
+    delete:
+      summary: Remove a User from an Organization
+      tags:
+        - Memberships
+      description: An Organization Admin can remove a user's membership from their organization.
+      parameters:
+        - in: path
+          name: organizationId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the organization.
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique ID of the user.
+      responses:
+        '204':
+          description: Membership deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Membership not found.
+
+  /collections:
+    get:
+      summary: Get all Collections
+      tags:
+        - Collections
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Filter collections by organization ID.
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Filter collections by status (e.g., planning, active, on-hold, completed).
+      responses:
+        '200':
+          description: A list of collections.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Collection'
+        '403':
+          description: Forbidden (cannot access collections outside of assigned organization).
+    post:
+      summary: Create a new Collection
+      tags:
+        - Collections
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionCreate'
+      responses:
+        '201':
+          description: Collection created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+
+  /collections/{collectionId}:
+    get:
+      summary: Get a Collection by ID
+      tags:
+        - Collections
+      parameters:
+        - in: path
+          name: collectionId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the collection.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '200':
+          description: Collection details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '403':
+          description: Forbidden (cannot access collections outside of assigned organization).
+        '404':
+          description: Collection not found.
+    put:
+      summary: Update a Collection by ID
+      tags:
+        - Collections
+      parameters:
+        - in: path
+          name: collectionId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the collection.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionUpdate'
+      responses:
+        '200':
+          description: Collection updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Collection not found.
+    delete:
+      summary: Delete a Collection by ID
+      tags:
+        - Collections
+      parameters:
+        - in: path
+          name: collectionId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the collection.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '204':
+          description: Collection deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Collection not found.
+        '409':
+          description: Conflict, cannot delete collection with associated work items.
+
+  /workitems:
+    get:
+      summary: Get all Work Items
+      tags:
+        - Work Items
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Filter work items by organization ID.
+        - in: query
+          name: collection_id
+          schema:
+            type: string
+          description: Filter work items by collection ID.
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Filter work items by status (e.g., Backlog, Ready, In-Progress, Done).
+      responses:
+        '200':
+          description: A list of work items.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkItem'
+        '403':
+          description: Forbidden (cannot access work items outside of assigned organization).
+    post:
+      summary: Create a new Work Item
+      tags:
+        - Work Items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemCreate'
+      responses:
+        '201':
+          description: Work Item created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+
+  /workitems/{workItemId}:
+    get:
+      summary: Get a Work Item by ID
+      tags:
+        - Work Items
+      parameters:
+        - in: path
+          name: workItemId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the work item.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '200':
+          description: Work Item details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        '403':
+          description: Forbidden (cannot access work items outside of assigned organization).
+        '404':
+          description: Work Item not found.
+    put:
+      summary: Update a Work Item by ID
+      tags:
+        - Work Items
+      parameters:
+        - in: path
+          name: workItemId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the work item.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkItemUpdate'
+      responses:
+        '200':
+          description: Work Item updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Work Item not found.
+    delete:
+      summary: Delete a Work Item by ID
+      tags:
+        - Work Items
+      parameters:
+        - in: path
+          name: workItemId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the work item.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '204':
+          description: Work Item deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Work Item not found.
+
+  /workitems/{workItemId}/tasks/{taskId}:
+    put:
+      summary: Update a specific task within a Work Item
+      tags:
+        - Work Items
+      parameters:
+        - in: path
+          name: workItemId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the work item.
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the task within the work item.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem' # Return updated Work Item
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Work Item or Task not found.
+
+  /schedules:
+    get:
+      summary: Get all Schedules
+      tags:
+        - Schedules
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Filter schedules by organization ID.
+        - in: query
+          name: capability_channel_id
+          schema:
+            type: string
+          description: Filter schedules by Capability Channel ID.
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Filter schedules by status (e.g., Planning, Pre-Constraint, Post-Constraint, Completed).
+      responses:
+        '200':
+          description: A list of schedules.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schedule'
+        '403':
+          description: Forbidden (cannot access schedules outside of assigned organization).
+    post:
+      summary: Create a new Schedule
+      tags:
+        - Schedules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleCreate'
+      responses:
+        '201':
+          description: Schedule created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '400':
+          description: Invalid input (e.g., exceeding CCR capacity).
+        '403':
+          description: Forbidden (insufficient permissions).
+
+  /schedules/{scheduleId}:
+    get:
+      summary: Get a Schedule by ID
+      tags:
+        - Schedules
+      parameters:
+        - in: path
+          name: scheduleId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the schedule.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '200':
+          description: Schedule details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '403':
+          description: Forbidden (cannot access schedules outside of assigned organization).
+        '404':
+          description: Schedule not found.
+    put:
+      summary: Update a Schedule by ID
+      tags:
+        - Schedules
+      parameters:
+        - in: path
+          name: scheduleId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the schedule.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleUpdate'
+      responses:
+        '200':
+          description: Schedule updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Schedule not found.
+    delete:
+      summary: Delete a Schedule by ID
+      tags:
+        - Schedules
+      parameters:
+        - in: path
+          name: scheduleId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the schedule.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '204':
+          description: Schedule deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: Schedule not found.
+
+  /ccrs:
+    get:
+      summary: Get all Capacity Constrained Resources (CCRs)
+      tags:
+        - CCRs
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Filter CCRs by organization ID.
+      responses:
+        '200':
+          description: A list of CCRs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CCR'
+        '403':
+          description: Forbidden (cannot access CCRs outside of assigned organization).
+    post:
+      summary: Create a new CCR
+      tags:
+        - CCRs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CCRCreate'
+      responses:
+        '201':
+          description: CCR created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CCR'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+
+  /ccrs/{ccrId}:
+    get:
+      summary: Get a CCR by ID
+      tags:
+        - CCRs
+      parameters:
+        - in: path
+          name: ccrId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the CCR.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '200':
+          description: CCR details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CCR'
+        '403':
+          description: Forbidden (cannot access CCRs outside of assigned organization).
+        '404':
+          description: CCR not found.
+    put:
+      summary: Update a CCR by ID
+      tags:
+        - CCRs
+      parameters:
+        - in: path
+          name: ccrId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the CCR.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CCRUpdate'
+      responses:
+        '200':
+          description: CCR updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CCR'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: CCR not found.
+    delete:
+      summary: Delete a CCR by ID
+      tags:
+        - CCRs
+      parameters:
+        - in: path
+          name: ccrId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the CCR.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '204':
+          description: CCR deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: CCR not found.
+
+  /board_configs:
+    get:
+      summary: Get all DBR Board Configurations
+      tags:
+        - Board Configurations
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Filter board configurations by organization ID.
+      responses:
+        '200':
+          description: A list of DBR board configurations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DBRBoardConfig'
+        '403':
+          description: Forbidden (cannot access board configurations outside of assigned organization).
+    post:
+      summary: Create a new DBR Board Configuration
+      tags:
+        - Board Configurations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBRBoardConfigCreate'
+      responses:
+        '201':
+          description: DBR Board Configuration created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBRBoardConfig'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+
+  /board_configs/{configId}:
+    get:
+      summary: Get a DBR Board Configuration by ID
+      tags:
+        - Board Configurations
+      parameters:
+        - in: path
+          name: configId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the board configuration.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '200':
+          description: DBR Board Configuration details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBRBoardConfig'
+        '403':
+          description: Forbidden (cannot access board configurations outside of assigned organization).
+        '404':
+          description: DBR Board Configuration not found.
+    put:
+      summary: Update a DBR Board Configuration by ID
+      tags:
+        - Board Configurations
+      parameters:
+        - in: path
+          name: configId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the board configuration.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DBRBoardConfigUpdate'
+      responses:
+        '200':
+          description: DBR Board Configuration updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBRBoardConfig'
+        '400':
+          description: Invalid input.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: DBR Board Configuration not found.
+    delete:
+      summary: Delete a DBR Board Configuration by ID
+      tags:
+        - Board Configurations
+      parameters:
+        - in: path
+          name: configId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the board configuration.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '204':
+          description: DBR Board Configuration deleted successfully.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: DBR Board Configuration not found.
+
+  /board_configs/{configId}/pause:
+    post:
+      summary: Pause the automatic time progression for a DBR Board
+      tags:
+        - Board Configurations
+      description: Halts the automatic advancement of schedules on the specified DBR board. This is typically used during stand-up meetings.
+      parameters:
+        - in: path
+          name: configId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the DBR board configuration to pause.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '200':
+          description: DBR Board timer paused successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "DBR Board timer paused."
+                  board_id:
+                    type: string
+                    format: uuid
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: DBR Board Configuration not found.
+        '409':
+          description: Conflict (board is already paused).
+
+  /board_configs/{configId}/unpause:
+    post:
+      summary: Unpause the automatic time progression for a DBR Board
+      tags:
+        - Board Configurations
+      description: Resumes the automatic advancement of schedules. The backend will evaluate if any time unit advancements were missed during the pause and apply them.
+      parameters:
+        - in: path
+          name: configId
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the DBR board configuration to unpause.
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+      responses:
+        '200':
+          description: DBR Board timer unpaused successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "DBR Board timer unpaused. Schedules advanced if needed."
+                  board_id:
+                    type: string
+                    format: uuid
+                  advancements_applied:
+                    type: integer
+                    description: Number of time unit advancements applied due to overrun.
+        '403':
+          description: Forbidden (insufficient permissions).
+        '404':
+          description: DBR Board Configuration not found.
+        '409':
+          description: Conflict (board is not paused).
+
+  /system/advance_time_unit:
+    post:
+      summary: Advance all schedules one time unit left (Manual/Fast-Forward)
+      tags:
+        - System
+      description: This operation simulates the passage of time, moving all active schedules one time slot to the left on the DBR board. This can be triggered manually (e.g., "Fast-Forward" button) or automatically by the system.
+      parameters:
+        - in: query
+          name: organization_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Organization ID to scope the request.
+        - in: query
+          name: board_config_id
+          schema:
+            type: string
+            nullable: true
+            description: Optional. If provided, only schedules on this specific board will be advanced. Otherwise, all active boards in the organization will advance.
+      responses:
+        '200':
+          description: Time unit advanced successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "All active schedules advanced one time unit."
+                  advanced_schedules_count:
+                    type: integer
+                    example: 5
+        '403':
+          description: Forbidden (insufficient permissions).
+        '500':
+          description: Internal server error.
+
+components:
+  schemas:
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique ID of the organization (UUIDv4).
+        name:
+          type: string
+          description: Name of the organization.
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the organization.
+        status:
+          type: string
+          enum: [active, suspended, archived]
+          default: active
+          description: Current status of the organization.
+        contact_email:
+          type: string
+          format: email
+          nullable: true
+          description: Primary contact email for the organization.
+        country:
+          type: string
+          nullable: true
+          description: Country where the organization is based.
+        subscription_level:
+          type: string
+          nullable: true
+          description: Subscription tier or feature access level.
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Date and time when the organization was created.
+        default_board_id:
+          type: string
+          nullable: true
+          description: The ID of the default DBR board configuration for this organization.
+      required:
+        - name
+
+    OrganizationCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the organization.
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the organization.
+        status:
+          type: string
+          enum: [active, suspended, archived]
+          default: active
+          description: Current status of the organization.
+        contact_email:
+          type: string
+          format: email
+          nullable: true
+          description: Primary contact email for the organization.
+        country:
+          type: string
+          nullable: true
+          description: Country where the organization is based.
+        subscription_level:
+          type: string
+          nullable: true
+          description: Subscription tier or feature access level.
+        default_board_id:
+          type: string
+          nullable: true
+          description: The ID of the default DBR board configuration for this organization.
+      required:
+        - name
+
+    OrganizationUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the organization.
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the organization.
+        status:
+          type: string
+          enum: [active, suspended, archived]
+          description: Current status of the organization.
+        contact_email:
+          type: string
+          format: email
+          nullable: true
+          description: Primary contact email for the organization.
+        country:
+          type: string
+          nullable: true
+          description: Country where the organization is based.
+        subscription_level:
+          type: string
+          nullable: true
+          description: Subscription tier or feature access level.
+        default_board_id:
+          type: string
+          nullable: true
+          description: The ID of the default DBR board configuration for this organization.
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique ID of the user (UUIDv4).
+        username:
+          type: string
+          description: Unique username for login.
+        email:
+          type: string
+          format: email
+          description: User's email address.
+        display_name:
+          type: string
+          nullable: true
+          description: User's preferred display name.
+        active_status:
+          type: boolean
+          default: true
+          description: Whether the user account is active.
+        last_login_date:
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
+          description: Date and time of the user's last login.
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Date and time when the user account was created.
+        system_role_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID of the system-wide role (e.g., "Super Admin"). Null for regular users.
+      required:
+        - username
+        - email
+
+    UserCreate:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Unique username for login.
+        email:
+          type: string
+          format: email
+          description: User's email address.
+        password:
+          type: string
+          format: password
+          writeOnly: true
+          description: User's password (will be hashed by backend).
+        display_name:
+          type: string
+          nullable: true
+          description: User's preferred display name.
+        active_status:
+          type: boolean
+          default: true
+          description: Whether the user account is active.
+        system_role_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID of the system-wide role (e.g., "Super Admin"). Only settable by Super Admin.
+      required:
+        - username
+        - email
+        - password
+
+    UserUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Unique username for login.
+        email:
+          type: string
+          format: email
+          description: User's email address.
+        password:
+          type: string
+          format: password
+          writeOnly: true
+          nullable: true
+          description: New password (optional, will be hashed by backend).
+        display_name:
+          type: string
+          nullable: true
+          description: User's preferred display name.
+        active_status:
+          type: boolean
+          description: Whether the user account is active.
+        system_role_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID of the system-wide role (e.g., "Super Admin"). Only settable by Super Admin.
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique ID of the role (UUIDv4).
+        name:
+          type: string
+          enum: [Super Admin, Organization Admin, Planner, Worker, Viewer]
+          description: Name of the system-defined role.
+        description:
+          type: string
+          nullable: true
+          description: Description of the role's responsibilities.
+      required:
+        - name
+
+    RoleCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          enum: [Super Admin, Organization Admin, Planner, Worker, Viewer]
+          description: Name of the system-defined role.
+        description:
+          type: string
+          nullable: true
+          description: Description of the role's responsibilities.
+      required:
+        - name
+
+    RoleUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          enum: [Super Admin, Organization Admin, Planner, Worker, Viewer]
+          description: Name of the system-defined role.
+        description:
+          type: string
+          nullable: true
+          description: Description of the role's responsibilities.
+
+    OrganizationMembership:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique ID of the membership (UUIDv4).
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization the user is a member of.
+        user_id:
+          type: string
+          format: uuid
+          description: ID of the user who is a member.
+        role_id:
+          type: string
+          format: uuid
+          description: ID of the role assigned to the user within this organization.
+        invitation_status:
+          type: string
+          enum: [pending, accepted, declined]
+          default: pending
+          description: Status of the invitation if the user was invited.
+        invited_by_user_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID of the user who initiated the invitation.
+        joined_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Date and time when the user accepted the invitation/joined.
+      required:
+        - organization_id
+        - user_id
+        - role_id
+
+    OrganizationMembershipCreate:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: ID of the user to add/invite.
+        role_id:
+          type: string
+          format: uuid
+          description: ID of the role to assign to the user within this organization.
+        # Note: organization_id comes from the path parameter
+      required:
+        - user_id
+        - role_id
+
+    OrganizationMembershipUpdate:
+      type: object
+      properties:
+        role_id:
+          type: string
+          format: uuid
+          description: New role ID to assign to the user within this organization.
+        invitation_status:
+          type: string
+          enum: [pending, accepted, declined]
+          description: Update the status of the invitation.
+      required:
+        - role_id
+
+    Collection:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Unique ID of the collection (e.g., "COL-001").
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this collection belongs to.
+        name:
+          type: string
+          description: Brief descriptive name of the collection.
+        description:
+          type: string
+          nullable: true
+          description: Detailed collection specification.
+        type:
+          type: string
+          enum: [Project, MOVE, Epic, Release]
+          default: Project
+          description: Categorization of the entity (Project, MOVE, Epic, or Release).
+        status:
+          type: string
+          enum: [planning, active, on-hold, completed]
+          default: planning
+          description: Current status of the collection.
+        owner_user_id:
+          type: string
+          nullable: true
+          description: ID of the user/team owning the collection.
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Date and time when the collection was created.
+        estimated_total_value:
+          type: number
+          format: float
+          nullable: true
+          description: Estimated total financial value of the collection.
+        target_completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Target date for collection completion.
+        target_completion_date_timezone:
+          type: string
+          description: IANA Time Zone database name for target_completion_date (e.g., "Europe/London").
+          example: Europe/London
+        estimated_sales_price:
+          type: number
+          format: float
+          nullable: true
+          description: Revenue potential of Collection.
+        estimated_variable_cost:
+          type: number
+          format: float
+          nullable: true
+          description: Material/variable costs per collection.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+        change_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeLogEntry'
+          readOnly: true
+          description: Log of changes made to this collection.
+      required:
+        - organization_id
+        - name
+
+    CollectionCreate:
+      type: object
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this collection belongs to.
+        name:
+          type: string
+          description: Brief descriptive name of the collection.
+        description:
+          type: string
+          nullable: true
+          description: Detailed collection specification.
+        type:
+          type: string
+          enum: [Project, MOVE, Epic, Release]
+          default: Project
+          description: Categorization of the entity (Project, MOVE, Epic, or Release).
+        status:
+          type: string
+          enum: [planning, active, on-hold, completed]
+          default: planning
+          description: Current status of the collection.
+        owner_user_id:
+          type: string
+          nullable: true
+          description: ID of the user/team owning the collection.
+        estimated_total_value:
+          type: number
+          format: float
+          nullable: true
+          description: Estimated total financial value of the collection.
+        target_completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Target date for collection completion.
+        target_completion_date_timezone:
+          type: string
+          description: IANA Time Zone database name for target_completion_date (e.g., "Europe/London").
+          example: Europe/London
+        estimated_sales_price:
+          type: number
+          format: float
+          nullable: true
+          description: Revenue potential of Collection.
+        estimated_variable_cost:
+          type: number
+          format: float
+          nullable: true
+          description: Material/variable costs per collection.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+      required:
+        - organization_id
+        - name
+
+    CollectionUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Brief descriptive name of the collection.
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the collection.
+        type:
+          type: string
+          enum: [Project, MOVE, Epic, Release]
+          default: Project
+          description: Categorization of the entity (Project, MOVE, Epic, or Release).
+        status:
+          type: string
+          enum: [planning, active, on-hold, completed]
+          default: planning
+          description: Current status of the collection.
+        owner_user_id:
+          type: string
+          nullable: true
+          description: ID of the user/team owning the collection.
+        estimated_total_value:
+          type: number
+          format: float
+          nullable: true
+          description: Estimated total financial value of the collection.
+        target_completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Target date for collection completion.
+        target_completion_date_timezone:
+          type: string
+          description: IANA Time Zone database name for target_completion_date (e.g., "Europe/London").
+          example: Europe/London
+        estimated_sales_price:
+          type: number
+          format: float
+          nullable: true
+          description: Revenue potential of Collection.
+        estimated_variable_cost:
+          type: number
+          format: float
+          nullable: true
+          description: Material/variable costs per collection.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+
+
+    WorkItem:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Unique ID of the work item (e.g., "WI-0001").
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this work item belongs to.
+        collection_id:
+          type: string
+          nullable: true
+          description: ID of the associated collection.
+        title:
+          type: string
+          description: Brief descriptive name of the work item.
+        description:
+          type: string
+          nullable: true
+          description: Detailed work item specification.
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Target completion date.
+        due_date_timezone:
+          type: string
+          description: IANA Time Zone database name for due_date (e.g., "Europe/London").
+          example: Europe/London
+        status:
+          type: string
+          enum: [Backlog, Ready, Standby, In-Progress, Done]
+          default: Backlog
+          description: Current status of the work item.
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          default: medium
+          description: Priority level of the work item.
+        estimated_total_hours:
+          type: number
+          format: float
+          description: Estimated total hours required for the work item.
+        ccr_hours_required:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+          description: Estimated time required from each CCR resource (e.g., {"CCR-Dev": 8.0, "CCR-QA": 4.0}).
+        estimated_sales_price:
+          type: number
+          format: float
+          nullable: true
+          description: Revenue potential of work item.
+        estimated_variable_cost:
+          type: number
+          format: float
+          nullable: true
+          description: Material/variable costs per work item.
+        throughput:
+          type: number
+          format: float
+          readOnly: true
+          description: Calculated Throughput (Sales Price - Variable Costs).
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+          description: Checklist of sub-items within work item.
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+          description: Timestamped comments/notes on work item.
+        change_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeLogEntry'
+          readOnly: true
+          description: Log of changes made to this work item.
+        responsible_user_id:
+          type: string
+          nullable: true
+          description: ID of the user responsible for this work item.
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItemDependency'
+          description: List of Work Item IDs that this item depends on (prerequisites) and the type of dependency.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Date and time when the work item was created.
+        progress_percentage:
+          type: number
+          format: float
+          readOnly: true
+          description: Auto-calculated percentage completion based on completed tasks.
+      required:
+        - organization_id
+        - title
+        - estimated_total_hours
+
+    WorkItemCreate:
+      type: object
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this work item belongs to.
+        collection_id:
+          type: string
+          nullable: true
+          description: ID of the associated collection.
+        title:
+          type: string
+          description: Brief descriptive name of the work item.
+        description:
+          type: string
+          nullable: true
+          description: Detailed work item specification.
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Target completion date.
+        due_date_timezone:
+          type: string
+          description: IANA Time Zone database name for due_date (e.g., "Europe/London").
+          example: Europe/London
+        status:
+          type: string
+          enum: [Backlog, Ready, Standby, In-Progress, Done]
+          default: Backlog
+          description: Current status of the work item.
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          default: medium
+          description: Priority level of the work item.
+        estimated_total_hours:
+          type: number
+          format: float
+          description: Estimated total hours required for the work item.
+        ccr_hours_required:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+          description: Estimated time required from each CCR resource (e.g., {"CCR-Dev": 8.0, "CCR-QA": 4.0}).
+        estimated_sales_price:
+          type: number
+          format: float
+          nullable: true
+          description: Revenue potential of work item.
+        estimated_variable_cost:
+          type: number
+          format: float
+          nullable: true
+          description: Material/variable costs per work item.
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskCreate'
+          description: Checklist of sub-items within work item.
+        responsible_user_id:
+          type: string
+          nullable: true
+          description: ID of the user responsible for this work item.
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItemDependencyCreate'
+          description: List of Work Item IDs that this item depends on (prerequisites) and the type of dependency.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+      required:
+        - organization_id
+        - title
+        - estimated_total_hours
+
+    WorkItemUpdate:
+      type: object
+      properties:
+        collection_id:
+          type: string
+          nullable: true
+          description: ID of the associated collection.
+        title:
+          type: string
+          description: Brief descriptive name of the work item.
+        description:
+          type: string
+          nullable: true
+          description: Detailed work item specification.
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Target completion date.
+        due_date_timezone:
+          type: string
+          description: IANA Time Zone database name for due_date (e.g., "Europe/London").
+          example: Europe/London
+        status:
+          type: string
+          enum: [Backlog, Ready, Standby, In-Progress, Done]
+          default: Backlog
+          description: Current status of the work item.
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          default: medium
+          description: Priority level of the work item.
+        estimated_total_hours:
+          type: number
+          format: float
+          description: Estimated total hours required for the work item.
+        ccr_hours_required:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+          description: Estimated time required from each CCR resource (e.g., {"CCR-Dev": 8.0, "CCR-QA": 4.0}).
+        estimated_sales_price:
+          type: number
+          format: float
+          nullable: true
+          description: Revenue potential of work item.
+        estimated_variable_cost:
+          type: number
+          format: float
+          nullable: true
+          description: Material/variable costs per work item.
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+          description: Checklist of sub-items within work item.
+        responsible_user_id:
+          type: string
+          nullable: true
+          description: ID of the user responsible for this work item.
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItemDependencyUpdate'
+          description: List of Work Item IDs that this item depends on (prerequisites) and the type of dependency.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+
+    WorkItemDependency:
+      type: object
+      properties:
+        work_item_id:
+          type: string
+          description: The ID of the dependent work item.
+        type:
+          type: string
+          enum: [incoming, outgoing]
+          description: The type of dependency (incoming means this item depends on it, outgoing means it depends on this item).
+      required:
+        - work_item_id
+        - type
+
+    WorkItemDependencyCreate:
+      type: object
+      properties:
+        work_item_id:
+          type: string
+          description: The ID of the dependent work item.
+        type:
+          type: string
+          enum: [incoming, outgoing]
+          description: The type of dependency (incoming means this item depends on it, outgoing means it depends on this item).
+      required:
+        - work_item_id
+        - type
+
+    WorkItemDependencyUpdate:
+      type: object
+      properties:
+        work_item_id:
+          type: string
+          description: The ID of the dependent work item.
+        type:
+          type: string
+          enum: [incoming, outgoing]
+          description: The type of dependency (incoming means this item depends on it, outgoing means it- depends on this item).
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Unique ID of the task.
+        description:
+          type: string
+          description: Description of the task.
+        completed:
+          type: boolean
+          default: false
+          description: Whether the task is completed.
+        completed_datetime:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when the task was marked as completed.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+      required:
+        - description
+
+    TaskCreate:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the task.
+        completed:
+          type: boolean
+          default: false
+          description: Whether the task is completed.
+        completed_datetime:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when the task was marked as completed.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+      required:
+        - description
+
+    TaskUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the task.
+        completed:
+          type: boolean
+          description: Whether the task is completed.
+        completed_datetime:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when the task was marked as completed.
+        url:
+          type: string
+          nullable: true
+          description: Optional URL linking to an external knowledge management system or related resource.
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuidv7
+          readOnly: true
+          description: Unique ID of the comment.
+        author_id:
+          type: string
+          description: ID of the user who made the comment.
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Date and time when the comment was made.
+        text:
+          type: string
+          description: The comment text.
+      required:
+        - author_id
+        - text
+
+    ChangeLogEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuidv7
+          readOnly: true
+          description: Unique ID for the change log entry.
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Date and time (UTC) when the change occurred.
+        user_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID of the user who made the change. Null if system-generated.
+        field_name:
+          type: string
+          nullable: true
+          description: The name of the field that was changed (e.g., "status", "work_item_ids").
+        old_value:
+          type: string
+          nullable: true
+          description: The previous value of the field (serialized to string).
+        new_value:
+          type: string
+          nullable: true
+          description: The new value of the field (serialized to string).
+        description:
+          type: string
+          description: A human-readable summary of the change.
+      required:
+        - timestamp
+        - description
+
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Unique ID of the schedule (e.g., "SCH-2025-001").
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this schedule belongs to.
+        capability_channel_id:
+          type: string
+          description: ID of the Capability Channel this schedule belongs to.
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Date and time when the schedule was assembled.
+        released_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Date and time when the schedule was moved onto the pre-constraint board.
+        completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Date and time when the schedule was marked Done and moved off the board.
+        timezone:
+          type: string
+          description: IANA Time Zone database name for schedule dates (e.g., "Europe/London").
+          example: Europe/London
+        work_item_ids:
+          type: array
+          items:
+            type: string
+          description: Ordered list of Work Item IDs included in this schedule.
+        status:
+          type: string
+          enum: [Planning, Pre-Constraint, Post-Constraint, Completed]
+          default: Planning
+          description: Current status of the schedule within the DBR system.
+        current_time_slot_offset:
+          type: integer
+          description: Current position relative to CCR (0 for CCR, -1 for 1 slot left, +1 for 1 slot right).
+        total_ccr_time:
+          type: number
+          format: float
+          readOnly: true
+          description: Running sum of CCR time for all work items in schedule.
+        change_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeLogEntry'
+          readOnly: true
+          description: Log of changes made to this schedule.
+      required:
+        - organization_id
+        - capability_channel_id
+        - work_item_ids
+        - timezone
+
+    ScheduleCreate:
+      type: object
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this schedule belongs to.
+        capability_channel_id:
+          type: string
+          description: ID of the Capability Channel this schedule belongs to.
+        timezone:
+          type: string
+          description: IANA Time Zone database name for schedule dates (e.g., "Europe/London").
+          example: Europe/London
+        work_item_ids:
+          type: array
+          items:
+            type: string
+          description: Ordered list of Work Item IDs included in this schedule.
+        status:
+          type: string
+          enum: [Planning, Pre-Constraint, Post-Constraint, Completed]
+          default: Planning
+          description: Initial status of the schedule.
+      required:
+        - organization_id
+        - capability_channel_id
+        - work_item_ids
+        - timezone
+
+    ScheduleUpdate:
+      type: object
+      properties:
+        capability_channel_id:
+          type: string
+          description: ID of the Capability Channel this schedule belongs to.
+        released_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Date and time when the schedule was moved onto the pre-constraint board.
+        completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Date and time when the schedule was marked Done and moved off the board.
+        timezone:
+          type: string
+          description: IANA Time Zone database name for schedule dates (e.g., "Europe/London").
+          example: Europe/London
+        work_item_ids:
+          type: array
+          items:
+            type: string
+          description: Ordered list of Work Item IDs included in this schedule.
+        status:
+          type: string
+          enum: [Planning, Pre-Constraint, Post-Constraint, Completed]
+          description: Current status of the schedule within the DBR system.
+        current_time_slot_offset:
+          type: integer
+          description: Current position relative to CCR (0 for CCR, -1 for 1 slot left, +1 for 1 slot right).
+
+    CCR:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Unique ID of the CCR (e.g., "CCR-Dev", "CCR-UX").
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this CCR belongs to.
+        name:
+          type: string
+          description: Display name of the CCR (e.g., "Developer CCR", "UX Designer CCR").
+        description:
+          type: string
+          nullable: true
+          description: Optional detailed description of the CCR.
+        type:
+          type: string
+          enum: [Skill-based, Team-based, Equipment-based]
+          default: Skill-based
+          description: The type of resource constraint.
+        default_capacity_per_time_unit:
+          type: number
+          format: float
+          nullable: true
+          description: Default capacity of this CCR per time unit (e.g., 8.0 hours/day). Can be overridden by board config.
+        associated_user_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of user IDs associated with this CCR (e.g., team members for a 'Team-based' CCR).
+      required:
+        - organization_id
+        - name
+
+    CCRCreate:
+      type: object
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+          description: ID of the organization this CCR belongs to.
+        name:
+          type: string
+          description: Display name of the CCR (e.g., "Developer CCR", "UX Designer CCR").
+        description:
+          type: string
+          nullable: true
+          description: Optional detailed description of the CCR.
+        type:
+          type: string
+          enum: [Skill-based, Team-based, Equipment-based]
+          default: Skill-based
+          description: The type of resource constraint.
+        default_capacity_per_time_unit:
+          type: number
+          format: float
+          nullable: true
+          description: Default capacity of this CCR per time unit (e.g., 8.0 hours/day).
+        associated_user_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of user IDs associated with this CCR.
+      required:
+        - organization_id
+        - name
+
+    CCRUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Display name of the CCR (e.g., "Developer CCR", "UX Designer CCR").
+        description:
+          type: string
+          nullable: true
+          description: Optional detailed description of the CCR.
+        type:
+          type: string
+          enum: [Skill-based, Team-based, Equipment-based]
+          default: Skill-based
+          description: The type of resource constraint.
+        default_capacity_per_time_unit:
+          type: number
+          format: float
+          nullable: true
+          description: Default capacity of this CCR per time unit (e.g., 8.0 hours/day).
+        associated_user_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of user IDs associated with this CCR.
