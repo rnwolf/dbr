@@ -17,6 +17,143 @@ Work items flow **right to left** through the system, mirroring the passage of t
 
 ![Pictures of BDR buffer boards from TOCICO Conference](<images/2025-07-15 mult-ccr buffer board.svg>)
 
+---
+
+## System Entities and Data Models
+The following sections define the core data structures (schemas) of the DBR system as implemented in the `DBR_OpenAPI_Specification.yml`.
+
+### 1. Organization
+The `Organization` is the top-level entity representing a tenant in the multi-tenant system. All other data is scoped within an organization.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string (uuid) | Unique ID of the organization. |
+| `name` | string | Name of the organization. |
+| `description` | string | Detailed description of the organization. |
+| `status` | enum | Current status: `active`, `suspended`, `archived`. |
+| `contact_email`| string (email) | Primary contact email. |
+| `country` | string | Country where the organization is based. |
+| `subscription_level` | string | Subscription tier or feature access level. |
+| `created_date` | string (date-time)| Date the organization was created. |
+| `default_board_id` | string | The ID of the default DBR board for this organization. |
+
+### 2. User
+Represents an application user who can be a member of one or more organizations.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string (uuid) | Unique ID of the user. |
+| `username` | string | Unique username for login. |
+| `email` | string (email) | User's email address. |
+| `display_name` | string | User's preferred display name. |
+| `active_status`| boolean | Whether the user account is active. |
+| `last_login_date`| string (date-time)| Date of the user's last login. |
+| `created_date` | string (date-time)| Date the user account was created. |
+| `system_role_id`| string (uuid) | ID of the system-wide role (e.g., "Super Admin"). |
+
+### 3. Role
+Defines a set of permissions within the system. Roles are system-defined.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string (uuid) | Unique ID of the role. |
+| `name` | enum | Name of the role: `Super Admin`, `Organization Admin`, `Planner`, `Worker`, `Viewer`. |
+| `description` | string | Description of the role's responsibilities. |
+
+### 4. OrganizationMembership
+This entity links a `User` to an `Organization` and assigns them a specific `Role` within that organization.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string (uuid) | Unique ID of the membership. |
+| `organization_id`| string (uuid) | ID of the organization. |
+| `user_id` | string (uuid) | ID of the user. |
+| `role_id` | string (uuid) | ID of the role assigned to the user. |
+| `invitation_status`| enum | Status of the invitation: `pending`, `accepted`, `declined`. |
+| `invited_by_user_id`| string (uuid) | ID of the user who sent the invitation. |
+| `joined_date` | string (date-time)| Date the user joined the organization. |
+
+### 5. Collection (Project/MOVE)
+A `Collection` is a container for a group of related `WorkItems`, such as a project, epic, or release.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string | Unique ID of the collection. |
+| `organization_id`| string (uuid) | ID of the parent organization. |
+| `name` | string | Name of the collection. |
+| `description` | string | Detailed description. |
+| `type` | enum | Type of collection: `Project`, `MOVE`, `Epic`, `Release`. |
+| `status` | enum | Current status: `planning`, `active`, `on-hold`, `completed`. |
+| `owner_user_id`| string | ID of the user owning the collection. |
+| `target_completion_date`| string (date-time)| Target completion date for the collection. |
+| `target_completion_date_timezone`| string | IANA Time Zone for the target date. |
+| `estimated_sales_price`| number | Revenue potential of the collection. |
+| `estimated_variable_cost`| number | Material/variable costs for the collection. |
+| `url` | string | Link to an external resource. |
+
+### 6. WorkItem
+The fundamental unit of work that flows through the DBR system.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string | Unique ID of the work item. |
+| `organization_id`| string (uuid) | ID of the parent organization. |
+| `collection_id`| string | ID of the associated collection. |
+| `title` | string | Brief, descriptive name of the work item. |
+| `description` | string | Detailed specification of the work. |
+| `due_date` | string (date-time)| Target completion date. |
+| `due_date_timezone`| string | IANA Time Zone for the due date. |
+| `status` | enum | Current status: `Backlog`, `Ready`, `Standby`, `In-Progress`, `Done`. |
+| `priority` | enum | Priority level: `low`, `medium`, `high`, `critical`. |
+| `estimated_total_hours`| number | Estimated total hours required. |
+| `ccr_hours_required`| object | JSON object specifying hours required from different CCRs. |
+| `estimated_sales_price`| number | Revenue potential of the work item. |
+| `estimated_variable_cost`| number | Material/variable costs per work item. |
+| `tasks` | array | A list of sub-tasks within the work item. |
+
+### 7. Schedule
+A time unit-sized bundle of `WorkItems` that moves across the DBR board.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string | Unique ID of the schedule. |
+| `organization_id`| string (uuid) | ID of the parent organization. |
+| `board_config_id`| string | ID of the DBR board this schedule belongs to. |
+| `capability_channel_id`| string | ID of the capability channel (CCR) this schedule is for. |
+| `status` | enum | Current status: `Planning`, `Pre-Constraint`, `Post-Constraint`, `Completed`. |
+| `work_item_ids`| array | Ordered list of Work Item IDs included in the schedule. |
+| `total_ccr_hours`| number | The sum of CCR hours for all work items in the schedule. |
+| `time_unit_position`| integer | The schedule's current position on the board relative to the CCR. |
+| `created_date` | string (date-time)| When the schedule was created. |
+| `released_date`| string (date-time)| When the schedule was moved to the pre-constraint buffer. |
+| `completed_date`| string (date-time)| When the schedule was marked as complete. |
+
+### 8. CCR (Capacity Constrained Resource)
+A dedicated entity representing a resource that constrains the system's flow.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string | Unique ID of the CCR. |
+| `organization_id`| string (uuid) | ID of the parent organization. |
+| `name` | string | Name of the CCR (e.g., "Senior Developers"). |
+| `description` | string | Detailed description of the resource. |
+| `capacity_per_time_unit`| number | The total available work hours for this CCR in a single time unit. |
+| `time_unit` | enum | The unit of time used for capacity planning: `hours`, `days`, `weeks`. |
+
+### 9. DBRBoardConfig
+Stores the configuration for a specific DBR board, including its buffer sizes and layout.
+
+| Attribute | Type | Description |
+|---|---|---|
+| `id` | string | Unique ID of the board configuration. |
+| `organization_id`| string (uuid) | ID of the parent organization. |
+| `name` | string | Name of the DBR board. |
+| `time_unit` | enum | The unit of time for the board: `hours`, `days`, `weeks`. |
+| `pre_constraint_buffer_size`| integer | Number of time units in the pre-constraint (right) buffer. |
+| `post_constraint_buffer_size`| integer | Number of time units in the post-constraint (left) buffer. |
+| `is_paused` | boolean | Whether the automatic time progression is currently paused. |
+
+---
 ## Work Item Data Structure
 
 ### Core Attributes
@@ -321,6 +458,20 @@ Then split this overall buffer into Pre-Constraint and Post-Constraint portions.
 
 **Key Principle:** TIME NEVER STOPS - board replicates this reality
 
+### Operational Procedures & API Mapping
+The conceptual operations of the DBR system are implemented through a RESTful API. The standup meeting, which occurs every time unit, is driven by specific API calls:
+
+1.  **Review:** The team reviews all schedules on the board. This is a visual action supported by `GET /schedules` and `GET /board_configs/{configId}`.
+2.  **Remove Completed:** Completed schedules are removed from the board via `DELETE /schedules/{scheduleId}`.
+3.  **Move Left:** All remaining schedules are shifted one time slot to the left. This core DBR mechanic is triggered by a single API call: `POST /system/advance_time_unit`.
+4.  **Release:** The next planned schedule is released from planning into the now-free slot on the right side of the board. This is achieved by updating a schedule's status via `PUT /schedules/{scheduleId}`.
+
+### System Control Operations
+The API provides endpoints for controlling the DBR board's timer, which is critical for facilitating meetings and handling exceptions.
+
+*   **Pause Board:** To halt the automatic time progression (e.g., during a stand-up), a `POST /board_configs/{configId}/pause` request is made.
+*   **Unpause Board:** To resume the timer, a `POST /board_configs/{configId}/unpause` request is made. The system will automatically catch up on any time units that passed during the pause.
+
 ### Schedule Movement Rules
 - **When Ahead:** Work completed faster than planned, row becomes shorter
 - **When Behind:** Work takes longer, schedules stay on board, row becomes longer
@@ -528,100 +679,32 @@ View management and configuration options
 ## User Roles and Organizational Structure
 
 ### Multi-Tenant Architecture
-- **Web Application Hosting:** System supports multiple organizations within single deployment
-- **Organizational Isolation:** Users can only access organizations for which they have permissions
-- **Data Separation:** Complete data isolation between organizations
-- **Cross-Organization Security:** No accidental data leakage between organizations
+The system is designed as a multi-tenant application.
+- **Organizational Isolation:** All data is strictly partitioned by `organization_id`. API requests must specify the organization to ensure users can only access data they have permission for.
+- **Data Separation:** Complete data isolation between organizations is enforced at the API and database level.
 
 ### User Role Hierarchy
+The system defines five roles, as specified in the **Role** entity table above. The responsibilities for each role are outlined below.
 
-#### Application Administrator (System-Wide)
-**Purpose:** Manage the entire DBR application across all organizations
+#### Application Administrator (Super Admin)
+- **Purpose:** Manages the entire application across all organizations.
+- **API Access:** Can create and manage `Organization` entities. Can assign the `Organization Admin` role to users.
 
-**Responsibilities:**
-- **Organization Management:** Create, configure, and manage organizations
-- **Organization Admin Assignment:** Designate Organization Administrators
-- **System Configuration:** Set application-wide defaults and settings
-- **Global User Management:** Oversee user accounts across all organizations
-- **System Monitoring:** Monitor application performance and usage
-- **Security Management:** Manage system-wide security policies
-- **Backup and Recovery:** Oversee data backup and system recovery procedures
+#### Organization Administrator
+- **Purpose:** Manages the DBR system within their specific organization.
+- **API Access:** Full CRUD access to users, roles, CCRs, and board configurations within their `organization_id`.
 
-**Permissions:**
-- Create/edit/delete organizations
-- Assign Organization Administrators
-- Configure global application settings
-- Access system-wide reports and analytics
-- Manage application-wide user accounts
-- Configure global security policies
+#### Planner
+- **Purpose:** Creates and manages schedules for assigned CCRs.
+- **API Access:** Can create and update `Schedule` entities. Can read `WorkItem` entities to plan them into schedules.
 
-#### Organization Administrator (Organization-Specific)
-**Purpose:** Manage DBR system within their specific organization
+#### Worker
+- **Purpose:** Updates work progress and task completion.
+- **API Access:** Can update the status of `WorkItem` tasks and add comments.
 
-**Responsibilities:**
-- **User Management:** Create, edit, and manage users within organization
-- **Role Assignment:** Assign roles to users (Planners, Workers, Viewers)
-- **CCR Configuration:** Set up and manage CCR definitions and resources
-- **DBR Board Setup:** Configure DBR buffer boards and time units
-- **Planning Rules:** Define and manage Planning Rules for CCRs
-- **Organization Settings:** Configure organization-specific settings
-- **Resource Management:** Manage organization's resource pool
-- **Reporting Configuration:** Set up organization-specific reports
-
-**Permissions:**
-- Full access to organization's data and settings
-- Create/edit/delete users within organization
-- Configure CCRs, resources, and DBR boards
-- Manage Planning Rules and buffer configurations
-- Access organization-wide reports and analytics
-- Configure organizational workflows and processes
-
-#### Planner (CCR-Specific)
-**Purpose:** Create and manage schedules for assigned CCRs
-
-**Responsibilities:**
-- **Schedule Creation:** Create schedules for assigned CCRs
-- **Work Item Planning:** Select and sequence Ready work items
-- **Capacity Management:** Ensure optimal CCR utilization
-- **Draft Management:** Manage multiple draft schedules
-- **Rule Application:** Follow and apply Planning Rules
-
-**Permissions:**
-- Access Planning interface for assigned CCRs
-- Create/edit/delete schedules for assigned CCRs
-- View Ready work items available for planning
-- Access Planning Rules documentation
-- Receive buffer zone alert notifications
-
-#### Worker (General)
-**Purpose:** Update work progress and task completion
-
-**Responsibilities:**
-- **Progress Updates:** Mark tasks complete within work items
-- **Status Updates:** Update work item status and progress
-- **Time Tracking:** Log time spent on work items
-- **Comments:** Add comments and notes to work items
-
-**Permissions:**
-- Update progress on assigned work items
-- Mark tasks complete
-- Add comments to work items
-- View work items and schedules relevant to their work
-- Access mobile interface for progress updates
-
-#### Viewer (Read-Only)
-**Purpose:** View DBR boards and reports without modification rights
-
-**Responsibilities:**
-- **Monitoring:** Observe DBR board status and progress
-- **Reporting:** Access reports and analytics
-- **Dashboard Viewing:** Monitor buffer zones and flow metrics
-
-**Permissions:**
-- View DBR boards and buffer status
-- Access reports and dashboards
-- View work items and schedules (read-only)
-- No editing or modification capabilities
+#### Viewer
+- **Purpose:** View DBR boards and reports without modification rights.
+- **API Access:** Read-only (`GET`) access to most entities within their organization.
 
 ### Organizational Data Structure
 
