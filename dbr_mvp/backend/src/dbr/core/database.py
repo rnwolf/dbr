@@ -40,9 +40,10 @@ def get_db() -> Session:
 def init_db():
     """Initialize database - create tables"""
     create_tables()
-    _create_default_organization()
+    default_org = _create_default_organization()
     _create_system_roles()
     _create_test_users()
+    _create_default_memberships(default_org.id if default_org else None)
 
 
 def get_default_organization():
@@ -225,3 +226,90 @@ def _create_users_in_session(session):
     
     session.commit()
     return created_users
+
+
+def create_default_memberships(session=None, organization_id=None):
+    """Create memberships linking test users to default organization"""
+    from dbr.models.organization_membership import OrganizationMembership, InvitationStatus
+    from dbr.models.user import User
+    from dbr.models.role import Role
+    from datetime import datetime, timezone
+    
+    if session is None:
+        db = SessionLocal()
+        try:
+            return _create_memberships_in_session(db, organization_id)
+        finally:
+            db.close()
+    else:
+        return _create_memberships_in_session(session, organization_id)
+
+
+def _create_default_memberships(organization_id=None):
+    """Create default memberships during database initialization"""
+    if organization_id is None:
+        return
+        
+    db = SessionLocal()
+    try:
+        # Check if memberships already exist
+        from dbr.models.organization_membership import OrganizationMembership
+        existing_memberships = db.query(OrganizationMembership).filter_by(organization_id=organization_id).count()
+        if existing_memberships > 0:
+            return
+            
+        _create_memberships_in_session(db, organization_id)
+    finally:
+        db.close()
+
+
+def _create_memberships_in_session(session, organization_id):
+    """Create memberships within a given session"""
+    from dbr.models.organization_membership import OrganizationMembership, InvitationStatus
+    from dbr.models.user import User
+    from dbr.models.role import Role
+    from datetime import datetime, timezone
+    
+    if organization_id is None:
+        return []
+    
+    # Get all test users
+    test_users = session.query(User).filter(User.email.like('%@test.com')).all()
+    
+    created_memberships = []
+    admin_user = None
+    
+    # Find admin user to use as inviter
+    for user in test_users:
+        if user.email == "admin@test.com":
+            admin_user = user
+            break
+    
+    if not admin_user:
+        return []
+    
+    for user in test_users:
+        # Check if membership already exists
+        existing_membership = session.query(OrganizationMembership).filter_by(
+            organization_id=organization_id,
+            user_id=user.id
+        ).first()
+        
+        if existing_membership:
+            created_memberships.append(existing_membership)
+            continue
+        
+        # Create membership
+        membership = OrganizationMembership(
+            organization_id=organization_id,
+            user_id=user.id,
+            role_id=user.system_role_id,  # Use the user's system role
+            invitation_status=InvitationStatus.ACCEPTED,
+            invited_by_user_id=admin_user.id,
+            joined_date=datetime.now(timezone.utc)
+        )
+        session.add(membership)
+        created_memberships.append(membership)
+    
+    session.commit()
+    return created_memberships

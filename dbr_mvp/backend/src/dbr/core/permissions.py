@@ -80,3 +80,69 @@ def can_manage_role(manager_role: RoleName, target_role: RoleName) -> bool:
 def get_permissions_for_role(role_name: RoleName) -> list[Permission]:
     """Get all permissions for a specific role"""
     return ROLE_PERMISSIONS.get(role_name, [])
+
+
+def user_has_permission(session, user_id: str, organization_id: str, permission: Permission) -> bool:
+    """Check if a user has a specific permission within an organization"""
+    from dbr.models.organization_membership import OrganizationMembership, InvitationStatus
+    from dbr.models.role import Role
+    
+    # Get user's membership in the organization
+    membership = session.query(OrganizationMembership).filter_by(
+        user_id=user_id,
+        organization_id=organization_id,
+        invitation_status=InvitationStatus.ACCEPTED
+    ).first()
+    
+    if not membership:
+        return False
+    
+    # Get the role
+    role = session.query(Role).filter_by(id=membership.role_id).first()
+    if not role:
+        return False
+    
+    # Check if role has the permission
+    return has_permission(role.name, permission)
+
+
+def get_user_role_in_org(session, user_id: str, organization_id: str) -> RoleName:
+    """Get a user's role within a specific organization"""
+    from dbr.models.organization_membership import OrganizationMembership, InvitationStatus
+    from dbr.models.role import Role
+    
+    # Get user's membership in the organization
+    membership = session.query(OrganizationMembership).filter_by(
+        user_id=user_id,
+        organization_id=organization_id,
+        invitation_status=InvitationStatus.ACCEPTED
+    ).first()
+    
+    if not membership:
+        return None
+    
+    # Get the role
+    role = session.query(Role).filter_by(id=membership.role_id).first()
+    if not role:
+        return None
+    
+    return role.name
+
+
+def get_user_organizations(session, user_id: str) -> list:
+    """Get all organizations a user is a member of"""
+    from dbr.models.organization_membership import OrganizationMembership, InvitationStatus
+    from dbr.models.organization import Organization
+    
+    memberships = session.query(OrganizationMembership).filter_by(
+        user_id=user_id,
+        invitation_status=InvitationStatus.ACCEPTED
+    ).all()
+    
+    organizations = []
+    for membership in memberships:
+        org = session.query(Organization).filter_by(id=membership.organization_id).first()
+        if org:
+            organizations.append(org)
+    
+    return organizations
