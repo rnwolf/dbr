@@ -9,7 +9,7 @@ In TDD, you write tests first, which means:
 
 ## TDD with Src Layout for directories
 
-**Src Layout Structure:**
+**Example Src Layout Structure:**
 ```
 dbr_backend/
 ├── src/
