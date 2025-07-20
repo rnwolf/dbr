@@ -1,6 +1,6 @@
 # tests/test_models/test_base.py
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import uuid
 
@@ -9,17 +9,19 @@ def test_database_connection():
     """Test basic database connectivity"""
     # Test: Can connect to SQLite
     engine = create_engine("sqlite:///:memory:")
-    connection = engine.connect()
     
-    # Test: Connection is valid
-    assert connection is not None
+    # Use context manager to ensure proper cleanup
+    with engine.connect() as connection:
+        # Test: Connection is valid
+        assert connection is not None
+        
+        # Test: Can execute basic SQL (using text() for SQLAlchemy 2.0)
+        result = connection.execute(text("SELECT 1 as test_value"))
+        row = result.fetchone()
+        assert row[0] == 1
     
-    # Test: Can execute basic SQL
-    result = connection.execute("SELECT 1 as test_value")
-    row = result.fetchone()
-    assert row[0] == 1
-    
-    connection.close()
+    # Properly dispose of the engine
+    engine.dispose()
 
 
 def test_uuid_generation():
@@ -37,14 +39,23 @@ def test_uuid_generation():
 
 def test_database_table_creation():
     """Test basic table creation and drop"""
-    # This test will fail until we create the base model
-    from dbr.models.base import Base
+    # Test: Can import base model
+    from dbr.models.base import Base, BaseModel
     
     # Test: Can create/drop tables
     engine = create_engine("sqlite:///:memory:")
-    Base.metadata.create_all(engine)
-    
-    # Test: Tables exist (will be empty initially but structure should be there)
-    assert engine.has_table("organizations") == False  # Will be True once we add models
-    
-    Base.metadata.drop_all(engine)
+    try:
+        Base.metadata.create_all(engine)
+        
+        # Test: Base metadata exists
+        assert Base.metadata is not None
+        
+        # Test: BaseModel has expected attributes
+        assert hasattr(BaseModel, 'id')
+        assert hasattr(BaseModel, 'created_date')
+        assert hasattr(BaseModel, 'updated_date')
+        
+        Base.metadata.drop_all(engine)
+    finally:
+        # Properly dispose of the engine
+        engine.dispose()
