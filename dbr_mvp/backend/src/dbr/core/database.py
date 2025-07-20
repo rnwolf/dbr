@@ -42,6 +42,7 @@ def init_db():
     create_tables()
     _create_default_organization()
     _create_system_roles()
+    _create_test_users()
 
 
 def get_default_organization():
@@ -148,3 +149,79 @@ def _create_roles_in_session(session):
     
     session.commit()
     return created_roles
+
+
+def create_test_users(session=None):
+    """Create test user accounts - can be called with existing session for testing"""
+    from dbr.models.user import User
+    from dbr.models.role import Role, RoleName
+    from dbr.core.security import hash_password
+    
+    if session is None:
+        db = SessionLocal()
+        try:
+            return _create_users_in_session(db)
+        finally:
+            db.close()
+    else:
+        return _create_users_in_session(session)
+
+
+def _create_test_users():
+    """Create test users during database initialization"""
+    from dbr.models.user import User
+    
+    db = SessionLocal()
+    try:
+        # Check if users already exist
+        existing_users = db.query(User).count()
+        if existing_users > 0:
+            return
+            
+        _create_users_in_session(db)
+    finally:
+        db.close()
+
+
+def _create_users_in_session(session):
+    """Create test users within a given session"""
+    from dbr.models.user import User
+    from dbr.models.role import Role, RoleName
+    from dbr.core.security import hash_password
+    
+    # Test user definitions
+    test_user_definitions = [
+        ("admin", "admin@test.com", "admin123", "Super Admin User", RoleName.SUPER_ADMIN),
+        ("orgadmin", "orgadmin@test.com", "orgadmin123", "Org Admin User", RoleName.ORGANIZATION_ADMIN),
+        ("planner", "planner@test.com", "planner123", "Planner User", RoleName.PLANNER),
+        ("worker", "worker@test.com", "worker123", "Worker User", RoleName.WORKER),
+        ("viewer", "viewer@test.com", "viewer123", "Viewer User", RoleName.VIEWER),
+    ]
+    
+    created_users = []
+    for username, email, password, display_name, role_name in test_user_definitions:
+        # Check if user already exists
+        existing_user = session.query(User).filter_by(email=email).first()
+        if existing_user:
+            created_users.append(existing_user)
+            continue
+        
+        # Find the role
+        role = session.query(Role).filter_by(name=role_name).first()
+        if not role:
+            continue  # Skip if role doesn't exist
+        
+        # Create user
+        user = User(
+            username=username,
+            email=email,
+            display_name=display_name,
+            password_hash=hash_password(password),
+            active_status=True,
+            system_role_id=role.id
+        )
+        session.add(user)
+        created_users.append(user)
+    
+    session.commit()
+    return created_users
