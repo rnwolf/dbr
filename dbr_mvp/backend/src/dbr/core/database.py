@@ -40,3 +40,49 @@ def get_db() -> Session:
 def init_db():
     """Initialize database - create tables"""
     create_tables()
+    _create_default_organization()
+
+
+def get_default_organization():
+    """Get the default organization for MVP"""
+    from dbr.models.organization import Organization
+    
+    db = SessionLocal()
+    try:
+        # Try to get existing default organization
+        default_org = db.query(Organization).filter_by(name="Default Organization").first()
+        if default_org is None:
+            # Create default organization if it doesn't exist
+            default_org = _create_default_organization()
+        return default_org
+    finally:
+        db.close()
+
+
+def _create_default_organization():
+    """Create the default organization for MVP"""
+    from dbr.models.organization import Organization
+    
+    db = SessionLocal()
+    try:
+        # Check if default org already exists
+        existing_org = db.query(Organization).filter_by(name="Default Organization").first()
+        if existing_org:
+            return existing_org
+            
+        # Create new default organization
+        from dbr.models.organization import OrganizationStatus
+        default_org = Organization(
+            name="Default Organization",
+            description="Default organization for MVP testing and development",
+            status=OrganizationStatus.ACTIVE,
+            contact_email="admin@default.org",
+            country="US",
+            subscription_level="basic"
+        )
+        db.add(default_org)
+        db.commit()
+        db.refresh(default_org)
+        return default_org
+    finally:
+        db.close()
