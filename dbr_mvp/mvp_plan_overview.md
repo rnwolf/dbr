@@ -20,7 +20,12 @@ In TDD, you write tests first, which means:
 ### Basic workflow
 
 Install in development mode (editable)
-`uv pip install -e .`
+`uv pip install -e .[dev]`
+
+The command uv pip install -e .[dev] creates a complete development environment:
+ - it ensures a virtual environment exists,
+ - installs your project in an editable way,
+ - and pulls in all the extra tools you need for development, like pytest and ruff.
 
 Run tests (imports work correctly)
 `uv run pytest`
