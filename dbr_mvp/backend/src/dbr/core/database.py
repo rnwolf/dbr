@@ -28,13 +28,18 @@ def create_tables():
     Base.metadata.create_all(bind=engine)
 
 
-def get_db() -> Session:
+def get_db():
     """Dependency to get database session"""
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def get_session() -> Session:
+    """Get a database session (for direct use, not as dependency)"""
+    return SessionLocal()
 
 
 def init_db():

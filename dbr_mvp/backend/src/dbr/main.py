@@ -1,7 +1,15 @@
 from fastapi import FastAPI
+from dbr.api.work_items import router as work_items_router
 
-app = FastAPI()
+app = FastAPI(
+    title="DBR Buffer Management System API",
+    version="1.0.0",
+    description="API for managing Collections, Work Items, and Schedules within a Drum Buffer Rope (DBR) system"
+)
+
+# Include API routers
+app.include_router(work_items_router, prefix="/api/v1")
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"message": "DBR Buffer Management System API", "version": "1.0.0"}
