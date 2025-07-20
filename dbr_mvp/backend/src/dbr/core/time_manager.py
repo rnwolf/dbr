@@ -1,5 +1,5 @@
 # src/dbr/core/time_manager.py
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 import pytz
 from freezegun import freeze_time
@@ -27,13 +27,13 @@ class TimeManager:
     def get_current_time(self) -> datetime:
         """Get the current system time"""
         if self._current_time is None:
-            return datetime.utcnow()
+            return datetime.now(timezone.utc)
         return self._current_time
     
     def advance_time(self, hours: int = 0, days: int = 0, weeks: int = 0, **kwargs) -> None:
         """Advance time by specified amount"""
         if self._current_time is None:
-            self._current_time = datetime.utcnow()
+            self._current_time = datetime.now(timezone.utc)
         
         delta = timedelta(hours=hours, days=days, weeks=weeks, **kwargs)
         self._current_time += delta
