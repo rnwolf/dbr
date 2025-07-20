@@ -183,30 +183,32 @@ frontend/
 
 ## Development Phases
 
-### Phase 1A: FastAPI Core Setup (3-4 days)
-- [ ] Project structure and FastAPI setup
-- [ ] SQLAlchemy models for core entities
-- [ ] Basic CRUD endpoints for Organizations, CCRs, WorkItems
-- [ ] SQLite database with Alembic migrations
-- [ ] Pydantic schemas matching OpenAPI spec
+### Foundation First
 
-### Phase 1B: DBR Business Logic (3-4 days)
-- [ ] Schedule creation and validation
-- [ ] Time progression mechanics (`/system/advance_time_unit`)
-- [ ] Capacity constraint validation
-- [ ] Work item dependency resolution
-- [ ] Buffer zone calculations
+- Authentication system with test users for each role
+- Time management system using freezegun for testing
+- Default organization setup for MVP simplicity
 
-### Phase 2A: Tkinter UI Foundation (3-4 days)
-- [ ] Main window layout
-- [ ] API client wrapper
-- [ ] Basic buffer board grid
-- [ ] Work item list widget
-- [ ] Schedule visualization
+### Core DBR Logic
 
-### Phase 2B: Interactive Features (3-4 days)
-- [ ] Time progression controls
-- [ ] Work item creation/editing
-- [ ] Schedule building interface
-- [ ] Real-time updates from API
-- [ ] Error handling and feedback
+- Work items, schedules, CCRs with full business logic
+- Time progression engine with buffer zone management
+- Complete API layer with role-based access control
+
+### Frontend Validation
+
+- API client layer for backend integration
+- Work item and schedule management UIs
+- Planning interface for schedule creation
+
+### Buffer Board
+
+- Visual DBR board with time progression
+- Standup meeting workflow
+- Real-time buffer zone status
+
+### Integration & Polish
+
+- End-to-end testing of complete workflows
+- Error handling and edge cases
+- Performance optimization and UX polish
