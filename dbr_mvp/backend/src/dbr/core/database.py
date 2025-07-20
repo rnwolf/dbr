@@ -41,6 +41,7 @@ def init_db():
     """Initialize database - create tables"""
     create_tables()
     _create_default_organization()
+    _create_system_roles()
 
 
 def get_default_organization():
@@ -86,3 +87,64 @@ def _create_default_organization():
         return default_org
     finally:
         db.close()
+
+
+def create_system_roles(session=None):
+    """Create all system roles - can be called with existing session for testing"""
+    from dbr.models.role import Role, RoleName
+    
+    if session is None:
+        db = SessionLocal()
+        try:
+            return _create_roles_in_session(db)
+        finally:
+            db.close()
+    else:
+        return _create_roles_in_session(session)
+
+
+def _create_system_roles():
+    """Create system roles during database initialization"""
+    from dbr.models.role import Role, RoleName
+    
+    db = SessionLocal()
+    try:
+        # Check if roles already exist
+        existing_roles = db.query(Role).count()
+        if existing_roles > 0:
+            return
+            
+        _create_roles_in_session(db)
+    finally:
+        db.close()
+
+
+def _create_roles_in_session(session):
+    """Create roles within a given session"""
+    from dbr.models.role import Role, RoleName
+    
+    role_definitions = [
+        (RoleName.SUPER_ADMIN, "System administrator with full access to all features and organizations"),
+        (RoleName.ORGANIZATION_ADMIN, "Organization administrator who can manage users and settings within their organization"),
+        (RoleName.PLANNER, "Can create and manage work items, schedules, and advance time"),
+        (RoleName.WORKER, "Can update work items and view reports"),
+        (RoleName.VIEWER, "Read-only access to view reports and dashboards"),
+    ]
+    
+    created_roles = []
+    for role_name, description in role_definitions:
+        # Check if role already exists
+        existing_role = session.query(Role).filter_by(name=role_name).first()
+        if existing_role:
+            created_roles.append(existing_role)
+            continue
+            
+        role = Role(
+            name=role_name,
+            description=description
+        )
+        session.add(role)
+        created_roles.append(role)
+    
+    session.commit()
+    return created_roles
