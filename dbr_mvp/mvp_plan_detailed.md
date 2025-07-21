@@ -29,7 +29,7 @@ def test_database_connection():
     """Test basic database connectivity"""
     # Test: Can connect to SQLite
     # Test: Can create/drop tables
-    
+
 def test_uuid_generation():
     """Test UUID primary keys work"""
     # Test: Models generate UUIDs
@@ -128,7 +128,7 @@ def test_user_authentication():
 - Implement password hashing
 - Create test users for each role:
   - `admin@test.com` (Super Admin)
-  - `orgadmin@test.com` (Org Admin) 
+  - `orgadmin@test.com` (Org Admin)
   - `planner@test.com` (Planner)
   - `worker@test.com` (Worker)
   - `viewer@test.com` (Viewer)
@@ -195,7 +195,7 @@ def test_work_item_dependencies():
     # Test: Add dependencies between work items
     # Test: Prevent circular dependencies
     # Test: Dependency impact on Ready status
-    
+
 def test_dependency_validation():
     """Test dependency business rules"""
     # Test: Cannot be Ready if dependencies incomplete
@@ -218,7 +218,7 @@ def test_collection_creation():
     # Test: Project and MOVE types
     # Test: Collection-WorkItem relationships
     # Test: Financial calculations
-    
+
 def test_collection_work_items():
     """Test work item management in collections"""
     # Test: Add work items to collections
@@ -270,7 +270,7 @@ def test_schedule_creation():
     # Test: Create schedule with work item list
     # Test: CCR time validation (cannot exceed capacity)
     # Test: Only Ready work items can be scheduled
-    
+
 def test_schedule_capacity_validation():
     """Test capacity constraint enforcement"""
     # Test: Reject schedules exceeding CCR capacity
@@ -292,7 +292,7 @@ def test_schedule_time_positioning():
     # Test: Time slot offset from CCR (0 = CCR, +1 = right, -1 = left)
     # Test: Schedule status based on position
     # Test: Position updates during time progression
-    
+
 def test_schedule_status_transitions():
     """Test schedule status lifecycle"""
     # Test: Planning → Pre-Constraint → Post-Constraint → Completed
@@ -315,7 +315,7 @@ def test_advance_time_unit():
     # Test: All schedules move one position left
     # Test: Completed schedules removed from board
     # Test: Schedule count tracking
-    
+
 def test_time_progression_with_multiple_schedules():
     """Test complex time progression scenarios"""
     # Test: Multiple schedules at different positions
@@ -335,9 +335,9 @@ def test_time_progression_with_multiple_schedules():
 def test_buffer_zone_configuration():
     """Test buffer zone setup"""
     # Test: Pre-constraint buffer size (e.g., 5 time units)
-    # Test: Post-constraint buffer size (e.g., 3 time units) 
+    # Test: Post-constraint buffer size (e.g., 3 time units)
     # Test: Zone color calculations (red/yellow/green)
-    
+
 def test_buffer_zone_status():
     """Test buffer zone status calculation"""
     # Test: Zone penetration detection
@@ -365,7 +365,7 @@ def test_create_work_item_api():
     # Test: POST /workitems creates work item
     # Test: Required fields validation
     # Test: Returns created work item with ID
-    
+
 def test_work_item_crud_api():
     """Test complete work item CRUD"""
     # Test: GET /workitems (list with filters)
@@ -388,7 +388,7 @@ def test_create_schedule_api():
     # Test: POST /schedules creates schedule
     # Test: Work item list validation
     # Test: Capacity constraint enforcement
-    
+
 def test_schedule_management_api():
     """Test schedule lifecycle management"""
     # Test: GET /schedules (list with status filters)
@@ -412,7 +412,7 @@ def test_advance_time_unit_api():
     # Test: POST /system/advance_time_unit
     # Test: Returns count of advanced schedules
     # Test: Proper error handling
-    
+
 def test_time_management_api():
     """Test time control API"""
     # Test: GET/POST /system/time (get/set current time)
@@ -436,7 +436,7 @@ def test_user_authentication_api():
     # Test: POST /auth/login with valid credentials
     # Test: Returns JWT token with user info
     # Test: Invalid credentials rejected
-    
+
 def test_protected_endpoints():
     """Test role-based access control"""
     # Test: Endpoints require authentication
@@ -464,7 +464,7 @@ def test_api_client_authentication():
     # Test: Login with test credentials
     # Test: Token storage and reuse
     # Test: Automatic logout on token expiry
-    
+
 def test_api_client_work_items():
     """Test work item API integration"""
     # Test: Fetch work items from backend
@@ -486,7 +486,7 @@ def test_frontend_work_item_model():
     # Test: Create from API JSON response
     # Test: Data validation and type conversion
     # Test: Local state management
-    
+
 def test_frontend_schedule_model():
     """Test frontend schedule data model"""
     # Test: Schedule with work items
@@ -510,7 +510,7 @@ def test_login_window_creation():
     # Test: Window appears with login form
     # Test: Username/password fields present
     # Test: Login button functionality
-    
+
 def test_login_authentication():
     """Test login process"""
     # Test: Valid credentials log in successfully
@@ -532,7 +532,7 @@ def test_main_window_layout():
     # Test: Menu bar with main sections
     # Test: Status bar with user info
     # Test: Content area for different views
-    
+
 def test_navigation_between_views():
     """Test view switching"""
     # Test: Switch between Work Items, Schedules, Buffer Board
@@ -560,7 +560,7 @@ def test_work_item_list_display():
     # Test: Load and display work items from API
     # Test: Search and filter capabilities
     # Test: Sort by different columns
-    
+
 def test_work_item_list_actions():
     """Test work item list interactions"""
     # Test: Double-click opens detail view
@@ -582,7 +582,7 @@ def test_work_item_detail_display():
     # Test: All work item fields displayed
     # Test: Task list with checkboxes
     # Test: Comments and history sections
-    
+
 def test_work_item_editing():
     """Test work item modification"""
     # Test: Edit fields and save changes
@@ -606,7 +606,7 @@ def test_schedule_list_display():
     # Test: Load schedules with status filtering
     # Test: Show work items within schedules
     # Test: Position and time information
-    
+
 def test_schedule_creation():
     """Test new schedule creation"""
     # Test: Open schedule builder
@@ -628,7 +628,7 @@ def test_planning_interface():
     # Test: Available work items list
     # Test: Drag-and-drop to schedule
     # Test: Capacity meter display
-    
+
 def test_planning_validation():
     """Test planning business rules"""
     # Test: Only Ready work items can be planned
@@ -656,7 +656,7 @@ def test_buffer_board_layout():
     # Test: Time slot columns displayed
     # Test: CCR rows displayed
     # Test: Zone color coding (red/yellow/green)
-    
+
 def test_buffer_board_data_display():
     """Test schedule display on board"""
     # Test: Schedules appear in correct positions
@@ -669,6 +669,10 @@ def test_buffer_board_data_display():
 - Add time slot headers
 - Implement CCR row display
 
+**Visual examples of capability channels**
+
+![Picture of example capability channels](images/example_capability_channels.png)
+
 #### Step 7.2: Schedule Display on Board (2 hours)
 **TDD Cycle:**
 ```python
@@ -678,7 +682,7 @@ def test_schedule_positioning():
     # Test: Schedules appear in correct time slots
     # Test: Multiple CCR rows supported
     # Test: Schedule detail popup on click
-    
+
 def test_schedule_progress_display():
     """Test progress visualization"""
     # Test: Progress bars for schedule completion
@@ -702,7 +706,7 @@ def test_time_progression_controls():
     # Test: Current time display
     # Test: Advance time button
     # Test: Set time manually
-    
+
 def test_time_progression_effects():
     """Test visual updates after time progression"""
     # Test: Schedules move left after advancement
@@ -724,7 +728,7 @@ def test_standup_interface():
     # Test: Review mode for all schedules
     # Test: Mark schedules complete
     # Test: Time progression at end of standup
-    
+
 def test_standup_workflow():
     """Test complete standup process"""
     # Test: Step through each CCR row
@@ -752,7 +756,7 @@ def test_complete_work_item_lifecycle():
     # Test: Create → Ready → Schedule → Progress → Complete
     # Test: Multiple user roles involved
     # Test: Frontend and backend sync
-    
+
 def test_complete_time_progression_cycle():
     """Test full time progression workflow"""
     # Test: Create schedules → Release → Progress → Complete
@@ -774,7 +778,7 @@ def test_network_error_handling():
     # Test: Backend unavailable scenarios
     # Test: Timeout handling
     # Test: Graceful error messages
-    
+
 def test_data_validation_edge_cases():
     """Test business rule edge cases"""
     # Test: Circular dependency prevention

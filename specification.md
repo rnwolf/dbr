@@ -632,17 +632,100 @@ The API provides endpoints for controlling the DBR board's timer, which is criti
 
 Main DBR Buffer Board Interface structure with the four key components you identified. Each component now has detailed sub-elements defined.
 
+#### Board Navigation Component
+
+![Tab Navigation for Boards](images/Tab_Navigation_for_Boards.png)
+
+A Tab navigation component enables quick navigation between various board that have been configured for an organisation.
+
 #### Controls Component:
 
 Time progression as primary operation (not drag-and-drop)
 Standup meeting optimization
 View management and configuration options
 
+![Time controls for a Board](images/Timer_controls_for_board.png)
+
+- Each board has an associated time progression control.
+- It displays the timezone for the clock
+- A "Fast Forward" button provides a method to progress the system time forward to the start of the next Time_Unit. This will be important for testing the application.
+- The control will display the time of the start of the next time_unit.
+- The will be a button to pause the board clock.
+- There will be a board clock, including seconds, so that when the board clock is running we can see the time progression.
+- If the board clock is paused, we will see a button with "Play Icon", which can be used to restart the board clock/timer.
+
+
 #### Buffer Boards Component:
 
 - Visual buffer zone representation
 - Multi-CCR row display
 - Interactive schedule and work item access
+
+![Core buffer board elements](images/Core_DBR_Capability_channels_frame.png)
+
+##### Header rows
+
+- Each header row can be configured to visible or not.
+
+- Cell Zones: While the colours of each cell indicates what zone a cell this row will indicate with the zone for each cell. (Zone 0 - Black, Zone 1 - Red, Zone 2 - Yellow, Zone 3 - Green, CCR - Light Blue)
+- Cell Variance: Indicated the number of Time_Units distant from the CCR cell, which is negative when the cell is in the post-constraint buffer, and positive when the cell is in the pre-constraint buffer.
+- Cell Index: Zero based index for each column or cell in the buffers. The index starts at the "Zone 0", cell, which is the zero index value.
+- Total buffer zones: A visual representation of the entire buffer. Zne 0, one cell big is always black. The remaing cells are equally distribiued between Zones 1,2 and 3. Any spare cells are to be allocated to Zone 2.
+- Total buffer percent: Displayes the persetage of the total buffer zones 1,2 and 3, per cell. With 100% on the red, zone 1 and 0% on the green, zone 3 side.
+
+##### Footer Row
+
+- Colour bar across the bottom (or top) of the Capability Channels.
+- Colour and text legand indicating the buffer zones
+- Will allways be aligned with coressponding cells in the rows.
+
+##### Capability Channels (Rows)
+
+###### Channel CCR & Schedule Status (CCR Status Component)
+
+- Real-time health indicators
+- Performance metrics
+- Alert and notification integration
+
+
+![Image of Channel CCR and Schedule status component](<images/Channel CCR and Schedule status component.png>)
+
+Each Capability Channel focuses on getting the best out of the channels designated CCR. This component will display the names of the CCR resources.
+The CCR resources are able to check-in to Channel WorkItems when working on them. When a CCR is logging time against a work item the Clock Icon will be displayed, otherwise the status indicator will be blank.
+The top of the component displays two things overlayed.
+The Sum of all the remaining time of work items in the left most schedule in the channel. We want to see at a gance how much effor is still required by the CCR resources to clear off the workitems in the schedule.
+The coloured progress bar behind the sum of time is the percentage of Done tasks for all the work items in the left most schedule in the channel.
+
+In summary at a gance we can see how time is required complete left most schedule, what percentage of schdule tasks are completed or remaining, who the CCR resources for this channel are and if they are woking on tasks right now!
+
+###### Buffer
+
+![Picture of example capability channels](images/example_capability_channels.png)
+
+The image above shows two examples of `Cell Variance` and buffer cells with colour and zone.
+
+The buffer consists of the following sections
+
+- Zone 0: Always to the left, and the final `bucket` for any WorkItems that move not been removed from the buffers before they get to the end of the zone 1 buffer (All schedules are moved to the left at the end of a time unit)
+- Post-constaint buffer: Always contains three Zones 1,2 & 3. There will always be an equal number of cells in each zone.(All schedules are moved to the left at the end of a time unit)
+
+- CCR: Single cell, between the pre and post constraint buffers. (All schedules are moved to the left at the end of a time unit)
+- Pre-constraint Buffer: Always contains three Zones 1,2 & 3. There will always be an equal number of cells in each zone. (All schedules are moved to the left at the end of a time unit)
+
+###### Cell
+
+![Image of buffer Cell](<images/Capability Channel Cell.png>)
+
+When there is a Schedule associated with a cell in the capability channel cell we display the following:
+
+- A button with the count of workitems in the schedule. Via the button one can view the schedule details.
+- A combo selector list contains the list of workitem numbers. The cell will by default display the highest priority incomplete workitem from the schedule.
+- The button with gear icon will open up workitem view, where details of the workitem can be viewed and edited.
+- The work item title will be displayed. The size of the title textbox will limit the amount that can be displayed
+- The top of the WorkItem description is also displayed. The number of characters will be limited by the size of the text box.
+- WorkItems can have an associated status. The status will have an associated icon.
+- The progress bar in the bottom displays the percentage of the workitem tasks done.
+- Over the progress bar we display the CCR time remaining on the workitem.
 
 ##### Detailed Buffer board features
 
@@ -668,13 +751,6 @@ View management and configuration options
 - Planning queue management
 - Integration with Planning interface
 - Priority and dependency visualization
-
-#### CCR Status Component:
-
-- Real-time health indicators
-- Performance metrics
-- Alert and notification integration
-
 
 ## User Roles and Organizational Structure
 
