@@ -2,7 +2,7 @@
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime, timezone
 from dbr.core.database import get_db
 from dbr.models.schedule import Schedule, ScheduleStatus
@@ -33,6 +33,8 @@ class ScheduleUpdate(BaseModel):
 
 
 class ScheduleResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: str
     organization_id: str
     board_config_id: str
@@ -45,9 +47,6 @@ class ScheduleResponse(BaseModel):
     created_date: str
     released_date: Optional[str]
     completion_date: Optional[str]
-
-    class Config:
-        from_attributes = True
 
 
 class ScheduleAnalytics(BaseModel):

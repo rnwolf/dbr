@@ -2,7 +2,7 @@
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from dbr.core.database import get_db
 from dbr.models.work_item import WorkItem, WorkItemStatus, WorkItemPriority
 from dbr.models.organization import Organization
@@ -60,6 +60,8 @@ class WorkItemUpdate(BaseModel):
 
 
 class WorkItemResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: str
     organization_id: str
     collection_id: Optional[str]
@@ -78,9 +80,6 @@ class WorkItemResponse(BaseModel):
     url: Optional[str]
     created_date: str
     updated_date: str
-
-    class Config:
-        from_attributes = True
 
 
 def _validate_organization_access(session: Session, organization_id: str) -> Organization:
@@ -283,7 +282,7 @@ def update_work_item(
         raise HTTPException(status_code=404, detail="Work item not found")
     
     # Update fields
-    update_data = work_item_data.dict(exclude_unset=True)
+    update_data = work_item_data.model_dump(exclude_unset=True)
     
     for field, value in update_data.items():
         if field == "status" and value is not None:
