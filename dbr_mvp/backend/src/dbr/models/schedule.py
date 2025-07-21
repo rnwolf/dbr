@@ -102,20 +102,14 @@ class Schedule(BaseModel):
     
     def calculate_total_ccr_hours(self, session: Session) -> float:
         """Calculate total CCR hours for all work items in this schedule"""
-        from dbr.models.ccr import CCR
-        
-        ccr = session.query(CCR).filter_by(id=self.capability_channel_id).first()
-        if not ccr:
-            return 0.0
-        
-        ccr_key = ccr.name.lower().replace(" ", "_")
         work_items = self.get_work_items(session)
         
         total_hours = 0.0
         for work_item in work_items:
             if work_item.ccr_hours_required:
-                hours = work_item.ccr_hours_required.get(ccr_key, 0.0)
-                total_hours += hours
+                # Sum all CCR hours for this work item (handles multi-CCR scenarios)
+                work_item_ccr_hours = sum(work_item.ccr_hours_required.values())
+                total_hours += work_item_ccr_hours
         
         return total_hours
     
