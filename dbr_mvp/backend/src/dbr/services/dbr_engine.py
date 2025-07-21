@@ -44,7 +44,7 @@ class DBREngine:
                 # Check if schedule has completed (moved beyond post-constraint buffer)
                 if schedule.time_unit_position > board_config.post_constraint_buffer_size:
                     schedule.status = ScheduleStatus.COMPLETED
-                    schedule.completion_date = self.time_manager.get_current_time()
+                    schedule.completed_date = self.time_manager.get_current_time()
                     completed_count += 1
         
         # Advance system time by one time unit
