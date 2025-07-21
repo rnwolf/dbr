@@ -6,7 +6,16 @@ from pydantic import BaseModel, Field, ConfigDict
 from dbr.core.database import get_db
 from dbr.models.work_item import WorkItem, WorkItemStatus, WorkItemPriority
 from dbr.models.organization import Organization
+from dbr.models.user import User
 
+# Import auth dependency
+try:
+    from dbr.api.auth import get_current_user
+except ImportError:
+    # Handle circular import during testing
+    def get_current_user():
+        from dbr.api.auth import get_current_user as _get_current_user
+        return _get_current_user
 
 router = APIRouter(prefix="/workitems", tags=["Work Items"])
 
@@ -138,7 +147,8 @@ def get_work_items(
     status: Optional[List[str]] = Query(None, description="Status to filter by"),
     priority: Optional[str] = Query(None, description="Priority to filter by"),
     sort: Optional[str] = Query(None, description="Sort field"),
-    session: Session = Depends(get_db)
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Get all work items with optional filtering"""
     
