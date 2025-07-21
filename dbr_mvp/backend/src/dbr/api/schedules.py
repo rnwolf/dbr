@@ -116,7 +116,18 @@ def get_schedules(
         status_enums = []
         for s in status:
             try:
-                status_enums.append(ScheduleStatus(s.replace("-", "_").upper()))
+                # Find enum by value (e.g., "Planning" -> ScheduleStatus.PLANNING)
+                found_status = None
+                for status_enum in ScheduleStatus:
+                    if status_enum.value == s:
+                        found_status = status_enum
+                        break
+                
+                if found_status:
+                    status_enums.append(found_status)
+                else:
+                    raise ValueError(f"Status '{s}' not found")
+                    
             except ValueError:
                 raise HTTPException(status_code=422, detail=f"Invalid status: {s}")
         query = query.filter(Schedule.status.in_(status_enums))
@@ -250,12 +261,21 @@ def update_schedule(
     for field, value in update_data.items():
         if field == "status" and value is not None:
             try:
-                new_status = ScheduleStatus(value.replace("-", "_").upper())
-                schedule.status = new_status
+                # Find enum by value (e.g., "Pre-Constraint" -> ScheduleStatus.PRE_CONSTRAINT)
+                found_status = None
+                for status_enum in ScheduleStatus:
+                    if status_enum.value == value:
+                        found_status = status_enum
+                        break
                 
-                # Set completion date if marking as completed
-                if new_status == ScheduleStatus.COMPLETED and not schedule.completed_date:
-                    schedule.completed_date = datetime.now(timezone.utc)
+                if found_status:
+                    schedule.status = found_status
+                    
+                    # Set completion date if marking as completed
+                    if found_status == ScheduleStatus.COMPLETED and not schedule.completed_date:
+                        schedule.completed_date = datetime.now(timezone.utc)
+                else:
+                    raise ValueError(f"Status '{value}' not found")
                     
             except ValueError:
                 raise HTTPException(status_code=422, detail=f"Invalid status: {value}")
