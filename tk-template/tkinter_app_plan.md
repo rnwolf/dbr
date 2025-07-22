@@ -2,7 +2,8 @@
 
 ## Overview
 
-This comprehensive development plan provides a complete blueprint for building modern, scalable Python GUI applications using CustomTkinter. The plan is specifically designed for AI agents like Claude Code and follows industry best practices for:
+This tk-template app provides a complete blueprint for building a modern, scalable Python GUI applications using CustomTkinter.
+The plan is specifically designed for AI agents to use as a reference and follows industry best practices for:
 
 - **Modern dependency management** with Astral's UV tool
 - **Test-driven development (TDD)** with pytest
@@ -10,7 +11,7 @@ This comprehensive development plan provides a complete blueprint for building m
 - **Professional project structure** that scales with complexity
 - **CustomTkinter GUI framework** for modern, cross-platform interfaces
 
-The plan includes complete code examples, testing strategies, and development workflows that enable rapid development while maintaining code quality and testability.
+The directory includes complete code examples. The document includes testing strategies and development workflows that enable rapid development while maintaining code quality and testability.
 
 ## Project Structure
 
@@ -34,6 +35,7 @@ project_name/
 │   │       ├── __init__.py
 │   │       ├── base_component.py
 │   │       ├── scrollable_canvas_frame.py
+│   │       ├── stats_display_frame.py
 │   │       └── widgets/        # Custom widgets
 │   │           ├── __init__.py
 │   │           ├── grid_cell_widget.py
@@ -62,6 +64,7 @@ project_name/
 │       ├── __init__.py
 │       ├── test_base_component.py
 │       ├── test_scrollable_canvas_frame.py
+│       ├── test_stats_display_frame.py
 │       └── test_widgets/       # Widget tests
 │           ├── __init__.py
 │           └── test_grid_cell_widget.py
@@ -139,48 +142,9 @@ app = "app.main:main"
 
 ```
 
-## Core Architecture
-
-### 4. Main Application Entry Point (src/main.py)
-
-### 5. Configuration Management (src/utils/config.py)
-
-### 6. Main Window Class (src/app/main_window.py)
-
-### 7. Menu Bar Component (src/app/menu_bar.py)
-
-### 8. Tab Navigation Component (src/app/tab_navigation.py)
-
-### 9. Page 1 - Grid Canvas View (src/app/pages/page1.py)
-
-### 10. Page 2 - Settings (src/app/pages/page2.py)
-
-### 11. Scrollable Canvas Frame (src/app/components/scrollable_canvas_frame.py)
-
-### 12. Grid Cell Widget (src/app/components/widgets/grid_cell_widget.py)
-### 15. Base Component Class (src/app/components/base_component.py)
-
-### 14. Enhanced Testing Examples
-
-#### Test for Tab Navigation (tests/test_tab_navigation.py)
-#### Test for Grid Cell Widget (tests/test_components/test_widgets/test_grid_cell_widget.py)
-#### Test for Page1 (tests/test_pages/test_page1.py)
-
-#### Test for Base component class for reusable UI components. (\tests\test_components\test_base_component.py)
-
-## Testing Framework
-
-### 9. Test Configuration (tests/conftest.py)
-
-
-### 10. Main Window Tests (tests/test_main_window.py)
-
-### 11. Menu Bar Tests (tests/test_menu_bar.py)
-
 ## Development Workflow
 
-
-#### Complex Component Testing
+### Complex Component Testing
 ```bash
 # Test specific components
 uv run pytest tests/test_components/test_widgets/ -v
@@ -196,7 +160,7 @@ uv run pytest --tb=long -v                        # Long traceback format
 uv run pytest --capture=no -v                     # Show print statements
 ```
 
-#### Application Usage Examples
+### Application Usage Examples
 ```bash
 # Start the application
 uv run python src/main.py
@@ -237,7 +201,7 @@ uv tree
 uv export --format requirements-txt --output-file requirements.txt
 ```
 
-### 17. Complex Component Development Pattern
+## Complex Component Development Pattern
 
 When building complex components like the grid system, follow this enhanced pattern:
 
