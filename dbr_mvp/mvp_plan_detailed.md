@@ -455,6 +455,9 @@ def test_protected_endpoints():
 
 ### Day 5A: Frontend Architecture (4 hours)
 
+#### Step 5.0: API Client Layer (2 hours)
+
+
 #### Step 5.1: API Client Layer (2 hours)
 **TDD Cycle:**
 ```python

@@ -47,7 +47,7 @@ def test_work_item_creation():
 ### Basic workflow
 
 Install in development mode (editable)
-`uv pip install -e .`
+`uv pip install -e .[dev]`
 
 Run tests (imports work correctly)
 `uv run pytest`
