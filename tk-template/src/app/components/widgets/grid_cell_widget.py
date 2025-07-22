@@ -3,17 +3,27 @@
 import customtkinter as ctk
 from typing import Callable, Optional, Dict, Any
 
+from app.utils.event_bus import EventBus
+
 
 class GridCellWidget(ctk.CTkFrame):
     """Custom widget for grid cells with button, coordinates label, and combobox."""
 
     def __init__(
-        self, parent, row: int, col: int, width: int = 90, height: int = 90, **kwargs
+        self,
+        parent,
+        row: int,
+        col: int,
+        width: int = 90,
+        height: int = 90,
+        event_bus: Optional[EventBus] = None,
+        **kwargs,
     ):
         super().__init__(parent, width=width, height=height, **kwargs)
 
         self.row = row
         self.col = col
+        self.event_bus = event_bus
         self.action_callback: Optional[Callable[[int, int, str, str], None]] = None
 
         # Data storage
@@ -82,7 +92,14 @@ class GridCellWidget(ctk.CTkFrame):
 
     def _on_combo_change(self, selected_value: str) -> None:
         """Handle combobox selection changes."""
+        old_value = self._data["selected_option"]
         self._data["selected_option"] = selected_value
+
+        if self.event_bus:
+            self.event_bus.publish(
+                "grid_value_changed",
+                data={"old_value": old_value, "new_value": selected_value},
+            )
 
         # Call callback if set
         if self.action_callback:

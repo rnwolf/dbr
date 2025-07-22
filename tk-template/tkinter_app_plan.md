@@ -281,32 +281,114 @@ When building complex components like the grid system, follow this enhanced patt
 
 ### 18. Advanced Architecture Patterns
 
-#### Component Communication
+#### Component Communication (Event Bus Pattern)
+
+For real-time updates and decoupled communication between components, the **Event Bus pattern** is employed. This pattern allows components to publish events without knowing which other components are listening, and components can subscribe to events they are interested in.
+
+**Key Principles:**
+
+-   **Decoupling**: Components do not directly interact, reducing dependencies and increasing reusability.
+-   **Centralized Communication**: All events flow through a single `EventBus` instance.
+-   **Flexibility**: New components can easily be added to publish or subscribe to events without modifying existing code.
+
+**Implementation Details:**
+
+-   The `EventBus` class (located in `src/app/utils/event_bus.py`) provides `subscribe` and `publish` methods.
+-   **Publishers**: Components that generate events (e.g., `GridCellWidget`) inject the `EventBus` instance and call `self.event_bus.publish('event_name', data={...})` when a relevant action occurs.
+    -   **Example**: In `GridCellWidget`, when a combobox value changes, it publishes a `"grid_value_changed"` event with the `old_value` and `new_value`.
+-   **Subscribers**: Components that need to react to events (e.g., `StatsDisplayFrame`) inject the `EventBus` instance and call `self.event_bus.subscribe('event_name', self.handler_method)`.
+    -   **Example**: `StatsDisplayFrame` subscribes to `"grid_value_changed"` events and updates its displayed statistics in response.
+-   **Initialization**: The `EventBus` instance is typically created in a higher-level component (e.g., `Page1`) and passed down to child components that need to communicate.
+
+**Example Usage:**
+
 ```python
-# Event system for component communication
+# src/app/utils/event_bus.py
+from typing import Callable, Dict, Any
+
 class EventBus:
     def __init__(self):
-        self._listeners = {}
+        self._listeners: Dict[str, List[Callable]] = {}
 
-    def subscribe(self, event_type: str, callback: Callable):
+    def subscribe(self, event_type: str, callback: Callable) -> None:
         if event_type not in self._listeners:
             self._listeners[event_type] = []
         self._listeners[event_type].append(callback)
 
-    def publish(self, event_type: str, data: Any):
+    def publish(self, event_type: str, data: Any) -> None:
         for callback in self._listeners.get(event_type, []):
             callback(data)
 
-# Usage in components
-class GridCellWidget(BaseComponent):
-    def __init__(self, parent, event_bus: EventBus, **kwargs):
+# src/app/components/widgets/grid_cell_widget.py (Publisher)
+class GridCellWidget(ctk.CTkFrame):
+    def __init__(self, parent, row: int, col: int, event_bus: EventBus, **kwargs):
+        # ...
+        self.event_bus = event_bus
+        # ...
+        self.option_combo.set("Option 1") # Initial value
+        # ...
+
+    def _on_combo_change(self, selected_value: str) -> None:
+        old_value = self._data["selected_option"]
+        self._data["selected_option"] = selected_value
+        if self.event_bus:
+            self.event_bus.publish(
+                "grid_value_changed",
+                data={"old_value": old_value, "new_value": selected_value},
+            )
+        # ...
+
+# src/app/components/stats_display_frame.py (Subscriber)
+from collections import Counter
+
+class StatsDisplayFrame(BaseComponent):
+    def __init__(self, parent: ctk.CTk, event_bus: EventBus, **kwargs: Dict) -> None:
         super().__init__(parent, **kwargs)
         self.event_bus = event_bus
+        self.stats: Counter = Counter()
+        # ...
+        self.event_bus.subscribe("grid_value_changed", self.handle_grid_update)
 
-    def _on_button_click(self):
-        self.event_bus.publish('grid_cell_clicked', {
-            'row': self.row, 'col': self.col, 'data': self.get_data()
-        })
+    def handle_grid_update(self, data: Dict) -> None:
+        old_value = data.get("old_value")
+        new_value = data.get("new_value")
+
+        if old_value:
+            self.stats[old_value] -= 1
+            if self.stats[old_value] == 0:
+                del self.stats[old_value]
+        if new_value:
+            self.stats[new_value] += 1
+        self.stats_label.configure(text=self._format_stats())
+        # ...
+
+# src/app/pages/page1.py (Or a higher-level orchestrator)
+class Page1(ctk.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.event_bus = EventBus() # Initialize the event bus
+        # ...
+        self.stats_frame = StatsDisplayFrame(self, self.event_bus) # Pass event bus
+        # ...
+        self._populate_sample_widgets() # Populates grid_widgets
+        self._initialize_stats_display() # Publishes initial values
+
+    def _add_grid_widget(self, row: int, col: int) -> None:
+        # ...
+        widget = GridCellWidget(
+            self.canvas_frame.get_canvas(),
+            row=row,
+            col=col,
+            event_bus=self.event_bus, # Pass event bus to grid cells
+        )
+        # ...
+
+    def _initialize_stats_display(self) -> None:
+        # Publish initial combobox values to the stats display
+        for widget in self.grid_widgets.values():
+            initial_value = widget.get_data().get("selected_option")
+            if initial_value:
+                self.event_bus.publish("grid_value_changed", data={"old_value": None, "new_value": initial_value})
 ```
 
 #### Data Management Pattern

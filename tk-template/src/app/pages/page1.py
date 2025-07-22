@@ -5,6 +5,8 @@ import tkinter as tk
 from typing import Dict, Tuple, List
 from ..components.scrollable_canvas_frame import ScrollableCanvasFrame
 from ..components.widgets.grid_cell_widget import GridCellWidget
+from ..components.stats_display_frame import StatsDisplayFrame
+from ..utils.event_bus import EventBus
 from utils.config import AppConfig
 
 
@@ -19,10 +21,12 @@ class Page1(ctk.CTkFrame):
         self.grid_cols = 15
         self.cell_size = 100
         self.grid_widgets: Dict[Tuple[int, int], GridCellWidget] = {}
+        self.event_bus = EventBus()
 
         self._setup_page()
         self._create_grid()
         self._populate_sample_widgets()
+        self._initialize_stats_display()
 
     def _setup_page(self) -> None:
         """Setup the page layout."""
@@ -30,7 +34,11 @@ class Page1(ctk.CTkFrame):
         self.title_label = ctk.CTkLabel(
             self, text="Grid Canvas View", font=ctk.CTkFont(size=20, weight="bold")
         )
-        self.title_label.pack(pady=(10, 20))
+        self.title_label.pack(pady=(10, 10))
+
+        # Stats Display
+        self.stats_frame = StatsDisplayFrame(self, self.event_bus)
+        self.stats_frame.pack(pady=5, fill="x", padx=10)
 
         # Scrollable canvas frame
         self.canvas_frame = ScrollableCanvasFrame(
@@ -67,6 +75,13 @@ class Page1(ctk.CTkFrame):
             if 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
                 self._add_grid_widget(row, col)
 
+    def _initialize_stats_display(self) -> None:
+        """Initializes the StatsDisplayFrame with current combobox values."""
+        for widget in self.grid_widgets.values():
+            initial_value = widget.get_data().get("selected_option")
+            if initial_value:
+                self.event_bus.publish("grid_value_changed", data={"old_value": None, "new_value": initial_value})
+
     def _add_grid_widget(self, row: int, col: int) -> None:
         """Add a custom widget to the specified grid cell."""
         # Calculate position
@@ -80,6 +95,7 @@ class Page1(ctk.CTkFrame):
             col=col,
             width=self.cell_size - 10,  # Account for padding
             height=self.cell_size - 10,
+            event_bus=self.event_bus,
         )
 
         # Place widget on canvas
@@ -91,6 +107,20 @@ class Page1(ctk.CTkFrame):
 
         # Bind widget events
         widget.bind_action_callback(self._on_widget_action)
+
+    def _initialize_stats_display(self) -> None:
+        """Initializes the StatsDisplayFrame with current combobox values."""
+        for widget in self.grid_widgets.values():
+            initial_value = widget.get_data().get("selected_option")
+            if initial_value:
+                self.event_bus.publish("grid_value_changed", data={"old_value": None, "new_value": initial_value})
+
+    def _initialize_stats_display(self) -> None:
+        """Initializes the StatsDisplayFrame with current combobox values."""
+        for widget in self.grid_widgets.values():
+            initial_value = widget.get_data().get("selected_option")
+            if initial_value:
+                self.event_bus.publish("grid_value_changed", data={"old_value": None, "new_value": initial_value})
 
     def _on_widget_action(
         self, row: int, col: int, action: str, value: str = ""

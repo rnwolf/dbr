@@ -3,6 +3,7 @@
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from app.components.widgets.grid_cell_widget import GridCellWidget
+from app.utils.event_bus import EventBus
 
 
 class TestGridCellWidget:
@@ -20,11 +21,13 @@ class TestGridCellWidget:
         parent._last_child_ids = {}
         parent.tk = Mock()
         parent.children = {}
+        event_bus = EventBus()
         
-        widget = GridCellWidget(parent, row=5, col=3)
+        widget = GridCellWidget(parent, row=5, col=3, event_bus=event_bus)
 
         assert widget.row == 5
         assert widget.col == 3
+        assert widget.event_bus is event_bus
         assert widget._data["row"] == 5
         assert widget._data["col"] == 3
         assert widget._data["button_clicks"] == 0
@@ -59,20 +62,27 @@ class TestGridCellWidget:
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_combo_change_handling(self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font):
-        """Test combobox change functionality."""
+    def test_combo_change_handling_and_event_publishing(self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font):
+        """Test combobox change functionality and event publishing."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
         parent._last_child_ids = {}
         parent.tk = Mock()
         parent.children = {}
+        event_bus = Mock(spec=EventBus)
         
-        widget = GridCellWidget(parent, row=1, col=1)
+        widget = GridCellWidget(parent, row=1, col=1, event_bus=event_bus)
+        initial_value = widget._data["selected_option"]
 
         # Test combo change
-        widget._on_combo_change("Option 3")
+        new_value = "Option 3"
+        widget._on_combo_change(new_value)
 
-        assert widget._data["selected_option"] == "Option 3"
+        assert widget._data["selected_option"] == new_value
+        event_bus.publish.assert_called_once_with(
+            "grid_value_changed",
+            data={"old_value": initial_value, "new_value": new_value}
+        )
 
     @patch("customtkinter.CTkFont")
     @patch("customtkinter.CTkComboBox")
