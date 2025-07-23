@@ -455,8 +455,14 @@ def test_protected_endpoints():
 
 ### Day 5A: Frontend Architecture (4 hours)
 
-#### Step 5.0: API Client Layer (2 hours)
+#### Step 5.0: CustomTkinter Application
 
+See the following documents for more information on the template:
+- C:\Users\rnwol\workspace\dbr\tk-template\README.md
+- C:\Users\rnwol\workspace\dbr\tk-template\tkinter_app_plan.md
+
+Using the template located in directory C:\Users\rnwol\workspace\dbr\tk-template create the frontend application in C:\Users\rnwol\workspace\dbr\dbr_mvp\frontend that will server as the base for later steps in this plan.
+This plan will extend, add and remove elements as needed.
 
 #### Step 5.1: API Client Layer (2 hours)
 **TDD Cycle:**
