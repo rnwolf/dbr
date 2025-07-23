@@ -8,7 +8,10 @@ from dbr.models.work_item import WorkItem, WorkItemStatus, WorkItemPriority
 from dbr.models.collection import Collection, CollectionType, CollectionStatus
 from dbr.models.role import Role, RoleName
 from dbr.models.user import User
+from dbr.models.organization_membership import OrganizationMembership, InvitationStatus
 from dbr.core.database import SessionLocal, create_tables
+from dbr.core.security import hash_password
+from dbr.api.auth import create_access_token
 
 
 @pytest.fixture
@@ -26,6 +29,103 @@ def session():
         yield session
     finally:
         session.close()
+
+
+@pytest.fixture
+def test_role(session):
+    """Create a test role"""
+    # Try to get existing role first
+    role = session.query(Role).filter_by(name=RoleName.PLANNER).first()
+    if not role:
+        # Create new role if it doesn't exist
+        role = Role(
+            name=RoleName.PLANNER,
+            description="Planner role for testing"
+        )
+        session.add(role)
+        session.commit()
+    return role
+
+
+@pytest.fixture
+def test_user(session, test_role):
+    """Create a test user"""
+    try:
+        # Try to get existing user by username or email
+        user = session.query(User).filter(
+            (User.username == "testuser_workitems") | 
+            (User.email == "testuser_workitems@example.com")
+        ).first()
+        
+        if not user:
+            # Create new user if it doesn't exist
+            user = User(
+                username="testuser_workitems",
+                email="testuser_workitems@example.com",
+                password_hash=hash_password("testpassword"),
+                display_name="Test User Work Items",
+                active_status=True,
+                system_role_id=test_role.id
+            )
+            session.add(user)
+            session.commit()
+        return user
+    except Exception as e:
+        # If there's any error, rollback and try again
+        session.rollback()
+        # Try to get existing user again after rollback
+        user = session.query(User).filter(
+            (User.username == "testuser_workitems") | 
+            (User.email == "testuser_workitems@example.com")
+        ).first()
+        if user:
+            return user
+        raise e
+
+
+@pytest.fixture
+def test_membership(session, test_user, test_organization, test_role):
+    """Create a test organization membership"""
+    try:
+        # Check if membership already exists
+        existing_membership = session.query(OrganizationMembership).filter_by(
+            organization_id=test_organization.id,
+            user_id=test_user.id,
+            role_id=test_role.id
+        ).first()
+        
+        if existing_membership:
+            return existing_membership
+        
+        membership = OrganizationMembership(
+            organization_id=test_organization.id,
+            user_id=test_user.id,
+            role_id=test_role.id,
+            invitation_status=InvitationStatus.ACCEPTED,
+            invited_by_user_id=test_user.id  # Self-invited for testing purposes
+        )
+        session.add(membership)
+        session.commit()
+        return membership
+    except Exception as e:
+        # If there's any error, rollback and try again
+        session.rollback()
+        # Try to get existing membership again after rollback
+        existing_membership = session.query(OrganizationMembership).filter_by(
+            organization_id=test_organization.id,
+            user_id=test_user.id,
+            role_id=test_role.id
+        ).first()
+        if existing_membership:
+            return existing_membership
+        raise e
+
+
+@pytest.fixture
+def auth_headers(test_user):
+    """Create auth headers for a test user"""
+    token = create_access_token(data={"sub": str(test_user.id)})
+    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture
@@ -113,7 +213,7 @@ def test_work_items(session, test_organization, test_collection):
     return work_items
 
 
-def test_create_work_item_api(client, session, test_organization, test_collection):
+def test_create_work_item_api(client, session, test_organization, test_collection, test_membership, auth_headers):
     """Test work item creation via API"""
     # Test: POST /workitems creates work item
     # Test: Required fields validation
@@ -135,7 +235,7 @@ def test_create_work_item_api(client, session, test_organization, test_collectio
         "estimated_variable_cost": 2400.0
     }
     
-    response = client.post("/api/v1/workitems", json=work_item_data)
+    response = client.post("/api/v1/workitems", json=work_item_data, headers=auth_headers)
     
     assert response.status_code == 201
     created_item = response.json()
@@ -158,7 +258,7 @@ def test_create_work_item_api(client, session, test_organization, test_collectio
     assert created_item["throughput"] == expected_throughput
 
 
-def test_create_work_item_validation(client, session, test_organization):
+def test_create_work_item_validation(client, session, test_organization, test_membership, auth_headers):
     """Test work item creation validation"""
     
     # Test missing required fields
@@ -168,7 +268,7 @@ def test_create_work_item_validation(client, session, test_organization):
         # Missing estimated_total_hours
     }
     
-    response = client.post("/api/v1/workitems", json=incomplete_data)
+    response = client.post("/api/v1/workitems", json=incomplete_data, headers=auth_headers)
     assert response.status_code == 422  # Validation error
     
     # Test invalid status
@@ -179,7 +279,7 @@ def test_create_work_item_validation(client, session, test_organization):
         "status": "InvalidStatus"
     }
     
-    response = client.post("/api/v1/workitems", json=invalid_status_data)
+    response = client.post("/api/v1/workitems", json=invalid_status_data, headers=auth_headers)
     assert response.status_code == 422
     
     # Test invalid priority
@@ -190,11 +290,11 @@ def test_create_work_item_validation(client, session, test_organization):
         "priority": "invalid_priority"
     }
     
-    response = client.post("/api/v1/workitems", json=invalid_priority_data)
+    response = client.post("/api/v1/workitems", json=invalid_priority_data, headers=auth_headers)
     assert response.status_code == 422
 
 
-def test_work_item_crud_api(client, session, test_organization, test_work_items):
+def test_work_item_crud_api(client, session, test_organization, test_work_items, test_membership, auth_headers):
     """Test complete work item CRUD"""
     # Test: GET /workitems (list with filters)
     # Test: GET /workitems/{id} (single item)
@@ -202,7 +302,7 @@ def test_work_item_crud_api(client, session, test_organization, test_work_items)
     # Test: DELETE /workitems/{id} (delete)
     
     # Test GET /workitems (list all)
-    response = client.get(f"/api/v1/workitems?organization_id={test_organization.id}")
+    response = client.get(f"/api/v1/workitems?organization_id={test_organization.id}", headers=auth_headers)
     assert response.status_code == 200
     
     work_items = response.json()
@@ -211,7 +311,7 @@ def test_work_item_crud_api(client, session, test_organization, test_work_items)
     assert all("title" in item for item in work_items)
     
     # Test GET /workitems with status filter
-    response = client.get(f"/api/v1/workitems?organization_id={test_organization.id}&status=Ready")
+    response = client.get(f"/api/v1/workitems?organization_id={test_organization.id}&status=Ready", headers=auth_headers)
     assert response.status_code == 200
     
     ready_items = response.json()
@@ -220,7 +320,7 @@ def test_work_item_crud_api(client, session, test_organization, test_work_items)
     
     # Test GET /workitems with collection filter
     collection_id = test_work_items[0].collection_id
-    response = client.get(f"/api/v1/workitems?organization_id={test_organization.id}&collection_id={collection_id}")
+    response = client.get(f"/api/v1/workitems?organization_id={test_organization.id}&collection_id={collection_id}", headers=auth_headers)
     assert response.status_code == 200
     
     collection_items = response.json()
@@ -228,7 +328,7 @@ def test_work_item_crud_api(client, session, test_organization, test_work_items)
     
     # Test GET /workitems/{id} (single item)
     work_item_id = test_work_items[0].id
-    response = client.get(f"/api/v1/workitems/{work_item_id}?organization_id={test_organization.id}")
+    response = client.get(f"/api/v1/workitems/{work_item_id}?organization_id={test_organization.id}", headers=auth_headers)
     assert response.status_code == 200
     
     single_item = response.json()
@@ -247,7 +347,8 @@ def test_work_item_crud_api(client, session, test_organization, test_work_items)
     
     response = client.put(
         f"/api/v1/workitems/{work_item_id}?organization_id={test_organization.id}",
-        json=update_data
+        json=update_data,
+        headers=auth_headers
     )
     assert response.status_code == 200
     
@@ -259,15 +360,15 @@ def test_work_item_crud_api(client, session, test_organization, test_work_items)
     
     # Test DELETE /workitems/{id}
     work_item_to_delete = test_work_items[1].id  # Standalone item
-    response = client.delete(f"/api/v1/workitems/{work_item_to_delete}?organization_id={test_organization.id}")
+    response = client.delete(f"/api/v1/workitems/{work_item_to_delete}?organization_id={test_organization.id}", headers=auth_headers)
     assert response.status_code == 204
     
     # Verify deletion
-    response = client.get(f"/api/v1/workitems/{work_item_to_delete}?organization_id={test_organization.id}")
+    response = client.get(f"/api/v1/workitems/{work_item_to_delete}?organization_id={test_organization.id}", headers=auth_headers)
     assert response.status_code == 404
 
 
-def test_work_item_tasks_api(client, session, test_organization, test_work_items):
+def test_work_item_tasks_api(client, session, test_organization, test_work_items, test_membership, auth_headers):
     """Test work item task management via API"""
     
     work_item_id = test_work_items[0].id
@@ -283,7 +384,8 @@ def test_work_item_tasks_api(client, session, test_organization, test_work_items
     
     response = client.put(
         f"/api/v1/workitems/{work_item_id}?organization_id={test_organization.id}",
-        json=update_data
+        json=update_data,
+        headers=auth_headers
     )
     assert response.status_code == 200
     
@@ -300,7 +402,8 @@ def test_work_item_tasks_api(client, session, test_organization, test_work_items
     
     response = client.put(
         f"/api/v1/workitems/{work_item_id}/tasks/{task_id}?organization_id={test_organization.id}",
-        json=task_update
+        json=task_update,
+        headers=auth_headers
     )
     assert response.status_code == 200
     
@@ -313,29 +416,63 @@ def test_work_item_tasks_api(client, session, test_organization, test_work_items
     assert updated_task["completed"] == True
 
 
-def test_work_item_error_handling(client, session, test_organization):
+def test_work_item_error_handling(client, session, test_organization, test_membership, auth_headers):
     """Test error handling for work item API"""
     
     # Test 404 for non-existent work item
-    response = client.get(f"/api/v1/workitems/non-existent-id?organization_id={test_organization.id}")
+    response = client.get(f"/api/v1/workitems/non-existent-id?organization_id={test_organization.id}", headers=auth_headers)
     assert response.status_code == 404
     
     # Test 403 for wrong organization
     fake_org_id = "00000000-0000-0000-0000-000000000000"
-    response = client.get(f"/api/v1/workitems?organization_id={fake_org_id}")
+    response = client.get(f"/api/v1/workitems?organization_id={fake_org_id}", headers=auth_headers)
     assert response.status_code == 403
     
-    # Test 400 for missing organization_id
-    response = client.get("/api/v1/workitems")
+    # Test 422 for missing organization_id
+    response = client.get("/api/v1/workitems", headers=auth_headers)
     assert response.status_code == 422  # Missing required query parameter
 
 
-def test_work_item_filtering_and_sorting(client, session, test_organization, test_work_items):
+def test_work_item_write_operations_require_authentication(client, session, test_organization, test_work_items):
+    """Test that write operations require authentication"""
+    
+    # Test POST /workitems without authentication
+    work_item_data = {
+        "organization_id": test_organization.id,
+        "title": "Unauthorized Work Item",
+        "estimated_total_hours": 8.0
+    }
+    response = client.post("/api/v1/workitems", json=work_item_data)
+    assert response.status_code in [401, 403], "Create work item should require authentication"
+    
+    # Test PUT /workitems/{id} without authentication
+    work_item_id = test_work_items[0].id
+    update_data = {"title": "Unauthorized Update"}
+    response = client.put(
+        f"/api/v1/workitems/{work_item_id}?organization_id={test_organization.id}",
+        json=update_data
+    )
+    assert response.status_code in [401, 403], "Update work item should require authentication"
+    
+    # Test DELETE /workitems/{id} without authentication
+    response = client.delete(f"/api/v1/workitems/{work_item_id}?organization_id={test_organization.id}")
+    assert response.status_code in [401, 403], "Delete work item should require authentication"
+    
+    # Test PUT /workitems/{id}/tasks/{task_id} without authentication
+    response = client.put(
+        f"/api/v1/workitems/{work_item_id}/tasks/1?organization_id={test_organization.id}",
+        json={"completed": True}
+    )
+    assert response.status_code in [401, 403], "Update task should require authentication"
+
+
+def test_work_item_filtering_and_sorting(client, session, test_organization, test_work_items, test_membership, auth_headers):
     """Test advanced filtering and sorting for work items"""
     
     # Test multiple status filter
     response = client.get(
-        f"/api/v1/workitems?organization_id={test_organization.id}&status=Backlog&status=Ready"
+        f"/api/v1/workitems?organization_id={test_organization.id}&status=Backlog&status=Ready",
+        headers=auth_headers
     )
     assert response.status_code == 200
     items = response.json()
@@ -343,7 +480,8 @@ def test_work_item_filtering_and_sorting(client, session, test_organization, tes
     
     # Test priority filter
     response = client.get(
-        f"/api/v1/workitems?organization_id={test_organization.id}&priority=high"
+        f"/api/v1/workitems?organization_id={test_organization.id}&priority=high",
+        headers=auth_headers
     )
     assert response.status_code == 200
     items = response.json()
@@ -352,7 +490,8 @@ def test_work_item_filtering_and_sorting(client, session, test_organization, tes
     
     # Test sorting (if implemented)
     response = client.get(
-        f"/api/v1/workitems?organization_id={test_organization.id}&sort=title"
+        f"/api/v1/workitems?organization_id={test_organization.id}&sort=title",
+        headers=auth_headers
     )
     assert response.status_code == 200
     items = response.json()

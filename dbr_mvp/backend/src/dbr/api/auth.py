@@ -176,7 +176,7 @@ def get_current_user_info(
 
 
 @router.post("/logout")
-def logout():
+def logout(current_user: User = Depends(get_current_user)):
     """
     Logout endpoint (JWT tokens are stateless, so this is mainly for client-side cleanup)
     """

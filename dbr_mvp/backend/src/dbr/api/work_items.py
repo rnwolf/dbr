@@ -2,6 +2,7 @@
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 from pydantic import BaseModel, Field, ConfigDict
 from dbr.core.database import get_db
 from dbr.models.work_item import WorkItem, WorkItemStatus, WorkItemPriority
@@ -199,7 +200,8 @@ def get_work_items(
 @router.post("", response_model=WorkItemResponse, status_code=201)
 def create_work_item(
     work_item_data: WorkItemCreate,
-    session: Session = Depends(get_db)
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Create a new work item"""
     
@@ -275,7 +277,8 @@ def update_work_item(
     work_item_id: str,
     work_item_data: WorkItemUpdate,
     organization_id: str = Query(..., description="Organization ID to scope the request"),
-    session: Session = Depends(get_db)
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Update a work item by ID"""
     
@@ -328,7 +331,8 @@ def update_work_item(
 def delete_work_item(
     work_item_id: str,
     organization_id: str = Query(..., description="Organization ID to scope the request"),
-    session: Session = Depends(get_db)
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Delete a work item by ID"""
     
@@ -354,7 +358,8 @@ def update_work_item_task(
     task_id: int,
     task_data: TaskUpdate,
     organization_id: str = Query(..., description="Organization ID to scope the request"),
-    session: Session = Depends(get_db)
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Update a specific task within a work item"""
     
@@ -390,8 +395,8 @@ def update_work_item_task(
     if not task_found:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    # Force SQLAlchemy to detect the change in the JSON field by creating a new list
-    work_item.tasks = list(work_item.tasks)
+    # Force SQLAlchemy to detect the change in the JSON field
+    flag_modified(work_item, "tasks")
     
     # Mark the work item as updated and commit
     session.commit()

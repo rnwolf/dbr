@@ -1,5 +1,9 @@
 # DBR System Development Handoff Summary
 
+## **Specification**
+
+[Link to full application Specification](specification.md)
+
 ## 🎯 **Current Status: Ready for Step 4.3 - Time Progression API**
 
 We have successfully completed **Phase 1, Phase 2, Phase 3A, Phase 3B, and Phase 4A** of the DBR (Drum Buffer Rope) system using Test-Driven Development. The core DBR system is now fully functional with complete API layer. Only the final Time Progression API endpoint remains.
@@ -157,7 +161,7 @@ uv run pytest tests/test_core/ -v
 #### **PowerShell Command Syntax:**
 - ❌ **Don't use**: `&&` (bash syntax doesn't work in PowerShell)
 - ✅ **Use**: `;` as statement separator in PowerShell
-- ❌ **Don't use**: `cd dir && command` 
+- ❌ **Don't use**: `cd dir && command`
 - ✅ **Use**: `cd dir; command` or separate commands
 
 #### **Working Directory Management:**
@@ -173,7 +177,7 @@ uv venv
 uv pip install -e .[dev]
 uv run pytest -v
 
-# Frontend setup (run from project root)  
+# Frontend setup (run from project root)
 cd C:\Users\rnwol\workspace\dbr\dbr_mvp\frontend
 uv venv
 uv pip install -e .[dev]
@@ -189,6 +193,14 @@ uv pip install -e .[dev]
 uv pip install --group dev
 ```
 
+#### **Full Path to Run API service (when relative paths fail):**
+```powershell
+# Use full paths for running FastAPI app
+cd C:\Users\rnwol\workspace\dbr\dbr_mvp\backend
+uv run uvicorn dbr.main:app --reload
+```
+
+
 #### **Full Path Testing (when relative paths fail):**
 ```powershell
 # Use full paths for test files when needed
@@ -202,7 +214,7 @@ uv run pytest C:\Users\rnwol\workspace\dbr\dbr_mvp\backend\tests\test_models\tes
 - **Required imports for tests**:
 ```python
 from dbr.models.user import User  # For foreign keys
-from dbr.models.role import Role  # For foreign keys  
+from dbr.models.role import Role  # For foreign keys
 from dbr.models.work_item_dependency import WorkItemDependency
 from dbr.models.ccr_user_association import CCRUserAssociation
 from dbr.models.organization_membership import OrganizationMembership

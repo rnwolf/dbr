@@ -6,8 +6,18 @@ from pydantic import BaseModel, Field, validator
 from dbr.core.database import get_db
 from dbr.services.dbr_engine import DBREngine
 from dbr.models.organization import Organization
+from dbr.models.user import User
 from dbr.core.time_manager import TimeManager
 import uuid
+
+# Import auth dependency
+try:
+    from dbr.api.auth import get_current_user
+except ImportError:
+    # Handle circular import during testing
+    def get_current_user():
+        from dbr.api.auth import get_current_user as _get_current_user
+        return _get_current_user
 
 
 router = APIRouter(prefix="/system", tags=["System"])
@@ -23,7 +33,8 @@ class AdvanceTimeResponse(BaseModel):
 def advance_time_unit(
     organization_id: str = Query(..., description="Organization ID to scope the request"),
     board_config_id: Optional[str] = Query(None, description="Optional board config ID to filter schedules"),
-    session: Session = Depends(get_db)
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ) -> AdvanceTimeResponse:
     """
     Advance all schedules one time unit left (Manual/Fast-Forward)
@@ -68,7 +79,10 @@ def advance_time_unit(
 
 
 @router.get("/time")
-def get_current_time(session: Session = Depends(get_db)) -> Dict[str, Any]:
+def get_current_time(
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
     """Get the current system time"""
     time_manager = TimeManager()
     current_time = time_manager.get_current_time()
@@ -82,7 +96,8 @@ def get_current_time(session: Session = Depends(get_db)) -> Dict[str, Any]:
 @router.post("/time")
 def set_system_time(
     time_iso: str = Query(..., description="ISO format datetime to set as system time"),
-    session: Session = Depends(get_db)
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """Set the system time (for testing purposes)"""
     time_manager = TimeManager()
