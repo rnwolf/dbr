@@ -2,6 +2,7 @@
 
 import customtkinter as ctk
 import tkinter as tk
+import random
 from typing import Dict, Tuple, List
 from ..components.scrollable_canvas_frame import ScrollableCanvasFrame
 from ..components.widgets.grid_cell_widget import GridCellWidget
@@ -49,22 +50,56 @@ class Page1(ctk.CTkFrame):
         self.canvas_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
     def _create_grid(self) -> None:
-        """Create the grid lines on the canvas."""
+        """Create the grid with colored cell backgrounds and dashed borders."""
         canvas = self.canvas_frame.get_canvas()
-
-        # Vertical lines
-        for col in range(self.grid_cols + 1):
-            x = col * self.cell_size
-            canvas.create_line(
-                x, 0, x, self.grid_rows * self.cell_size, fill="gray60", width=1
-            )
-
-        # Horizontal lines
-        for row in range(self.grid_rows + 1):
-            y = row * self.cell_size
-            canvas.create_line(
-                0, y, self.grid_cols * self.cell_size, y, fill="gray60", width=1
-            )
+        
+        # Define the light colors for cell backgrounds
+        colors = ["#FFE6E6", "#E6FFE6", "#FFFFE6"]  # light red, light green, light yellow
+        
+        # Create cell backgrounds with random colors
+        for row in range(self.grid_rows):
+            for col in range(self.grid_cols):
+                x1 = col * self.cell_size
+                y1 = row * self.cell_size
+                x2 = x1 + self.cell_size
+                y2 = y1 + self.cell_size
+                
+                # Random color selection
+                bg_color = random.choice(colors)
+                
+                # Create colored background rectangle
+                canvas.create_rectangle(
+                    x1, y1, x2, y2,
+                    fill=bg_color,
+                    outline="",
+                    width=0
+                )
+        
+        # Create dashed borders around each cell
+        for row in range(self.grid_rows):
+            for col in range(self.grid_cols):
+                x1 = col * self.cell_size
+                y1 = row * self.cell_size
+                x2 = x1 + self.cell_size
+                y2 = y1 + self.cell_size
+                
+                # Create dashed white border (outer)
+                canvas.create_rectangle(
+                    x1, y1, x2, y2,
+                    outline="white",
+                    width=2,
+                    dash=(3, 3),
+                    fill=""
+                )
+                
+                # Create dashed black border (inner, slightly offset)
+                canvas.create_rectangle(
+                    x1 + 1, y1 + 1, x2 - 1, y2 - 1,
+                    outline="black",
+                    width=1,
+                    dash=(2, 2),
+                    fill=""
+                )
 
     def _populate_sample_widgets(self) -> None:
         """Populate some grid cells with sample widgets."""

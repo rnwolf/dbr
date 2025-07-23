@@ -24,7 +24,7 @@ class ScrollableCanvasFrame(ctk.CTkFrame):
         # Create canvas
         self.canvas = tk.Canvas(
             self,
-            bg="gray90",
+            bg="white",
             scrollregion=(0, 0, self.canvas_width, self.canvas_height),
             highlightthickness=0,
         )
@@ -42,11 +42,9 @@ class ScrollableCanvasFrame(ctk.CTkFrame):
             xscrollcommand=self.h_scrollbar.set, yscrollcommand=self.v_scrollbar.set
         )
 
-        # Create a frame inside the canvas for widgets
-        self.canvas_frame = ctk.CTkFrame(self.canvas)
-        self.canvas_window = self.canvas.create_window(
-            0, 0, window=self.canvas_frame, anchor="nw"
-        )
+        # Note: No canvas_frame needed since we're drawing directly on canvas
+        self.canvas_frame = None
+        self.canvas_window = None
 
         # Layout
         self.canvas.grid(row=0, column=0, sticky="nsew")
@@ -57,8 +55,7 @@ class ScrollableCanvasFrame(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        # Update canvas frame size
-        self.canvas_frame.configure(width=self.canvas_width, height=self.canvas_height)
+        # Canvas frame removed - drawing directly on canvas
 
         # Bind canvas resize
         self.canvas.bind("<Configure>", self._on_canvas_configure)
@@ -75,10 +72,8 @@ class ScrollableCanvasFrame(ctk.CTkFrame):
 
     def _on_canvas_configure(self, event) -> None:
         """Handle canvas resize events."""
-        # Update the canvas frame width to fill the canvas if it's smaller
-        canvas_width = event.width
-        if self.canvas_width < canvas_width:
-            self.canvas.itemconfig(self.canvas_window, width=canvas_width)
+        # Canvas frame removed - no need to update frame width
+        pass
 
     def _on_mousewheel(self, event) -> None:
         """Handle vertical mouse wheel scrolling."""
@@ -129,4 +124,3 @@ class ScrollableCanvasFrame(ctk.CTkFrame):
         self.canvas.configure(
             scrollregion=(0, 0, self.canvas_width, self.canvas_height)
         )
-        self.canvas_frame.configure(width=self.canvas_width, height=self.canvas_height)
