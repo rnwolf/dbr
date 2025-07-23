@@ -451,9 +451,9 @@ def test_protected_endpoints():
 
 ---
 
-## Phase 5: Frontend Foundation (Days 12-14)
+## Phase 5: Frontend Foundation
 
-### Day 5A: Frontend Architecture (4 hours)
+### Day 5A: Frontend Architecture
 
 #### Step 5.0: CustomTkinter Application
 
