@@ -1,7 +1,7 @@
 [project]
-name = "frontend"
+name = "dbr-frontend"
 version = "0.1.0"
-description = "Add your description here"
+description = "DBR Buffer Management System - Frontend Application"
 readme = "README.md"
 authors = [
     { name = "Rudiger Wolf", email = "Rudiger.Wolf@ThroughputFocus.com" }
@@ -10,10 +10,11 @@ requires-python = ">=3.13"
 dependencies = [
     "customtkinter>=5.2.2",
     "requests>=2.32.4",
+    "pillow>=10.0.0",
 ]
 
 [project.scripts]
-frontend = "frontend.main:main"
+dbr-frontend = "main:main"
 
 [project.optional-dependencies]
 dev = [
@@ -87,6 +88,24 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--cov=src",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+]
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
 
 [dependency-groups]
 dev = [
