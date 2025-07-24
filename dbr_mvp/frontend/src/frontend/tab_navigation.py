@@ -1,7 +1,7 @@
 """Tab navigation component for switching between pages."""
 
 import customtkinter as ctk
-from typing import Dict, Callable, Optional, Any
+from typing import Dict, Callable, Optional
 
 
 class TabNavigation(ctk.CTkFrame):

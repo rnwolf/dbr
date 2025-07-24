@@ -1,8 +1,7 @@
 """Tests for MenuBar class."""
 
-import pytest
 from unittest.mock import Mock, patch
-from app.menu_bar import MenuBar
+from frontend.menu_bar import MenuBar
 
 
 class TestMenuBar:

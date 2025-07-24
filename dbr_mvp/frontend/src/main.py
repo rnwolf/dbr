@@ -2,9 +2,8 @@
 """
 Main application entry point.
 """
-
 import customtkinter as ctk
-from app.main_window import MainWindow
+from frontend.main_window import MainWindow
 from utils.config import AppConfig
 
 

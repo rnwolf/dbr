@@ -1,7 +1,6 @@
 """Page 2 - Settings and configuration."""
 
 import customtkinter as ctk
-from typing import Dict, Any
 
 
 class Page2(ctk.CTkFrame):

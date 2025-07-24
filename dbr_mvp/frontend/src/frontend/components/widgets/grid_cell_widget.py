@@ -3,7 +3,7 @@
 import customtkinter as ctk
 from typing import Callable, Optional, Dict, Any
 
-from app.utils.event_bus import EventBus
+from frontend.utils.event_bus import EventBus
 
 
 class GridCellWidget(ctk.CTkFrame):

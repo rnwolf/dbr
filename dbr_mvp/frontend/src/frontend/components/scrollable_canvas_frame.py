@@ -2,7 +2,6 @@
 
 import customtkinter as ctk
 import tkinter as tk
-from typing import Optional
 
 
 class ScrollableCanvasFrame(ctk.CTkFrame):

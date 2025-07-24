@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 import customtkinter
 
 # Import after setting up mocks if necessary, or patch where used.
-from app.main_window import MainWindow
+from frontend.main_window import MainWindow
 from utils.config import AppConfig
 
 
@@ -27,11 +27,11 @@ def mocked_window(mocker):
     mock_destroy = mocker.patch.object(customtkinter.CTk, "destroy")
 
     # Mock other dependencies used within MainWindow
-    mocker.patch("app.main_window.MenuBar", autospec=True)
-    mocker.patch("app.main_window.TabNavigation", autospec=True)
-    mocker.patch("app.main_window.Page1", autospec=True)
-    mocker.patch("app.main_window.Page2", autospec=True)
-    mocker.patch("app.main_window.ctk.CTkLabel", autospec=True)
+    mocker.patch("frontend.main_window.MenuBar", autospec=True)
+    mocker.patch("frontend.main_window.TabNavigation", autospec=True)
+    mocker.patch("frontend.main_window.Page1", autospec=True)
+    mocker.patch("frontend.main_window.Page2", autospec=True)
+    mocker.patch("frontend.main_window.ctk.CTkLabel", autospec=True)
 
     # Patch _center_window as it tries to do GUI work
     with patch.object(MainWindow, "_center_window") as mock_center:

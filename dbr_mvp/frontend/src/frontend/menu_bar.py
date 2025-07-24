@@ -1,9 +1,8 @@
 """Application menu bar."""
 
-import tkinter as tk
 from tkinter import messagebox
 import customtkinter as ctk
-from typing import Callable, Dict, Any
+from typing import Callable, Dict
 
 
 class MenuBar(ctk.CTkFrame):

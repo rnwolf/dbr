@@ -1,16 +1,15 @@
 """Tests for Page1 class."""
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
-from app.pages.page1 import Page1
+from unittest.mock import Mock, patch
+from frontend.pages.page1 import Page1
 
 
 class TestPage1:
     """Test cases for Page1."""
 
-    @patch("app.pages.page1.StatsDisplayFrame")
-    @patch("app.pages.page1.GridCellWidget")
-    @patch("app.pages.page1.ScrollableCanvasFrame")
+    @patch("frontend.pages.page1.StatsDisplayFrame")
+    @patch("frontend.pages.page1.GridCellWidget")
+    @patch("frontend.pages.page1.ScrollableCanvasFrame")
     @patch("customtkinter.CTkFont")
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
@@ -40,9 +39,9 @@ class TestPage1:
         assert isinstance(page.grid_widgets, dict)
         mock_stats_frame.assert_called_once()
 
-    @patch("app.pages.page1.StatsDisplayFrame")
-    @patch("app.pages.page1.ScrollableCanvasFrame")
-    @patch("app.pages.page1.GridCellWidget")
+    @patch("frontend.pages.page1.StatsDisplayFrame")
+    @patch("frontend.pages.page1.ScrollableCanvasFrame")
+    @patch("frontend.pages.page1.GridCellWidget")
     @patch("customtkinter.CTkFont")
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
@@ -73,9 +72,9 @@ class TestPage1:
         mock_widget.assert_called()
         assert mock_widget.call_args.kwargs["event_bus"] is page.event_bus
 
-    @patch("app.pages.page1.StatsDisplayFrame")
-    @patch("app.pages.page1.GridCellWidget")
-    @patch("app.pages.page1.ScrollableCanvasFrame")
+    @patch("frontend.pages.page1.StatsDisplayFrame")
+    @patch("frontend.pages.page1.GridCellWidget")
+    @patch("frontend.pages.page1.ScrollableCanvasFrame")
     @patch("customtkinter.CTkFont")
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)

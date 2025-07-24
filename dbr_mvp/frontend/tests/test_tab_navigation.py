@@ -1,14 +1,13 @@
 """Tests for TabNavigation class."""
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
-from app.tab_navigation import TabNavigation
+from unittest.mock import Mock, patch
+from frontend.tab_navigation import TabNavigation
 
 
 class TestTabNavigation:
     """Test cases for TabNavigation."""
 
-    @patch("app.tab_navigation.TabNavigation._setup_navigation")
+    @patch("frontend.tab_navigation.TabNavigation._setup_navigation")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
     def test_tab_creation(self, mock_frame_init, mock_button, mock_setup_nav):
@@ -43,7 +42,7 @@ class TestTabNavigation:
         assert "Test Tab" in tab_nav._tab_buttons
         assert tab_nav.get_active_tab_name() == "Test Tab"
 
-    @patch("app.tab_navigation.TabNavigation._setup_navigation")
+    @patch("frontend.tab_navigation.TabNavigation._setup_navigation")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
     def test_tab_switching(self, mock_frame_init, mock_button, mock_setup_nav):
@@ -82,7 +81,7 @@ class TestTabNavigation:
         tab_nav._switch_tab("Tab 2")
         assert tab_nav.get_active_tab_name() == "Tab 2"
 
-    @patch("app.tab_navigation.TabNavigation._setup_navigation")
+    @patch("frontend.tab_navigation.TabNavigation._setup_navigation")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
     def test_tab_change_callback(self, mock_frame_init, mock_button, mock_setup_nav):

@@ -7,7 +7,7 @@ from typing import Dict
 import customtkinter as ctk
 
 from .base_component import BaseComponent
-from app.utils.event_bus import EventBus
+from frontend.utils.event_bus import EventBus
 
 
 class StatsDisplayFrame(BaseComponent):

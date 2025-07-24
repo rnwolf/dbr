@@ -1,14 +1,12 @@
 """Page 1 - Grid canvas with scrollable viewport and custom widgets."""
 
 import customtkinter as ctk
-import tkinter as tk
 import random
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple
 from ..components.scrollable_canvas_frame import ScrollableCanvasFrame
 from ..components.widgets.grid_cell_widget import GridCellWidget
 from ..components.stats_display_frame import StatsDisplayFrame
 from ..utils.event_bus import EventBus
-from utils.config import AppConfig
 
 
 class Page1(ctk.CTkFrame):
@@ -135,7 +133,7 @@ class Page1(ctk.CTkFrame):
 
         # Place widget on canvas
         canvas = self.canvas_frame.get_canvas()
-        canvas_window = canvas.create_window(x, y, window=widget, anchor="nw")
+        canvas.create_window(x, y, window=widget, anchor="nw")
 
         # Store reference
         self.grid_widgets[(row, col)] = widget

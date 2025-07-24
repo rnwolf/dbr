@@ -1,9 +1,7 @@
 """Pytest configuration and fixtures."""
 
 import pytest
-import tkinter as tk
-import customtkinter as ctk
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 import sys
 import os
 
@@ -22,7 +20,7 @@ def mock_tk():
 def sample_app():
     """Create a sample application for testing."""
     with patch("customtkinter.CTk"):
-        from app.main_window import MainWindow
+        from frontend.main_window import MainWindow
 
         app = MainWindow()
         yield app

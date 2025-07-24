@@ -1,9 +1,8 @@
 """Tests for GridCellWidget class."""
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
-from app.components.widgets.grid_cell_widget import GridCellWidget
-from app.utils.event_bus import EventBus
+from unittest.mock import Mock, patch
+from frontend.components.widgets.grid_cell_widget import GridCellWidget
+from frontend.utils.event_bus import EventBus
 
 
 class TestGridCellWidget:
