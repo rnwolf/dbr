@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13.3"
 dependencies = [
     "customtkinter>=5.2.0",
+    "dbrsdk",
     "pillow>=10.0.0",
     "tk>=0.1.0",
 ]
@@ -40,6 +41,9 @@ markers = [
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
 ]
+
+[tool.uv.sources]
+dbrsdk = { path = "../../dbrsdk-python" }
 
 [project.scripts]
 app = "main:main"
