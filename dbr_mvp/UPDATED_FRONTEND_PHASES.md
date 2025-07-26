@@ -16,7 +16,10 @@
 ✅ **CustomTkinter Template Complete**: Professional GUI foundation with modern architecture
 ✅ **Core Components Ready**: Tab navigation, scrollable canvas, event bus, testing framework
 ✅ **Development Infrastructure**: UV dependency management, pytest, code quality tools
-❌ **DBR-Specific Functionality**: API client, authentication, domain models, buffer boards
+✅ **DBR SDK Validated**: Professional auto-generated SDK with authentication working
+✅ **Backend Enhanced**: Comprehensive logging, health checks, 5 test users with roles
+✅ **Test Environment**: Complete multi-user setup with Default Organization
+❌ **DBR-Specific Frontend**: Role-based navigation, organization context, DBR workflows
 
 ### DBR Organization Admin Workflow (Refined)
 
@@ -83,126 +86,150 @@ def test_application_branding():
 - Implement startup sequence manager with progressive UI reveal
 - Add connection status indicators and error handling
 
-#### Step 5.2: API Client Foundation & Health Check Integration (2 hours)
-**Objective**: Create robust API client with health check capabilities for backend communication
+#### Step 5.2: DBR Service Layer with SDK Integration (2 hours)
+**Objective**: Create frontend service layer wrapping the validated DBR SDK
 
 **TDD Cycle:**
 ```python
-# tests/test_frontend/test_api_client.py
-def test_api_health_check():
-    """Test API health check functionality"""
-    # Test: Successful health check response
-    # Test: Failed connection handling
-    # Test: Timeout scenarios
-    # Test: Invalid URL handling
+# tests/test_frontend/test_dbr_service.py
+def test_dbr_service_initialization():
+    """Test DBR service initialization"""
+    # Test: Service initializes with backend URL
+    # Test: Health check integration
+    # Test: Connection status management
 
-def test_api_client_authentication():
-    """Test API authentication flow"""
-    # Test: Login with valid credentials
-    # Test: JWT token storage and refresh
-    # Test: Automatic logout on token expiry
-
-def test_api_client_endpoints():
-    """Test API endpoint integration"""
-    # Test: Organization API calls (CRUD)
-    # Test: Work items API calls (with organization scoping)
-    # Test: Schedules API calls (with organization scoping)
-    # Test: System API calls (time progression)
-    # Test: Error handling and retries
-
-def test_organization_scoping():
-    """Test organization context in API calls"""
-    # Test: All API calls include organization_id
-    # Test: Organization switching updates context
-    # Test: Multi-tenant data isolation
-```
-
-**Implementation Tasks:**
-- Create `APIClient` class with health check endpoint integration
-- Implement JWT token management and refresh
-- Add request/response logging and error handling
-- Create data models for Organizations, Users, Roles, WorkItems, Schedules, CCRs
-- Set up mock API responses for testing
-- Integrate health check with startup sequence
-
-### Day 5B: Authentication & Navigation Development (4 hours)
-
-#### Step 5.3: Authentication UI Components with Organization Context (2 hours)
-**Objective**: Build login/logout interface with organization context management
-
-**TDD Cycle:**
-```python
-# tests/test_frontend/test_authentication.py
-def test_login_dialog():
-    """Test login dialog functionality"""
-    # Test: Username/password input validation
-    # Test: Backend authentication integration
-    # Test: Error message display for failed login
-    # Test: Success flow with token storage
+def test_authentication_service():
+    """Test authentication through service layer"""
+    # Test: Login with test credentials (admin/admin123)
+    # Test: Token storage and management
+    # Test: Organization context extraction
+    # Test: Role-based permission caching
 
 def test_organization_context():
     """Test organization context management"""
     # Test: Single organization auto-selection
-    # Test: Multi-organization selection dialog
-    # Test: Organization context switching
-    # Test: Role-based permissions per organization
+    # Test: Multi-organization switching capability
+    # Test: Organization-scoped API calls
 
-def test_session_management():
-    """Test user session lifecycle"""
-    # Test: Token refresh before expiry
-    # Test: Automatic logout on token expiry
-    # Test: Session persistence across app restarts
-    # Test: Logout functionality
+def test_role_based_operations():
+    """Test role-based API operations"""
+    # Test: Super Admin operations (all access)
+    # Test: Org Admin operations (organization scope)
+    # Test: Planner operations (work items, schedules)
+    # Test: Worker operations (limited updates)
+    # Test: Viewer operations (read-only)
 ```
 
 **Implementation Tasks:**
-- Create login dialog with username/password fields
-- Implement organization selection for multi-org users (subtle UI)
-- Add session management with token storage and refresh
-- Create user profile display with logout option
-- Integrate authentication state with navigation system
-- Add role detection and permission caching
+- Install DBR SDK as frontend dependency: `uv add ../../dbrsdk-python`
+- Create `DBRService` class wrapping SDK with frontend-specific needs
+- Implement authentication flow with test user credentials
+- Add organization context management for multi-org users
+- Create role-based permission checking
+- Add health check integration using SDK endpoints
+- Implement error handling and user-friendly error messages
 
-#### Step 5.4: Role-Based Navigation Structure (2 hours)
-**Objective**: Implement dynamic navigation based on user role and setup completion state
+### Day 5B: Authentication & Navigation Development (4 hours)
+
+#### Step 5.3: Authentication UI with Test User Integration (2 hours)
+**Objective**: Build login interface integrated with test user credentials and role detection
 
 **TDD Cycle:**
 ```python
-# tests/test_frontend/test_navigation.py
-def test_role_based_navigation():
-    """Test navigation visibility based on user role"""
-    # Test: Super Admin sees all navigation options
-    # Test: Org Admin sees organization management
-    # Test: Planner sees work items and planning
-    # Test: Worker sees limited operational views
+# tests/test_frontend/test_authentication_ui.py
+def test_login_dialog_with_test_users():
+    """Test login dialog with actual test credentials"""
+    # Test: Login with admin/admin123 (Super Admin)
+    # Test: Login with orgadmin/orgadmin123 (Org Admin)
+    # Test: Login with planner/planner123 (Planner)
+    # Test: Invalid credentials handling
+    # Test: Connection error handling
 
-def test_setup_state_navigation():
-    """Test navigation based on organization setup completion"""
-    # Test: Setup tab visible when setup incomplete
-    # Test: Setup tab hidden/minimized when complete
-    # Test: Progressive disclosure of functionality
-    # Test: Setup completion detection
+def test_role_detection_and_caching():
+    """Test role detection from login response"""
+    # Test: Extract user role from SDK login response
+    # Test: Cache role-based permissions locally
+    # Test: Organization membership extraction
+    # Test: Default organization auto-selection
 
-def test_organization_context_navigation():
-    """Test navigation with organization context"""
-    # Test: Navigation updates on organization switch
-    # Test: Organization-scoped data loading
-    # Test: Context persistence across sessions
+def test_session_persistence():
+    """Test session management across app lifecycle"""
+    # Test: Token storage and retrieval
+    # Test: Session restoration on app restart
+    # Test: Automatic logout on token expiry
+    # Test: Clean logout functionality
+
+def test_user_context_display():
+    """Test user context in UI"""
+    # Test: Display current user name and role
+    # Test: Show current organization context
+    # Test: Role-appropriate menu visibility
+    # Test: Logout button functionality
 ```
 
 **Implementation Tasks:**
-- Replace generic "Grid View/Settings" tabs with DBR-specific navigation:
-  - **Setup** (conditional - visible when setup incomplete)
-  - **Work Items** (create/edit individual tasks)
-  - **Collections** (group work items into projects/epics)
-  - **Planning** (schedule creation and CCR loading)
-  - **Buffer Boards** (operational execution view)
-  - **Reports** (metrics and analytics)
-- Implement role-based tab visibility and permissions
-- Add setup completion detection and progressive disclosure
-- Create organization context indicator (subtle, top-right)
-- Update menu structure for DBR operations (File→Import/Export, Tools→Time Progression)
-- Add setup wizard navigation within Setup tab
+- Create login dialog with test user credential hints
+- Integrate with DBRService for SDK-based authentication
+- Extract and cache user role and organization from login response
+- Implement automatic organization selection (Default Organization)
+- Create user context display showing current user and role
+- Add session persistence using local storage or config files
+- Implement clean logout with token cleanup
+
+#### Step 5.4: Role-Based Navigation with Test User Validation (2 hours)
+**Objective**: Implement dynamic navigation validated with actual test user roles
+
+**TDD Cycle:**
+```python
+# tests/test_frontend/test_role_navigation.py
+def test_super_admin_navigation():
+    """Test Super Admin navigation (admin@test.com)"""
+    # Test: All tabs visible (Setup, Work Items, Collections, Planning, Buffer Boards, Reports)
+    # Test: System management menu items visible
+    # Test: Organization management accessible
+    # Test: Global time progression controls
+
+def test_org_admin_navigation():
+    """Test Organization Admin navigation (orgadmin@test.com)"""
+    # Test: Setup tab visible (user management, CCR setup, board config)
+    # Test: Work Items, Collections, Planning, Buffer Boards, Reports visible
+    # Test: Organization settings accessible
+    # Test: User invitation capabilities
+
+def test_planner_navigation():
+    """Test Planner navigation (planner@test.com)"""
+    # Test: Work Items, Collections, Planning, Buffer Boards, Reports visible
+    # Test: Setup tab hidden (no user management access)
+    # Test: Schedule creation and management accessible
+    # Test: Time progression controls available
+
+def test_worker_navigation():
+    """Test Worker navigation (worker@test.com)"""
+    # Test: Work Items (assigned only), Buffer Boards (execution), Reports (limited)
+    # Test: Collections visible but read-only for assigned items
+    # Test: Planning tab hidden
+    # Test: Setup tab hidden
+
+def test_viewer_navigation():
+    """Test Viewer navigation (viewer@test.com)"""
+    # Test: Buffer Boards (read-only), Reports visible
+    # Test: Work Items visible but read-only
+    # Test: Planning, Setup tabs hidden
+    # Test: No editing capabilities anywhere
+```
+
+**Implementation Tasks:**
+- Replace generic "Grid View/Settings" tabs with role-based DBR navigation
+- Implement navigation visibility matrix:
+  - **Super Admin**: All tabs (Setup, Work Items, Collections, Planning, Buffer Boards, Reports, System)
+  - **Org Admin**: Setup, Work Items, Collections, Planning, Buffer Boards, Reports
+  - **Planner**: Work Items, Collections, Planning, Buffer Boards, Reports
+  - **Worker**: Work Items (assigned), Buffer Boards (execution), Reports (limited)
+  - **Viewer**: Buffer Boards (read-only), Reports (read-only)
+- Add "Default Organization" context indicator in top-right
+- Update menu structure with role-appropriate options
+- Implement setup completion detection for progressive disclosure
+- Add user role indicator and logout option in menu bar
 
 ### Navigation Structure by Role
 
@@ -236,27 +263,40 @@ def test_organization_context_navigation():
 
 ---
 
-## Updated Phase 5 Summary
+## Updated Phase 5 Summary (SDK-Leveraged Approach)
 
 ### **Key Changes from Original Plan:**
-1. **Workflow-Driven**: Navigation based on DBR operational workflow rather than generic features
-2. **Role-Based**: Dynamic UI based on user permissions and organizational context
-3. **Progressive**: Setup completion drives feature availability
-4. **Multi-Org Ready**: Architecture supports multiple organizations while optimizing for single-org UX
-5. **Health Check First**: Backend connectivity validation before any operations
+1. **SDK Integration**: Leverages professional auto-generated SDK instead of custom API client
+2. **Test User Validation**: All development validated with actual test users and roles
+3. **Role-Based Architecture**: Navigation and permissions based on 5 distinct user roles
+4. **Default Organization**: Optimized for single organization with multi-org capability
+5. **Enhanced Backend**: Comprehensive logging and health checks for debugging
+
+### **SDK Benefits Realized:**
+- **60-70% Development Time Saved**: No custom API client, authentication, or data models needed
+- **Type Safety**: Full IDE support with Pydantic models and error handling
+- **Professional Error Handling**: Built-in retry logic, timeouts, and exception hierarchy
+- **Automatic Backend Sync**: SDK regenerates when backend API changes
+- **Async Support**: Perfect for non-blocking GUI operations
 
 ### **Dependencies Resolved:**
-- Step 5.1 creates startup sequence and health check foundation
-- Step 5.2 provides API client needed for health checks and authentication
-- Step 5.3 establishes authentication and organization context
-- Step 5.4 creates role-based navigation that depends on authenticated user context
+- Step 5.1 creates DBR-branded application with startup sequence
+- Step 5.2 wraps SDK in frontend service layer with organization context
+- Step 5.3 integrates SDK authentication with test user credentials
+- Step 5.4 creates role-validated navigation with actual permission testing
+
+### **Test Environment Ready:**
+- **5 Test Users**: admin, orgadmin, planner, worker, viewer with known credentials
+- **Default Organization**: Complete membership setup for all users
+- **Role Validation**: Each navigation feature tested with appropriate user roles
+- **Backend Logging**: Enhanced debugging for frontend-backend integration
 
 ### **Next Phase Preparation:**
-Phase 5 establishes the foundation for Phase 6 (Setup Workflow Implementation) by providing:
-- Authenticated user sessions with role detection
-- Organization context management
-- Health-checked backend connectivity
-- Role-based navigation structure ready for setup workflow components
+Phase 5 establishes the foundation for Phase 6 (Organization Setup Workflow) by providing:
+- SDK-integrated service layer with authentication and organization context
+- Role-based navigation validated with test users
+- Complete test environment with 5 user roles and Default Organization
+- Enhanced backend logging for debugging setup workflows
 
 ---
 
