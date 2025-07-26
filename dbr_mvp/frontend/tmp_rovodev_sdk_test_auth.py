@@ -9,16 +9,64 @@ import asyncio
 from typing import Optional
 
 def test_backend_connection():
-    """Test basic connection to backend"""
+    """Test basic connection to backend using health check"""
     try:
-        from dbrsdk import Dbrsdk
+        # Try to import requests, fall back to httpx if not available
+        try:
+            import requests as http_client
+            get_func = http_client.get
+            ConnectionError = http_client.exceptions.ConnectionError
+            Timeout = http_client.exceptions.Timeout
+        except ImportError:
+            try:
+                import httpx as http_client
+                get_func = http_client.get
+                ConnectionError = http_client.ConnectError
+                Timeout = http_client.TimeoutException
+            except ImportError:
+                print("❌ Neither requests nor httpx available for health check")
+                # Skip health check, just test SDK client creation
+                from dbrsdk import Dbrsdk
+                client = Dbrsdk(server_url="http://localhost:8000/api/v1")
+                print("✅ SDK client created (health check skipped - no HTTP client)")
+                return True
         
-        # Test connection to backend
-        client = Dbrsdk(server_url="http://localhost:8000/api/v1")
+        # Test health check endpoint first
+        print("🔍 Testing health check endpoint...")
+        health_response = get_func("http://localhost:8000/health", timeout=5)
+        
+        if health_response.status_code == 200:
+            health_data = health_response.json()
+            print(f"✅ Backend health check successful: {health_data.get('status')}")
+            print(f"   Service: {health_data.get('service')}")
+            print(f"   Version: {health_data.get('version')}")
+        else:
+            print(f"⚠️  Health check returned status {health_response.status_code}")
+        
+        # Test API health check
+        print("🔍 Testing API health check endpoint...")
+        api_health_response = get_func("http://localhost:8000/api/v1/health", timeout=5)
+        
+        if api_health_response.status_code == 200:
+            api_health_data = api_health_response.json()
+            print(f"✅ API health check successful: {api_health_data.get('status')}")
+            print(f"   Available endpoints: {api_health_data.get('endpoints')}")
+        
+        # Now test SDK client creation
+        from dbrsdk import Dbrsdk
+        client = Dbrsdk(server_url="http://localhost:8000")
         print("✅ SDK client created with backend URL")
+        
         return True
+        
+    except ConnectionError:
+        print("❌ Cannot connect to backend - is it running on localhost:8000?")
+        return False
+    except Timeout:
+        print("❌ Backend connection timeout")
+        return False
     except Exception as e:
-        print(f"❌ Backend connection setup failed: {e}")
+        print(f"❌ Backend connection test failed: {e}")
         return False
 
 def test_login_sync():
@@ -28,16 +76,14 @@ def test_login_sync():
         from dbrsdk.models import LoginRequest
         
         # Create client without authentication first
-        client = Dbrsdk(server_url="http://localhost:8000/api/v1")
+        client = Dbrsdk(server_url="http://localhost:8000")
         
         # Attempt login (this will likely fail if no backend is running)
-        login_request = LoginRequest(
-            username="admin",  # Default super user
-            password="admin"   # Default password
-        )
-        
         print("🔍 Attempting login...")
-        response = client.authentication.login(login_request)
+        response = client.authentication.login(
+            username="admin",     # Default super user
+            password="admin123"   # Default password from database init
+        )
         
         print(f"✅ Login successful!")
         print(f"   Token type: {response.token_type}")
@@ -57,15 +103,13 @@ async def test_login_async():
         from dbrsdk.models import LoginRequest
         
         # Create async client
-        async with Dbrsdk(server_url="http://localhost:8000/api/v1") as client:
-            
-            login_request = LoginRequest(
-                username="admin",
-                password="admin"
-            )
+        async with Dbrsdk(server_url="http://localhost:8000") as client:
             
             print("🔍 Attempting async login...")
-            response = await client.authentication.login_async(login_request)
+            response = await client.authentication.login_async(
+                username="admin",
+                password="admin123"
+            )
             
             print(f"✅ Async login successful!")
             print(f"   Token: {response.access_token[:20]}...")
@@ -82,7 +126,7 @@ def test_authenticated_client(token: str):
         
         # Create authenticated client
         auth_client = Dbrsdk(
-            server_url="http://localhost:8000/api/v1",
+            server_url="http://localhost:8000",
             http_bearer=token
         )
         

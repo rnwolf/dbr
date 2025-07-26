@@ -97,7 +97,7 @@ wheels = [
 
 [[package]]
 name = "dbrsdk"
-version = "0.2.0"
+version = "0.2.5"
 source = { directory = "../../dbrsdk-python" }
 dependencies = [
     { name = "httpcore" },

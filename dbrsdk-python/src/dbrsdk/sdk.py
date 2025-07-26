@@ -14,7 +14,9 @@ from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union, cast
 import weakref
 
 if TYPE_CHECKING:
+    from dbrsdk.apihealth import APIHealth
     from dbrsdk.authentication import Authentication
+    from dbrsdk.health import Health
     from dbrsdk.root import Root
     from dbrsdk.schedules import Schedules
     from dbrsdk.system import System
@@ -29,12 +31,16 @@ class Dbrsdk(BaseSDK):
     system: "System"
     authentication: "Authentication"
     root: "Root"
+    health: "Health"
+    api_health: "APIHealth"
     _sub_sdk_map = {
         "work_items": ("dbrsdk.workitems", "WorkItems"),
         "schedules": ("dbrsdk.schedules", "Schedules"),
         "system": ("dbrsdk.system", "System"),
         "authentication": ("dbrsdk.authentication", "Authentication"),
         "root": ("dbrsdk.root", "Root"),
+        "health": ("dbrsdk.health", "Health"),
+        "api_health": ("dbrsdk.apihealth", "APIHealth"),
     }
 
     def __init__(

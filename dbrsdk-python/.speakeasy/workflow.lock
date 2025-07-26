@@ -2,8 +2,8 @@ speakeasyVersion: 1.590.0
 sources:
     DBR Buffer Management System API:
         sourceNamespace: dbr-buffer-management-system-api
-        sourceRevisionDigest: sha256:546dfa8319b9b44fe8ef776b98acbed8e08d51db4c160ef41edc8c4eb50a7eaa
-        sourceBlobDigest: sha256:34b5cb33d698c4767f7ce1d2f764bc8f5968d8a64afab5b382fc000110d52671
+        sourceRevisionDigest: sha256:45a0588542f0b35ca3ddc2e7b630bd113f5fb666c5ba6668e7ec1b7a182b4e6f
+        sourceBlobDigest: sha256:3dbae8e2eadf2bc356f568db749b0730aa2ff31359b6e411021a9d80648326b5
         tags:
             - latest
             - 1.0.0
@@ -11,10 +11,10 @@ targets:
     dbrsdk:
         source: DBR Buffer Management System API
         sourceNamespace: dbr-buffer-management-system-api
-        sourceRevisionDigest: sha256:546dfa8319b9b44fe8ef776b98acbed8e08d51db4c160ef41edc8c4eb50a7eaa
-        sourceBlobDigest: sha256:34b5cb33d698c4767f7ce1d2f764bc8f5968d8a64afab5b382fc000110d52671
+        sourceRevisionDigest: sha256:45a0588542f0b35ca3ddc2e7b630bd113f5fb666c5ba6668e7ec1b7a182b4e6f
+        sourceBlobDigest: sha256:3dbae8e2eadf2bc356f568db749b0730aa2ff31359b6e411021a9d80648326b5
         codeSamplesNamespace: dbr-buffer-management-system-api-python-code-samples
-        codeSamplesRevisionDigest: sha256:62556faae6453cae908ef28d126e85db20d4f2d156d29450b52d73d256d51d25
+        codeSamplesRevisionDigest: sha256:ae1154843835ff59e17b6f19e90f35487138a2f1e28d3380e431dacdc92692c3
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
@@ -25,6 +25,7 @@ workflow:
             overlays:
                 - location: .speakeasy\speakeasy-modifications-overlay.yaml
                 - location: .speakeasy\speakeasy-error-modifications-overlay.yml
+                - location: .speakeasy\speakeasy-error-modifications-for-health-overlay.yml
             output: .speakeasy/out.openapi.yaml
             registry:
                 location: registry.speakeasyapi.dev/throughput-focus/dbr/dbr-buffer-management-system-api

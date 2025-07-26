@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: fab7d25f-d11a-41b6-92bb-ecf4cef91e4c
 management:
-  docChecksum: a940e28aa399c194c905e5b2c35c6831
+  docChecksum: 1ac88351b0cc7ac4cd452dc10bcee86e
   docVersion: 1.0.0
   speakeasyVersion: 1.590.0
   generationVersion: 2.666.0
-  releaseVersion: 0.2.0
-  configChecksum: 30c88046409e04deddbbb76dcf15297a
+  releaseVersion: 0.2.5
+  configChecksum: d03dd8b2ff6b8d8b70fc64ccee049759
 features:
   python:
     additionalDependencies: 1.0.0
@@ -75,8 +75,10 @@ generatedFiles:
   - docs/models/workitemresponse.md
   - docs/models/workitemupdate.md
   - docs/sdks/analytics/README.md
+  - docs/sdks/apihealth/README.md
   - docs/sdks/authentication/README.md
   - docs/sdks/dbrsdk/README.md
+  - docs/sdks/health/README.md
   - docs/sdks/root/README.md
   - docs/sdks/schedules/README.md
   - docs/sdks/system/README.md
@@ -92,6 +94,7 @@ generatedFiles:
   - src/dbrsdk/_hooks/types.py
   - src/dbrsdk/_version.py
   - src/dbrsdk/analytics.py
+  - src/dbrsdk/apihealth.py
   - src/dbrsdk/authentication.py
   - src/dbrsdk/basesdk.py
   - src/dbrsdk/errors/__init__.py
@@ -104,6 +107,7 @@ generatedFiles:
   - src/dbrsdk/errors/ratelimited_error.py
   - src/dbrsdk/errors/responsevalidationerror.py
   - src/dbrsdk/errors/unauthorized_error.py
+  - src/dbrsdk/health.py
   - src/dbrsdk/httpclient.py
   - src/dbrsdk/models/__init__.py
   - src/dbrsdk/models/advance_time_unit_api_v1_system_advance_time_unit_postop.py
@@ -510,6 +514,32 @@ examples:
           application/json: {}
   logout_api_v1_auth_logout_post:
     speakeasy-default-logout-api-v1-auth-logout-post:
+      responses:
+        "200":
+          application/json: "<value>"
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "400":
+          application/json: {}
+        "429":
+          application/json: {}
+  health_check_health_get:
+    speakeasy-default-health-check-health-get:
+      responses:
+        "200":
+          application/json: "<value>"
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "400":
+          application/json: {}
+        "429":
+          application/json: {}
+  api_health_check_api_v1_health_get:
+    speakeasy-default-api-health-check-api-v1-health-get:
       responses:
         "200":
           application/json: "<value>"

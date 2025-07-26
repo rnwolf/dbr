@@ -1,0 +1,71 @@
+overlay: 1.0.0
+info:
+  title: Response Codes Overlay
+  version: 0.0.2
+actions:
+  - target: $["paths"]["/health"]["get"]["responses"]
+    update:
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '401':
+        $ref: '#/components/responses/Unauthorized'
+      '403':
+        $ref: '#/components/responses/Unauthorized'
+      '404':
+        $ref: '#/components/responses/NotFound'
+      '422':
+        $ref: '#/components/responses/BadRequest'
+      '429':
+        $ref: '#/components/responses/RateLimited'
+    x-speakeasy-metadata:
+      after: |-
+        health_check_health_get:
+        	catch(Unauthorized) { ... }
+      before: |-
+        health_check_health_get:
+        	catch(SDKError) { ... }
+      created_at: 1753559909242
+      type: error-names
+  - target: $["paths"]["/api/v1/health"]["get"]["responses"]
+    update:
+      '400':
+        $ref: '#/components/responses/BadRequest'
+      '401':
+        $ref: '#/components/responses/Unauthorized'
+      '403':
+        $ref: '#/components/responses/Unauthorized'
+      '404':
+        $ref: '#/components/responses/NotFound'
+      '422':
+        $ref: '#/components/responses/BadRequest'
+      '429':
+        $ref: '#/components/responses/RateLimited'
+    x-speakeasy-metadata:
+      after: |-
+        api_health_check_api_v1_health_get:
+        	catch(Unauthorized) { ... }
+      before: |-
+        api_health_check_api_v1_health_get:
+        	catch(SDKError) { ... }
+      created_at: 1753559909242
+      type: error-names
+  - target: $["paths"]["/health"]["get"]
+    update:
+      x-speakeasy-group: health
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.health.get()
+      before: sdk.<no_group>.health_check_health_get()
+      created_at: 1753560031021
+      reviewed_at: 1753560039279
+      type: method-name
+  - target: $["paths"]["/api/v1/health"]["get"]
+    update:
+      x-speakeasy-group: apiHealth
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.apiHealth.get()
+      before: sdk.<no_group>.api_health_check_api_v1_health_get()
+      created_at: 1753560031022
+      reviewed_at: 1753560039279
+      type: method-name

@@ -193,12 +193,20 @@ with Dbrsdk(
 <details open>
 <summary>Available methods</summary>
 
+### [api_health](docs/sdks/apihealth/README.md)
+
+* [get](docs/sdks/apihealth/README.md#get) - Api Health Check
+
 ### [authentication](docs/sdks/authentication/README.md)
 
 * [login](docs/sdks/authentication/README.md#login) - Login
 * [get_current_user_info](docs/sdks/authentication/README.md#get_current_user_info) - Get Current User Info
 * [logout](docs/sdks/authentication/README.md#logout) - Logout
 
+
+### [health](docs/sdks/health/README.md)
+
+* [get](docs/sdks/health/README.md#get) - Health Check
 
 ### [root](docs/sdks/root/README.md)
 
@@ -332,9 +340,8 @@ with Dbrsdk(
   * [`UnauthorizedError`](./src/dbrsdk/errors/unauthorizederror.py): Permission denied or not authenticated.
   * [`NotFoundError`](./src/dbrsdk/errors/notfounderror.py): Not found. Status code `404`.
   * [`RateLimitedError`](./src/dbrsdk/errors/ratelimitederror.py): Rate limit exceeded. Status code `429`.
-  * [`HTTPValidationError`](./src/dbrsdk/errors/httpvalidationerror.py): Validation Error. Status code `422`. *
 
-<details><summary>Less common errors (5)</summary>
+<details><summary>Less common errors (6)</summary>
 
 <br />
 
@@ -345,6 +352,7 @@ with Dbrsdk(
 
 
 **Inherit from [`DbrsdkError`](./src/dbrsdk/errors/dbrsdkerror.py)**:
+* [`HTTPValidationError`](./src/dbrsdk/errors/httpvalidationerror.py): Validation Error. Status code `422`. Applicable to 16 of 22 methods.*
 * [`ResponseValidationError`](./src/dbrsdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>

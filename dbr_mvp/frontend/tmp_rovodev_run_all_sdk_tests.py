@@ -37,20 +37,30 @@ def check_backend_status():
     """Check if backend is running"""
     print("🔍 Checking backend status...")
     try:
-        import requests
-        response = requests.get("http://localhost:8000/api/v1/docs", timeout=5)
+        # Try requests first, then httpx
+        try:
+            import requests as http_client
+            get_func = http_client.get
+            ConnectionError = http_client.exceptions.ConnectionError
+        except ImportError:
+            try:
+                import httpx as http_client
+                get_func = http_client.get
+                ConnectionError = http_client.ConnectError
+            except ImportError:
+                print("⚠️  Neither requests nor httpx available, skipping backend check")
+                return None
+        
+        response = get_func("http://localhost:8000/health", timeout=5)
         if response.status_code == 200:
             print("✅ Backend is running on localhost:8000")
             return True
         else:
             print(f"⚠️  Backend responded with status {response.status_code}")
             return False
-    except requests.exceptions.ConnectionError:
+    except ConnectionError:
         print("❌ Backend is not running on localhost:8000")
         return False
-    except ImportError:
-        print("⚠️  requests not available, skipping backend check")
-        return None
     except Exception as e:
         print(f"⚠️  Backend check failed: {e}")
         return None

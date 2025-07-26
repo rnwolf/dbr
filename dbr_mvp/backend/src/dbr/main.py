@@ -13,7 +13,7 @@ from dbr.core.middleware import (
     RequestLoggingMiddleware,
     AuthLoggingMiddleware,
     DatabaseLoggingMiddleware,
-    ErrorLoggingMiddleware
+    ErrorLoggingMiddleware,
 )
 
 # Setup logging
@@ -22,9 +22,7 @@ log_file = os.getenv("LOG_FILE", "logs/dbr_api.log")
 enable_sql_logging = os.getenv("ENABLE_SQL_LOGGING", "false").lower() == "true"
 
 setup_logging(
-    log_level=log_level,
-    log_file=log_file,
-    enable_sql_logging=enable_sql_logging
+    log_level=log_level, log_file=log_file, enable_sql_logging=enable_sql_logging
 )
 
 # Get application logger
@@ -32,6 +30,7 @@ logger = get_logger("main")
 
 # Initialize database
 from dbr.core.database import init_db
+
 logger.info("Initializing database...")
 init_db()
 logger.info("Database initialization complete")
@@ -61,11 +60,14 @@ app.add_middleware(
 # app.add_middleware(AuthLoggingMiddleware)
 app.add_middleware(RequestLoggingMiddleware)
 
-logger.info("DBR API starting up", extra={
-    "version": "1.0.0",
-    "log_level": log_level,
-    "sql_logging": enable_sql_logging
-})
+logger.info(
+    "DBR API starting up",
+    extra={
+        "version": "1.0.4",
+        "log_level": log_level,
+        "sql_logging": enable_sql_logging,
+    },
+)
 
 # Include API routers
 app.include_router(work_items_router, prefix="/api/v1")
@@ -88,7 +90,7 @@ def health_check():
         "status": "healthy",
         "service": "DBR Buffer Management System API",
         "version": "1.0.0",
-        "timestamp": "2024-01-01T00:00:00Z"  # You might want to use actual timestamp
+        "timestamp": "2024-01-01T00:00:00Z",  # You might want to use actual timestamp
     }
 
 
@@ -100,7 +102,7 @@ def api_health_check():
         "status": "healthy",
         "api_version": "v1",
         "endpoints": ["workitems", "schedules", "system", "auth"],
-        "timestamp": "2024-01-01T00:00:00Z"
+        "timestamp": "2024-01-01T00:00:00Z",
     }
 
 

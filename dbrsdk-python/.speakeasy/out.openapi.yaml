@@ -880,6 +880,56 @@ paths:
           $ref: '#/components/responses/RateLimited'
       x-speakeasy-group: "root"
       x-speakeasy-name-override: "get"
+  "/health":
+    get:
+      summary: "Health Check"
+      description: "Health check endpoint for monitoring and frontend connectivity tests"
+      operationId: "health_check_health_get"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+      x-speakeasy-group: health
+      x-speakeasy-name-override: get
+  "/api/v1/health":
+    get:
+      summary: "Api Health Check"
+      description: "API-specific health check endpoint"
+      operationId: "api_health_check_api_v1_health_get"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+      x-speakeasy-group: apiHealth
+      x-speakeasy-name-override: get
 components:
   schemas:
     "AdvanceTimeResponse":

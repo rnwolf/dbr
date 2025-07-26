@@ -10,7 +10,7 @@ class AppConfig:
     """Application configuration constants."""
 
     # Window settings
-    WINDOW_TITLE: str = "My Application"
+    WINDOW_TITLE: str = "DBR Buffer Management System"
     WINDOW_SIZE: Tuple[int, int] = (1200, 800)
     MIN_WINDOW_SIZE: Tuple[int, int] = (800, 600)
 

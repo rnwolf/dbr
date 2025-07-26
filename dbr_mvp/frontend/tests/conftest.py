@@ -1,13 +1,18 @@
 """Pytest configuration and fixtures."""
 
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import sys
 import os
 
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+@pytest.fixture(autouse=True)
+def mock_dbrsdk():
+    """Mock the entire dbrsdk to prevent import errors and isolate the frontend."""
+    with patch.dict('sys.modules', {'dbrsdk': MagicMock()}) as mock:
+        yield mock
 
 @pytest.fixture
 def mock_tk():
