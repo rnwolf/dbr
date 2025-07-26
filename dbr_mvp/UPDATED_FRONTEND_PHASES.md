@@ -12,39 +12,90 @@
 
 ## Phase 5: Frontend Foundation (Days 15-16)
 
+### Current Frontend Status Assessment
+✅ **CustomTkinter Template Complete**: Professional GUI foundation with modern architecture
+✅ **Core Components Ready**: Tab navigation, scrollable canvas, event bus, testing framework
+✅ **Development Infrastructure**: UV dependency management, pytest, code quality tools
+❌ **DBR-Specific Functionality**: API client, authentication, domain models, buffer boards
+
+### DBR Organization Admin Workflow (Refined)
+
+#### **Phase 1: Organization Setup (Sequential Dependencies)**
+1. **User Management/Membership** → Invite users, assign roles
+2. **CCR Setup** → Define Capacity Constrained Resources (requires users)
+3. **Time Unit & Calendar Setup** → Define time periods, working calendars  
+4. **DBR Board Setup** → Configure buffer zones, capability channels (requires CCRs)
+
+#### **Phase 2: Content Management (Parallel Activities)**
+5. **Work Items Management** → Create/edit individual tasks
+6. **Collections Management** → Group work items into projects/epics/releases
+
+#### **Phase 3: Planning Operations (Ongoing Cycle)**
+7. **Schedule Planning** → Bundle work items into time-unit schedules
+   - Select Capability Channel (CCR)
+   - Sequence work items into schedules
+   - Get real-time CCR loading feedback
+   - Validate capacity constraints
+
+#### **Phase 4: Execution Operations (Ongoing Cycle)**
+8. **Schedule Release** → Move Ready schedules into active capability channels
+9. **Operational Updates** → Track work item progress and status
+
+### Application Startup Workflow
+1. **Application Launch** → Backend URL Configuration Dialog
+2. **Health Check** → Verify API connectivity and display status
+3. **Authentication** → User login with role detection
+4. **Organization Context** → Single org optimization, multi-org capability
+5. **Role-Based Navigation** → Dynamic UI based on user permissions
+6. **Setup State Detection** → Progressive disclosure based on completion
+
 ### Day 5A: Application Architecture Setup (4 hours)
 
-#### Step 5.1: Frontend Application Bootstrap (2 hours)
-**Objective**: Create the main frontend application structure using the tkinter template
+#### Step 5.1: DBR Application Bootstrap & Startup Sequence (2 hours)
+**Objective**: Transform generic template into DBR-specific application with proper startup flow
 
 **TDD Cycle:**
 ```python
-# tests/test_frontend/test_app_structure.py
-def test_application_startup():
-    """Test main application starts correctly"""
-    # Test: Application window opens
-    # Test: Main components initialize
-    # Test: No startup errors
+# tests/test_frontend/test_dbr_startup.py
+def test_backend_url_configuration():
+    """Test backend URL configuration dialog"""
+    # Test: URL input validation
+    # Test: Health check integration
+    # Test: Configuration persistence
 
-def test_template_integration():
-    """Test tkinter template integration"""
-    # Test: Tab navigation works
-    # Test: Component structure intact
-    # Test: Event bus functional
+def test_health_check_workflow():
+    """Test API health check functionality"""
+    # Test: Successful connection detection
+    # Test: Failed connection handling
+    # Test: Connection status display
+
+def test_application_branding():
+    """Test DBR application branding"""
+    # Test: Window title updated to DBR
+    # Test: Menu structure reflects DBR operations
+    # Test: Status bar shows DBR context
 ```
 
 **Implementation Tasks:**
-- Copy and adapt tkinter-template to `dbr_mvp/frontend/`
-- Update project structure for DBR-specific needs
-- Configure main application entry point
-- Set up logging and error handling
+- Rename application from "CustomTkinter Template" to "DBR Buffer Management System"
+- Create backend URL configuration dialog with health check
+- Update AppConfig for DBR-specific settings (window title, default sizes)
+- Implement startup sequence manager with progressive UI reveal
+- Add connection status indicators and error handling
 
-#### Step 5.2: API Client Foundation (2 hours)
-**Objective**: Create robust API client for backend communication
+#### Step 5.2: API Client Foundation & Health Check Integration (2 hours)
+**Objective**: Create robust API client with health check capabilities for backend communication
 
 **TDD Cycle:**
 ```python
 # tests/test_frontend/test_api_client.py
+def test_api_health_check():
+    """Test API health check functionality"""
+    # Test: Successful health check response
+    # Test: Failed connection handling
+    # Test: Timeout scenarios
+    # Test: Invalid URL handling
+
 def test_api_client_authentication():
     """Test API authentication flow"""
     # Test: Login with valid credentials
@@ -67,50 +118,162 @@ def test_organization_scoping():
 ```
 
 **Implementation Tasks:**
-- Create `APIClient` class with authentication
-- Implement JWT token management
-- Add error handling and retry logic
-- Create API response models
-- Add organization context management to all API calls
-- Implement organization CRUD API methods
+- Create `APIClient` class with health check endpoint integration
+- Implement JWT token management and refresh
+- Add request/response logging and error handling
+- Create data models for Organizations, Users, Roles, WorkItems, Schedules, CCRs
+- Set up mock API responses for testing
+- Integrate health check with startup sequence
 
-### Day 5B: Core Data Models & Authentication (4 hours)
+### Day 5B: Authentication & Navigation Development (4 hours)
 
-#### Step 5.3: Frontend Data Models (2 hours)
-**Objective**: Create frontend data models matching backend schemas
+#### Step 5.3: Authentication UI Components with Organization Context (2 hours)
+**Objective**: Build login/logout interface with organization context management
 
 **TDD Cycle:**
 ```python
-# tests/test_frontend/test_data_models.py
-def test_organization_model():
-    """Test Organization frontend model"""
-    # Test: Create from API JSON
-    # Test: Organization CRUD operations
-    # Test: Multi-tenant data scoping
+# tests/test_frontend/test_authentication.py
+def test_login_dialog():
+    """Test login dialog functionality"""
+    # Test: Username/password input validation
+    # Test: Backend authentication integration
+    # Test: Error message display for failed login
+    # Test: Success flow with token storage
 
-def test_work_item_model():
-    """Test WorkItem frontend model"""
-    # Test: Create from API JSON with organization_id
-    # Test: Data validation
-    # Test: Local state management
+def test_organization_context():
+    """Test organization context management"""
+    # Test: Single organization auto-selection
+    # Test: Multi-organization selection dialog
+    # Test: Organization context switching
+    # Test: Role-based permissions per organization
 
-def test_schedule_model():
-    """Test Schedule frontend model"""
-    # Test: Schedule with work items
-    # Test: Position calculations
-    # Test: Status transitions
-    # Test: Organization scoping
+def test_session_management():
+    """Test user session lifecycle"""
+    # Test: Token refresh before expiry
+    # Test: Automatic logout on token expiry
+    # Test: Session persistence across app restarts
+    # Test: Logout functionality
 ```
 
 **Implementation Tasks:**
-- Create `Organization` model as foundational entity
-- Create `WorkItem`, `Schedule`, `CCR`, `BoardConfig` models with organization scoping
-- Implement JSON serialization/deserialization
-- Add data validation and type checking
-- Create local data caching mechanisms with organization context
+- Create login dialog with username/password fields
+- Implement organization selection for multi-org users (subtle UI)
+- Add session management with token storage and refresh
+- Create user profile display with logout option
+- Integrate authentication state with navigation system
+- Add role detection and permission caching
 
-#### Step 5.4: Login & Authentication UI (2 hours)
-**Objective**: Implement user authentication interface
+#### Step 5.4: Role-Based Navigation Structure (2 hours)
+**Objective**: Implement dynamic navigation based on user role and setup completion state
+
+**TDD Cycle:**
+```python
+# tests/test_frontend/test_navigation.py
+def test_role_based_navigation():
+    """Test navigation visibility based on user role"""
+    # Test: Super Admin sees all navigation options
+    # Test: Org Admin sees organization management
+    # Test: Planner sees work items and planning
+    # Test: Worker sees limited operational views
+
+def test_setup_state_navigation():
+    """Test navigation based on organization setup completion"""
+    # Test: Setup tab visible when setup incomplete
+    # Test: Setup tab hidden/minimized when complete
+    # Test: Progressive disclosure of functionality
+    # Test: Setup completion detection
+
+def test_organization_context_navigation():
+    """Test navigation with organization context"""
+    # Test: Navigation updates on organization switch
+    # Test: Organization-scoped data loading
+    # Test: Context persistence across sessions
+```
+
+**Implementation Tasks:**
+- Replace generic "Grid View/Settings" tabs with DBR-specific navigation:
+  - **Setup** (conditional - visible when setup incomplete)
+  - **Work Items** (create/edit individual tasks)
+  - **Collections** (group work items into projects/epics)
+  - **Planning** (schedule creation and CCR loading)
+  - **Buffer Boards** (operational execution view)
+  - **Reports** (metrics and analytics)
+- Implement role-based tab visibility and permissions
+- Add setup completion detection and progressive disclosure
+- Create organization context indicator (subtle, top-right)
+- Update menu structure for DBR operations (File→Import/Export, Tools→Time Progression)
+- Add setup wizard navigation within Setup tab
+
+### Navigation Structure by Role
+
+#### **Super Admin Navigation:**
+- Organizations (manage all organizations)
+- Users (global user management)
+- System (global settings, time progression)
+
+#### **Organization Admin Navigation:**
+- Setup (Users→CCRs→Time Units→Board Config)
+- Work Items & Collections
+- Planning & Buffer Boards
+- Reports
+
+#### **Planner Navigation:**
+- Work Items & Collections
+- Planning (schedule creation)
+- Buffer Boards (planning view)
+- Reports (planning metrics)
+
+#### **Worker Navigation:**
+- Work Items (assigned tasks)
+- Buffer Boards (execution view)
+- Reports (personal metrics)
+
+### Setup Completion Detection
+- **Phase 1 Complete**: Users invited, CCRs defined, time units configured, board setup
+- **Phase 2 Ready**: Work items and collections can be created
+- **Phase 3 Ready**: Planning and scheduling can begin
+- **Phase 4 Ready**: Operational execution can start
+
+---
+
+## Updated Phase 5 Summary
+
+### **Key Changes from Original Plan:**
+1. **Workflow-Driven**: Navigation based on DBR operational workflow rather than generic features
+2. **Role-Based**: Dynamic UI based on user permissions and organizational context
+3. **Progressive**: Setup completion drives feature availability
+4. **Multi-Org Ready**: Architecture supports multiple organizations while optimizing for single-org UX
+5. **Health Check First**: Backend connectivity validation before any operations
+
+### **Dependencies Resolved:**
+- Step 5.1 creates startup sequence and health check foundation
+- Step 5.2 provides API client needed for health checks and authentication
+- Step 5.3 establishes authentication and organization context
+- Step 5.4 creates role-based navigation that depends on authenticated user context
+
+### **Next Phase Preparation:**
+Phase 5 establishes the foundation for Phase 6 (Setup Workflow Implementation) by providing:
+- Authenticated user sessions with role detection
+- Organization context management
+- Health-checked backend connectivity
+- Role-based navigation structure ready for setup workflow components
+
+---
+
+## Phase 6: Organization Setup Workflow (Days 17-19)
+*[Phases 6-8 to be detailed after Phase 5 implementation]*
+
+### Day 6A: User Management Setup (4 hours)
+#### Step 6.1: User Invitation & Role Assignment Interface (2 hours)
+#### Step 6.2: Organization Membership Management (2 hours)
+
+### Day 6B: CCR & Time Unit Configuration (4 hours)  
+#### Step 6.3: CCR Definition Interface (2 hours)
+#### Step 6.4: Time Unit & Calendar Setup (2 hours)
+
+### Day 6C: Board Configuration Setup (4 hours)
+#### Step 6.5: Buffer Zone Configuration (2 hours)
+#### Step 6.6: Capability Channel Setup (2 hours)
 
 **TDD Cycle:**
 ```python

@@ -1,0 +1,524 @@
+lockVersion: 2.0.0
+id: fab7d25f-d11a-41b6-92bb-ecf4cef91e4c
+management:
+  docChecksum: a940e28aa399c194c905e5b2c35c6831
+  docVersion: 1.0.0
+  speakeasyVersion: 1.590.0
+  generationVersion: 2.666.0
+  releaseVersion: 0.2.0
+  configChecksum: 30c88046409e04deddbbb76dcf15297a
+features:
+  python:
+    additionalDependencies: 1.0.0
+    additionalProperties: 1.0.1
+    constsAndDefaults: 1.0.5
+    core: 5.19.4
+    defaultEnabledRetries: 0.2.0
+    devContainers: 3.0.0
+    envVarSecurityUsage: 0.3.2
+    flatRequests: 1.0.1
+    flattening: 3.1.1
+    globalSecurity: 3.0.3
+    globalSecurityCallbacks: 1.0.0
+    globalSecurityFlattening: 1.0.0
+    globalServerURLs: 3.1.1
+    groups: 3.0.0
+    methodArguments: 1.0.2
+    nameOverrides: 3.0.1
+    nullables: 1.0.1
+    responseFormat: 1.0.1
+    retries: 3.0.2
+    sdkHooks: 1.1.0
+    unions: 3.0.4
+generatedFiles:
+  - .devcontainer/README.md
+  - .devcontainer/devcontainer.json
+  - .devcontainer/setup.sh
+  - .gitattributes
+  - .vscode/settings.json
+  - USAGE.md
+  - docs/errors/badrequesterror.md
+  - docs/errors/httpvalidationerror.md
+  - docs/errors/notfounderror.md
+  - docs/errors/ratelimitederror.md
+  - docs/errors/unauthorizederror.md
+  - docs/models/advancetimeresponse.md
+  - docs/models/advancetimeunitapiv1systemadvancetimeunitpostrequest.md
+  - docs/models/boardanalytics.md
+  - docs/models/deletescheduleapiv1schedulesscheduleiddeleterequest.md
+  - docs/models/deleteworkitemapiv1workitemsworkitemiddeleterequest.md
+  - docs/models/getboardanalyticsapiv1schedulesboardboardconfigidanalyticsgetrequest.md
+  - docs/models/getscheduleanalyticsapiv1schedulesscheduleidanalyticsgetrequest.md
+  - docs/models/getscheduleapiv1schedulesscheduleidgetrequest.md
+  - docs/models/getschedulesapiv1schedulesgetrequest.md
+  - docs/models/getworkitemapiv1workitemsworkitemidgetrequest.md
+  - docs/models/getworkitemsapiv1workitemsgetrequest.md
+  - docs/models/loc.md
+  - docs/models/loginrequest.md
+  - docs/models/loginresponse.md
+  - docs/models/scheduleanalytics.md
+  - docs/models/schedulecreate.md
+  - docs/models/scheduleresponse.md
+  - docs/models/scheduleupdate.md
+  - docs/models/security.md
+  - docs/models/setsystemtimeapiv1systemtimepostrequest.md
+  - docs/models/taskcreate.md
+  - docs/models/taskresponse.md
+  - docs/models/taskupdate.md
+  - docs/models/updatescheduleapiv1schedulesscheduleidputrequest.md
+  - docs/models/updateworkitemapiv1workitemsworkitemidputrequest.md
+  - docs/models/updateworkitemtaskapiv1workitemsworkitemidtaskstaskidputrequest.md
+  - docs/models/userinfo.md
+  - docs/models/utils/retryconfig.md
+  - docs/models/validationerror.md
+  - docs/models/workitemcreate.md
+  - docs/models/workitemresponse.md
+  - docs/models/workitemupdate.md
+  - docs/sdks/analytics/README.md
+  - docs/sdks/authentication/README.md
+  - docs/sdks/dbrsdk/README.md
+  - docs/sdks/root/README.md
+  - docs/sdks/schedules/README.md
+  - docs/sdks/system/README.md
+  - docs/sdks/workitems/README.md
+  - poetry.toml
+  - py.typed
+  - pylintrc
+  - pyproject.toml
+  - scripts/publish.sh
+  - src/dbrsdk/__init__.py
+  - src/dbrsdk/_hooks/__init__.py
+  - src/dbrsdk/_hooks/sdkhooks.py
+  - src/dbrsdk/_hooks/types.py
+  - src/dbrsdk/_version.py
+  - src/dbrsdk/analytics.py
+  - src/dbrsdk/authentication.py
+  - src/dbrsdk/basesdk.py
+  - src/dbrsdk/errors/__init__.py
+  - src/dbrsdk/errors/apierror.py
+  - src/dbrsdk/errors/badrequest_error.py
+  - src/dbrsdk/errors/dbrsdkerror.py
+  - src/dbrsdk/errors/httpvalidationerror.py
+  - src/dbrsdk/errors/no_response_error.py
+  - src/dbrsdk/errors/notfound_error.py
+  - src/dbrsdk/errors/ratelimited_error.py
+  - src/dbrsdk/errors/responsevalidationerror.py
+  - src/dbrsdk/errors/unauthorized_error.py
+  - src/dbrsdk/httpclient.py
+  - src/dbrsdk/models/__init__.py
+  - src/dbrsdk/models/advance_time_unit_api_v1_system_advance_time_unit_postop.py
+  - src/dbrsdk/models/advancetimeresponse.py
+  - src/dbrsdk/models/boardanalytics.py
+  - src/dbrsdk/models/delete_schedule_api_v1_schedules_schedule_id_deleteop.py
+  - src/dbrsdk/models/delete_work_item_api_v1_workitems_work_item_id_deleteop.py
+  - src/dbrsdk/models/get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop.py
+  - src/dbrsdk/models/get_schedule_analytics_api_v1_schedules_schedule_id_analytics_getop.py
+  - src/dbrsdk/models/get_schedule_api_v1_schedules_schedule_id_getop.py
+  - src/dbrsdk/models/get_schedules_api_v1_schedules_getop.py
+  - src/dbrsdk/models/get_work_item_api_v1_workitems_work_item_id_getop.py
+  - src/dbrsdk/models/get_work_items_api_v1_workitems_getop.py
+  - src/dbrsdk/models/loginrequest.py
+  - src/dbrsdk/models/loginresponse.py
+  - src/dbrsdk/models/scheduleanalytics.py
+  - src/dbrsdk/models/schedulecreate.py
+  - src/dbrsdk/models/scheduleresponse.py
+  - src/dbrsdk/models/scheduleupdate.py
+  - src/dbrsdk/models/security.py
+  - src/dbrsdk/models/set_system_time_api_v1_system_time_postop.py
+  - src/dbrsdk/models/taskcreate.py
+  - src/dbrsdk/models/taskresponse.py
+  - src/dbrsdk/models/taskupdate.py
+  - src/dbrsdk/models/update_schedule_api_v1_schedules_schedule_id_putop.py
+  - src/dbrsdk/models/update_work_item_api_v1_workitems_work_item_id_putop.py
+  - src/dbrsdk/models/update_work_item_task_api_v1_workitems_work_item_id_tasks_task_id_putop.py
+  - src/dbrsdk/models/userinfo.py
+  - src/dbrsdk/models/validationerror.py
+  - src/dbrsdk/models/workitemcreate.py
+  - src/dbrsdk/models/workitemresponse.py
+  - src/dbrsdk/models/workitemupdate.py
+  - src/dbrsdk/py.typed
+  - src/dbrsdk/root.py
+  - src/dbrsdk/schedules.py
+  - src/dbrsdk/sdk.py
+  - src/dbrsdk/sdkconfiguration.py
+  - src/dbrsdk/system.py
+  - src/dbrsdk/types/__init__.py
+  - src/dbrsdk/types/basemodel.py
+  - src/dbrsdk/utils/__init__.py
+  - src/dbrsdk/utils/annotations.py
+  - src/dbrsdk/utils/datetimes.py
+  - src/dbrsdk/utils/enums.py
+  - src/dbrsdk/utils/eventstreaming.py
+  - src/dbrsdk/utils/forms.py
+  - src/dbrsdk/utils/headers.py
+  - src/dbrsdk/utils/logger.py
+  - src/dbrsdk/utils/metadata.py
+  - src/dbrsdk/utils/queryparams.py
+  - src/dbrsdk/utils/requestbodies.py
+  - src/dbrsdk/utils/retries.py
+  - src/dbrsdk/utils/security.py
+  - src/dbrsdk/utils/serializers.py
+  - src/dbrsdk/utils/unmarshal_json_response.py
+  - src/dbrsdk/utils/url.py
+  - src/dbrsdk/utils/values.py
+  - src/dbrsdk/workitems.py
+examples:
+  read_root__get:
+    speakeasy-default-read-root-get:
+      responses:
+        "200":
+          application/json: "<value>"
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "400":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_work_items_api_v1_workitems_get:
+    speakeasy-default-get-work-items-api-v1-workitems-get:
+      parameters:
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: [{"id": "<id>", "organization_id": "<id>", "collection_id": "<id>", "title": "<value>", "description": "unless puppet present unconscious think on", "status": "<value>", "priority": "<value>", "estimated_total_hours": 975.77, "ccr_hours_required": {"key": 7850.34}, "estimated_sales_price": 1852.23, "estimated_variable_cost": 5226.06, "throughput": 6090.02, "tasks": [{"id": 273542, "title": "<value>", "completed": true}], "progress_percentage": 9534.61, "responsible_user_id": "<id>", "url": "https://optimistic-brush.name", "created_date": "<value>", "updated_date": "<value>"}]
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  create_work_item_api_v1_workitems_post:
+    speakeasy-default-create-work-item-api-v1-workitems-post:
+      requestBody:
+        application/json: {"organization_id": "<id>", "title": "<value>", "estimated_total_hours": 5599.86}
+      responses:
+        "201":
+          application/json: {"id": "<id>", "organization_id": "<id>", "collection_id": "<id>", "title": "<value>", "description": null, "status": "<value>", "priority": "<value>", "estimated_total_hours": 1076.82, "ccr_hours_required": {"key": 3421.62, "key1": 1611.79}, "estimated_sales_price": 4856.88, "estimated_variable_cost": 6079.74, "throughput": 5866.02, "tasks": [], "progress_percentage": 7394.66, "responsible_user_id": "<id>", "url": "https://impeccable-detective.net", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_work_item_api_v1_workitems__work_item_id__get:
+    speakeasy-default-get-work-item-api-v1-workitems-work-item-id-get:
+      parameters:
+        path:
+          work_item_id: "<id>"
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "organization_id": "<id>", "collection_id": "<id>", "title": "<value>", "description": "silently hunt chunter confirm finally inasmuch middle kinase overdub", "status": "<value>", "priority": "<value>", "estimated_total_hours": 3550.32, "ccr_hours_required": {"key": 8720.12, "key1": 2949.69, "key2": 6426.94}, "estimated_sales_price": 437.08, "estimated_variable_cost": 6967.7, "throughput": 2990.63, "tasks": [], "progress_percentage": 7787.99, "responsible_user_id": "<id>", "url": "https://wonderful-desk.info", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  update_work_item_api_v1_workitems__work_item_id__put:
+    speakeasy-default-update-work-item-api-v1-workitems-work-item-id-put:
+      parameters:
+        path:
+          work_item_id: "<id>"
+        query:
+          organization_id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "organization_id": "<id>", "collection_id": "<id>", "title": "<value>", "description": "yahoo coast lift over powerfully woot motivate catalyze agile because", "status": "<value>", "priority": "<value>", "estimated_total_hours": 486.29, "ccr_hours_required": null, "estimated_sales_price": 9540.35, "estimated_variable_cost": 1506.35, "throughput": 2914.6, "tasks": [], "progress_percentage": 9557.02, "responsible_user_id": "<id>", "url": "https://superior-gloom.net", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  delete_work_item_api_v1_workitems__work_item_id__delete:
+    speakeasy-default-delete-work-item-api-v1-workitems-work-item-id-delete:
+      parameters:
+        path:
+          work_item_id: "<id>"
+        query:
+          organization_id: "<id>"
+      responses:
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  update_work_item_task_api_v1_workitems__work_item_id__tasks__task_id__put:
+    speakeasy-default-update-work-item-task-api-v1-workitems-work-item-id-tasks-task-id-put:
+      parameters:
+        path:
+          work_item_id: "<id>"
+          task_id: 744912
+        query:
+          organization_id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "organization_id": "<id>", "collection_id": "<id>", "title": "<value>", "description": "except trouser woot ouch humble recommendation shudder whoever needily", "status": "<value>", "priority": "<value>", "estimated_total_hours": 8630.5, "ccr_hours_required": null, "estimated_sales_price": 2838, "estimated_variable_cost": 3688.11, "throughput": 6573.24, "tasks": [{"id": 943772, "title": "<value>", "completed": false}], "progress_percentage": 4118.07, "responsible_user_id": "<id>", "url": "https://defensive-volleyball.biz/", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_schedules_api_v1_schedules_get:
+    speakeasy-default-get-schedules-api-v1-schedules-get:
+      parameters:
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: [{"id": "<id>", "organization_id": "<id>", "board_config_id": "<id>", "capability_channel_id": "<id>", "status": "<value>", "work_item_ids": ["<value 1>", "<value 2>"], "time_unit_position": 901081, "total_ccr_time": 7983.3, "timezone": "America/La_Paz", "created_date": "<value>", "released_date": "<value>", "completion_date": "<value>"}]
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  create_schedule_api_v1_schedules_post:
+    speakeasy-default-create-schedule-api-v1-schedules-post:
+      requestBody:
+        application/json: {"organization_id": "<id>", "board_config_id": "<id>", "work_item_ids": ["<value 1>", "<value 2>", "<value 3>"], "timezone": "UTC"}
+      responses:
+        "201":
+          application/json: {"id": "<id>", "organization_id": "<id>", "board_config_id": "<id>", "capability_channel_id": "<id>", "status": "<value>", "work_item_ids": ["<value 1>", "<value 2>", "<value 3>"], "time_unit_position": 33163, "total_ccr_time": 5378.12, "timezone": "America/Barbados", "created_date": "<value>", "released_date": "<value>", "completion_date": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_schedule_api_v1_schedules__schedule_id__get:
+    speakeasy-default-get-schedule-api-v1-schedules-schedule-id-get:
+      parameters:
+        path:
+          schedule_id: "<id>"
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "organization_id": "<id>", "board_config_id": "<id>", "capability_channel_id": "<id>", "status": "<value>", "work_item_ids": ["<value 1>"], "time_unit_position": 23561, "total_ccr_time": 3204.35, "timezone": "Europe/Zurich", "created_date": "<value>", "released_date": "<value>", "completion_date": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  update_schedule_api_v1_schedules__schedule_id__put:
+    speakeasy-default-update-schedule-api-v1-schedules-schedule-id-put:
+      parameters:
+        path:
+          schedule_id: "<id>"
+        query:
+          organization_id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "organization_id": "<id>", "board_config_id": "<id>", "capability_channel_id": "<id>", "status": "<value>", "work_item_ids": [], "time_unit_position": 143652, "total_ccr_time": 5623.94, "timezone": "America/North_Dakota/Center", "created_date": "<value>", "released_date": "<value>", "completion_date": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  delete_schedule_api_v1_schedules__schedule_id__delete:
+    speakeasy-default-delete-schedule-api-v1-schedules-schedule-id-delete:
+      parameters:
+        path:
+          schedule_id: "<id>"
+        query:
+          organization_id: "<id>"
+      responses:
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_schedule_analytics_api_v1_schedules__schedule_id__analytics_get:
+    speakeasy-default-get-schedule-analytics-api-v1-schedules-schedule-id-analytics-get:
+      parameters:
+        path:
+          schedule_id: "<id>"
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: {"work_item_count": 269198, "total_ccr_hours": 9413.28, "buffer_zone": "<value>", "position_info": {"key": "<value>"}, "throughput_metrics": {"key": "<value>", "key1": "<value>", "key2": "<value>"}}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_board_analytics_api_v1_schedules_board__board_config_id__analytics_get:
+    speakeasy-default-get-board-analytics-api-v1-schedules-board-board-config-id-analytics-get:
+      parameters:
+        path:
+          board_config_id: "<id>"
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: {"total_schedules": 717569, "status_distribution": {"key": 478454, "key1": 588934, "key2": 430558}, "zone_occupancy": {"key": 723675, "key1": 304865, "key2": 904482}, "capacity_utilization": {"key": 5237.02, "key1": 3626}}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  advance_time_unit_api_v1_system_advance_time_unit_post:
+    speakeasy-default-advance-time-unit-api-v1-system-advance-time-unit-post:
+      parameters:
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: {"message": "<value>", "advanced_schedules_count": 184148}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_current_time_api_v1_system_time_get:
+    speakeasy-default-get-current-time-api-v1-system-time-get:
+      responses:
+        "200":
+          application/json: {"key": "<value>", "key1": "<value>"}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "400":
+          application/json: {}
+        "429":
+          application/json: {}
+  set_system_time_api_v1_system_time_post:
+    speakeasy-default-set-system-time-api-v1-system-time-post:
+      parameters:
+        query:
+          time_iso: "<value>"
+      responses:
+        "200":
+          application/json: {"key": "<value>", "key1": "<value>"}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  login_api_v1_auth_login_post:
+    speakeasy-default-login-api-v1-auth-login-post:
+      requestBody:
+        application/json: {"username": "Felix_Mante", "password": "3yjgaqeC7UMz5sl"}
+      responses:
+        "200":
+          application/json: {"access_token": "<value>", "token_type": "bearer", "user": {"key": "Neha34", "key1": "Rossie.Glover90"}}
+        "422":
+          application/json: {}
+        "400":
+          application/json: {}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "429":
+          application/json: {}
+  get_current_user_info_api_v1_auth_me_get:
+    speakeasy-default-get-current-user-info-api-v1-auth-me-get:
+      responses:
+        "200":
+          application/json: {"id": "<id>", "username": "Humberto89", "email": "Toni11@yahoo.com", "display_name": null, "active_status": false}
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "400":
+          application/json: {}
+        "429":
+          application/json: {}
+  logout_api_v1_auth_logout_post:
+    speakeasy-default-logout-api-v1-auth-logout-post:
+      responses:
+        "200":
+          application/json: "<value>"
+        "401":
+          application/json: {}
+        "404":
+          application/json: {}
+        "400":
+          application/json: {}
+        "429":
+          application/json: {}
+examplesVersion: 1.0.2

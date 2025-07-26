@@ -1,0 +1,22 @@
+workflowVersion: 1.0.0
+speakeasyVersion: latest
+sources:
+    DBR Buffer Management System API:
+        inputs:
+            - location: http://127.0.0.1:8000/openapi.json
+        overlays:
+            - location: .speakeasy\speakeasy-modifications-overlay.yaml
+            - location: .speakeasy\speakeasy-error-modifications-overlay.yml
+        output: .speakeasy/out.openapi.yaml
+        registry:
+            location: registry.speakeasyapi.dev/throughput-focus/dbr/dbr-buffer-management-system-api
+targets:
+    dbrsdk:
+        target: python
+        source: DBR Buffer Management System API
+        codeSamples:
+            registry:
+                location: registry.speakeasyapi.dev/throughput-focus/dbr/dbr-buffer-management-system-api-python-code-samples
+            labelOverride:
+                fixedValue: Python (SDK)
+            blocking: false

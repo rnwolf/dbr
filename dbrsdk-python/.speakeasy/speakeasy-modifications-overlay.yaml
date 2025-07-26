@@ -1,0 +1,211 @@
+overlay: 1.0.0
+x-speakeasy-jsonpath: rfc9535
+info:
+  title: Speakeasy Modifications
+  version: 0.0.2
+  x-speakeasy-metadata:
+    after: ""
+    before: ""
+    type: speakeasy-modifications
+actions:
+  - target: "$"
+    description: Add global retries
+    update:
+      x-speakeasy-retries:
+        strategy: backoff
+        backoff:
+          initialInterval: 500
+          maxInterval: 60000
+          maxElapsedTime: 3600000
+          exponent: 1.5
+        statusCodes:
+          - 5XX
+        retryConnectionErrors: true
+  - target: $["paths"]["/api/v1/auth/logout"]["post"]
+    update:
+      x-speakeasy-name-override: logout
+    x-speakeasy-metadata:
+      after: sdk.authentication.logout()
+      before: sdk.Authentication.logout_api_v1_auth_logout_post()
+      created_at: 1753455389854
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/auth/me"]["get"]
+    update:
+      x-speakeasy-name-override: getCurrentUserInfo
+    x-speakeasy-metadata:
+      after: sdk.authentication.getCurrentUserInfo()
+      before: sdk.Authentication.get_current_user_info_api_v1_auth_me_get()
+      created_at: 1753455389854
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/schedules/board/{board_config_id}/analytics"]["get"]
+    update:
+      x-speakeasy-name-override: getBoardAnalytics
+    x-speakeasy-metadata:
+      after: sdk.schedules.getBoardAnalytics()
+      before: sdk.Schedules.get_board_analytics_api_v1_schedules_board__board_config_id__analytics_get()
+      created_at: 1753455389854
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/schedules/{schedule_id}/analytics"]["get"]
+    update:
+      x-speakeasy-group: schedules.analytics
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.schedules.analytics.get()
+      before: sdk.Schedules.get_schedule_analytics_api_v1_schedules__schedule_id__analytics_get()
+      created_at: 1753455389854
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/"]["get"]
+    update:
+      x-speakeasy-group: root
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.root.get()
+      before: sdk.<no_group>.read_root__get()
+      created_at: 1753455389854
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/schedules/{schedule_id}"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.schedules.get()
+      before: sdk.Schedules.get_schedule_api_v1_schedules__schedule_id__get()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/workitems/{work_item_id}"]["delete"]
+    update:
+      x-speakeasy-group: workItems
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.workItems.delete()
+      before: sdk.Work Items.delete_work_item_api_v1_workitems__work_item_id__delete()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/schedules"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.schedules.list()
+      before: sdk.Schedules.get_schedules_api_v1_schedules_get()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/system/time"]["get"]
+    update:
+      x-speakeasy-name-override: getTime
+    x-speakeasy-metadata:
+      after: sdk.system.getTime()
+      before: sdk.System.get_current_time_api_v1_system_time_get()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/workitems/{work_item_id}"]["put"]
+    update:
+      x-speakeasy-group: workItems
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      after: sdk.workItems.update()
+      before: sdk.Work Items.update_work_item_api_v1_workitems__work_item_id__put()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/system/time"]["post"]
+    update:
+      x-speakeasy-name-override: setTime
+    x-speakeasy-metadata:
+      after: sdk.system.setTime()
+      before: sdk.System.set_system_time_api_v1_system_time_post()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/auth/login"]["post"]
+    update:
+      x-speakeasy-name-override: login
+    x-speakeasy-metadata:
+      after: sdk.authentication.login()
+      before: sdk.Authentication.login_api_v1_auth_login_post()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/workitems"]["post"]
+    update:
+      x-speakeasy-group: workItems
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.workItems.create()
+      before: sdk.Work Items.create_work_item_api_v1_workitems_post()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/workitems"]["get"]
+    update:
+      x-speakeasy-group: workItems
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.workItems.list()
+      before: sdk.Work Items.get_work_items_api_v1_workitems_get()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/schedules/{schedule_id}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.schedules.delete()
+      before: sdk.Schedules.delete_schedule_api_v1_schedules__schedule_id__delete()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/schedules/{schedule_id}"]["put"]
+    update:
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      after: sdk.schedules.update()
+      before: sdk.Schedules.update_schedule_api_v1_schedules__schedule_id__put()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/workitems/{work_item_id}"]["get"]
+    update:
+      x-speakeasy-group: workItems
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.workItems.get()
+      before: sdk.Work Items.get_work_item_api_v1_workitems__work_item_id__get()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/system/advance_time_unit"]["post"]
+    update:
+      x-speakeasy-name-override: advanceTimeUnit
+    x-speakeasy-metadata:
+      after: sdk.system.advanceTimeUnit()
+      before: sdk.System.advance_time_unit_api_v1_system_advance_time_unit_post()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/schedules"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.schedules.create()
+      before: sdk.Schedules.create_schedule_api_v1_schedules_post()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
+  - target: $["paths"]["/api/v1/workitems/{work_item_id}/tasks/{task_id}"]["put"]
+    update:
+      x-speakeasy-group: workItems
+      x-speakeasy-name-override: updateTask
+    x-speakeasy-metadata:
+      after: sdk.workItems.updateTask()
+      before: sdk.Work Items.update_work_item_task_api_v1_workitems__work_item_id__tasks__task_id__put()
+      created_at: 1753455389855
+      reviewed_at: 1753455464299
+      type: method-name
