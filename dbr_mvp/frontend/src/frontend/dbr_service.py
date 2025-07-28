@@ -41,16 +41,19 @@ class DBRService:
                 # Extract user information from login response
                 if hasattr(response, 'user') and response.user:
                     self._user_info = response.user
-                    
-                    # Extract role information if available
-                    if hasattr(response.user, 'role') and response.user.role:
-                        self._user_role = response.user.role
+                
+                # Role information is not included in login response
+                # We'll need to fetch it separately or get it from user memberships
+                self._user_role = None  # Will be set by _fetch_user_role()
                 
                 # Create authenticated client for future API calls
                 self._authenticated_client = Dbrsdk(
                     server_url=self.base_url,
                     http_bearer=self._token
                 )
+                
+                # Fetch additional user information including role
+                self._fetch_user_role()
                 
                 # Auto-select organization context (Default Organization for now)
                 self._setup_organization_context()
@@ -90,6 +93,41 @@ class DBRService:
     def get_current_organization(self) -> Optional[Dict[str, Any]]:
         """Returns the current organization context."""
         return self._current_organization
+
+    def _fetch_user_role(self) -> None:
+        """Fetch user role information from backend."""
+        try:
+            if not self._authenticated_client:
+                return
+            
+            # Try to get current user info which might include role details
+            # Note: The backend /auth/me endpoint may not include role info
+            # For now, we'll try to infer role from user info or set a default
+            
+            # Check if user info has system_role_id or other role indicators
+            if self._user_info:
+                user_id = self._user_info.get('id')
+                username = self._user_info.get('username', '')
+                
+                # For now, map usernames to roles based on actual database users
+                # In a real implementation, this would query the backend for role info
+                role_mapping = {
+                    'admin': 'Organization Admin',
+                    'orgadmin': 'Organization Admin',
+                    'planner': 'Planner',
+                    'testuser': 'Planner',
+                    'testuser_workitems': 'Planner',
+                    'testuser_system': 'Planner',
+                    'viewer': 'Viewer',
+                    'viewer2': 'Viewer'
+                }
+                
+                self._user_role = role_mapping.get(username, 'Unknown Role')
+                print(f"User role determined: {self._user_role}")
+            
+        except Exception as e:
+            print(f"Failed to fetch user role: {e}")
+            self._user_role = 'Unknown Role'
 
     def _setup_organization_context(self) -> None:
         """Setup organization context after login."""

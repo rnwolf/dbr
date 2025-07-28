@@ -5,7 +5,7 @@ Main application entry point.
 import customtkinter as ctk
 from frontend.main_window import MainWindow
 from frontend.backend_config_dialog import BackendConfigDialog
-from frontend.dbr_service import DBRService
+from frontend.authentication_ui import AuthenticationManager
 from utils.config import AppConfig
 
 
@@ -20,12 +20,16 @@ def main():
     backend_url = config_dialog.get_url()
 
     if backend_url:
-        # Initialize DBR Service and perform health check
-        dbr_service = DBRService(backend_url)
-        if dbr_service.health_check():
-            # Create and run application
-            app = MainWindow()
+        # Run authentication workflow
+        auth_manager = AuthenticationManager(backend_url)
+        authenticated_service = auth_manager.authenticate()
+        
+        if authenticated_service:
+            # Create and run application with authenticated service
+            app = MainWindow(authenticated_service)
             app.run()
+        else:
+            print("Authentication cancelled or failed. Exiting application.")
 
 
 if __name__ == "__main__":

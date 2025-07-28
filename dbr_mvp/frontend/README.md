@@ -9,6 +9,7 @@ This is a **modern, scalable Python GUI application template** built with Custom
 `uv sync`
 `uv pip install -e .`
 `./venv/bin/app` or `.venv\Scripts\app.exe`
+`uv run python src/main.py`
 
 ## Key Features
 
