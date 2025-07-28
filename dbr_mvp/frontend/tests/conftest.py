@@ -11,7 +11,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 @pytest.fixture(autouse=True)
 def mock_dbrsdk():
     """Mock the entire dbrsdk to prevent import errors and isolate the frontend."""
-    with patch.dict('sys.modules', {'dbrsdk': MagicMock()}) as mock:
+    with patch.dict('sys.modules', {
+        'dbrsdk': MagicMock(),
+        'dbrsdk.models': MagicMock(),
+    }) as mock:
         yield mock
 
 @pytest.fixture

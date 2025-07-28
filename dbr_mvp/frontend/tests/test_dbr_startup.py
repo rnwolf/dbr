@@ -50,22 +50,17 @@ class TestDbrStartup:
     @patch('main.MainWindow')
     @patch('main.BackendConfigDialog')
     @patch('main.DBRService')
-    def test_startup_sequence_shows_config_dialog(self, mock_dbr_service, mock_backend_dialog, mock_main_window):
-        """
-        Tests that the main application entry point shows the backend config dialog
-        and, upon successful configuration, launches the main window.
-        """
+    def test_startup_sequence_and_health_check(self, mock_dbr_service, mock_backend_dialog, mock_main_window):
+        """Tests the startup sequence including the health check."""
         import main as app_main
 
-        # Mock the dialog to simulate a successful configuration
+        # Arrange
         mock_dialog_instance = mock_backend_dialog.return_value
         mock_dialog_instance.get_url.return_value = "http://127.0.0.1:8000"
 
-        # Mock the service to simulate a successful health check
         mock_service_instance = mock_dbr_service.return_value
         mock_service_instance.health_check.return_value = True
 
-        # To make main() testable without blocking, we'll patch the run method
         mock_main_window.return_value.run = Mock()
 
         # Act
@@ -77,25 +72,3 @@ class TestDbrStartup:
         mock_service_instance.health_check.assert_called_once()
         mock_main_window.assert_called_once()
         mock_main_window.return_value.run.assert_called_once()
-
-    @patch('main.MainWindow')
-    @patch('main.BackendConfigDialog')
-    @patch('main.DBRService')
-    def test_health_check_after_config(self, mock_dbr_service, mock_backend_dialog, mock_main_window):
-        """Tests that a health check is performed after URL configuration."""
-        import main as app_main
-
-        # Arrange: Mock the dialog and service layer
-        mock_dialog_instance = mock_backend_dialog.return_value
-        mock_dialog_instance.get_url.return_value = "http://127.0.0.1:8000"
-
-        mock_service_instance = mock_dbr_service.return_value
-        mock_service_instance.health_check.return_value = True
-
-        # Act
-        app_main.main()
-
-        # Assert
-        mock_dbr_service.assert_called_once_with("http://127.0.0.1:8000")
-        mock_service_instance.health_check.assert_called_once()
-        mock_main_window.assert_called_once()

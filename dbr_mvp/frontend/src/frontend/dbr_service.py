@@ -14,14 +14,11 @@ class DBRService:
     def health_check(self) -> bool:
         """Performs a health check against the backend using the SDK."""
         try:
-            # Assuming the health check endpoint is under an 'api_health' group in the SDK
-            response = self.client.api_health.get()
-            # The actual response structure will depend on the OpenAPI spec.
-            # We'll assume a simple successful status for now.
-            if response and getattr(response, 'status', None) == 'ok':
+            response = self.client.health.get()
+            if isinstance(response, dict) and response.get('status') == 'healthy':
                 print("Backend health check successful.")
                 return True
-            print("Backend health check failed: Invalid response.")
+            print(f"Backend health check failed: Invalid response: {response}")
             return False
         except Exception as e:
             print(f"Backend health check failed: {e}")
@@ -32,7 +29,7 @@ class DBRService:
         try:
             login_request = LoginRequest(username=username, password=password)
             response = self.client.authentication.login(login_request)
-            if response and response.access_token:
+            if response and hasattr(response, 'access_token') and response.access_token:
                 self._token = response.access_token
                 return True
             return False
