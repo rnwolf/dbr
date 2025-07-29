@@ -266,10 +266,10 @@ class LoginDialog(ctk.CTkToplevel):
     def get_test_user_hints(self) -> List[Dict[str, str]]:
         """Get test user credential hints based on actual database users."""
         return [
-            {"username": "admin", "password": "admin123", "role": "Organization Admin"},
+            {"username": "admin", "password": "admin123", "role": "Super Admin"},
             {"username": "orgadmin", "password": "orgadmin123", "role": "Organization Admin"},
             {"username": "planner", "password": "planner123", "role": "Planner"},
-            {"username": "testuser", "password": "testpassword123", "role": "Planner"},
+            {"username": "testuser", "password": "testpassword123", "role": "Organization Admin"},
             {"username": "viewer2", "password": "viewer123", "role": "Viewer"},
         ]
 
