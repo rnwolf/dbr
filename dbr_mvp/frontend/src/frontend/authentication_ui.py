@@ -38,6 +38,9 @@ class LoginDialog(ctk.CTkToplevel):
         self.title("DBR Login - Buffer Management System")
         self.geometry("450x600")
         self.resizable(False, False)
+        
+        # Ensure proper window title
+        self.wm_title("DBR Login - Buffer Management System")
 
     def _center_dialog(self) -> None:
         """Center the dialog on screen."""
@@ -333,6 +336,23 @@ class AuthenticationManager:
         try:
             # Create and show login dialog
             dialog = LoginDialog(None, self.backend_url)
+            dialog.wait_window()  # Wait for dialog to close
+            
+            # Return authenticated service if login was successful
+            if dialog.result:
+                return dialog.result
+            else:
+                return None
+                
+        except Exception as e:
+            messagebox.showerror("Authentication Error", f"Authentication failed: {str(e)}")
+            return None
+
+    def authenticate_with_parent(self, parent) -> Optional[DBRService]:
+        """Run authentication workflow with a specific parent window."""
+        try:
+            # Create and show login dialog with parent
+            dialog = LoginDialog(parent, self.backend_url)
             dialog.wait_window()  # Wait for dialog to close
             
             # Return authenticated service if login was successful

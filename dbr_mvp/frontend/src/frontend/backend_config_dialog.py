@@ -8,9 +8,13 @@ class BackendConfigDialog(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.title("Backend Configuration")
+        self.title("DBR Backend Configuration")
         self.geometry("400x200")
         self.url = None
+        
+        # If no parent, set this as the main window temporarily
+        if parent is None:
+            self.wm_title("DBR Backend Configuration")
 
         self.label = ctk.CTkLabel(self, text="Enter Backend URL:")
         self.label.pack(pady=20)

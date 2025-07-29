@@ -3,6 +3,7 @@
 Main application entry point.
 """
 import customtkinter as ctk
+import tkinter as tk
 from frontend.main_window import MainWindow
 from frontend.backend_config_dialog import BackendConfigDialog
 from frontend.authentication_ui import AuthenticationManager
@@ -15,21 +16,40 @@ def main():
     ctk.set_appearance_mode(AppConfig.APPEARANCE_MODE)
     ctk.set_default_color_theme(AppConfig.COLOR_THEME)
 
-    # Get backend URL from user
-    config_dialog = BackendConfigDialog(None)
-    backend_url = config_dialog.get_url()
+    # Create and hide the root window to prevent "tk" window
+    root = tk.Tk()
+    root.title("DBR Buffer Management System")
+    root.withdraw()  # Hide the root window
+    
+    try:
+        # Get backend URL from user first
+        config_dialog = BackendConfigDialog(None)
+        backend_url = config_dialog.get_url()
 
-    if backend_url:
-        # Run authentication workflow
-        auth_manager = AuthenticationManager(backend_url)
-        authenticated_service = auth_manager.authenticate()
-        
-        if authenticated_service:
-            # Create and run application with authenticated service
-            app = MainWindow(authenticated_service)
-            app.run()
+        if backend_url:
+            # Run authentication workflow
+            auth_manager = AuthenticationManager(backend_url)
+            authenticated_service = auth_manager.authenticate()
+            
+            if authenticated_service:
+                # Destroy the hidden root window
+                root.destroy()
+                
+                # Create and run the main application
+                app = MainWindow(authenticated_service)
+                app.run()
+            else:
+                print("Authentication cancelled or failed. Exiting application.")
+                root.destroy()
         else:
-            print("Authentication cancelled or failed. Exiting application.")
+            print("Backend configuration cancelled. Exiting application.")
+            root.destroy()
+    except Exception as e:
+        print(f"Application error: {e}")
+        try:
+            root.destroy()
+        except:
+            pass
 
 
 if __name__ == "__main__":
