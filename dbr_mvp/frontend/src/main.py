@@ -32,22 +32,34 @@ def main():
             authenticated_service = auth_manager.authenticate()
             
             if authenticated_service:
-                # Destroy the hidden root window
-                root.destroy()
+                # Don't destroy root - let MainWindow handle it
+                # The MainWindow will create its own window and the root will be unused
                 
                 # Create and run the main application
                 app = MainWindow(authenticated_service)
                 app.run()
+                
+                # Clean up the hidden root after main app closes
+                try:
+                    if root.winfo_exists():
+                        root.quit()
+                        root.destroy()
+                except:
+                    pass
             else:
                 print("Authentication cancelled or failed. Exiting application.")
+                root.quit()
                 root.destroy()
         else:
             print("Backend configuration cancelled. Exiting application.")
+            root.quit()
             root.destroy()
     except Exception as e:
         print(f"Application error: {e}")
         try:
-            root.destroy()
+            if root.winfo_exists():
+                root.quit()
+                root.destroy()
         except:
             pass
 
