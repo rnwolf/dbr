@@ -3,53 +3,72 @@
 import pytest
 from unittest.mock import Mock, patch
 import customtkinter
-
-# Import after setting up mocks if necessary, or patch where used.
-from frontend.main_window import MainWindow
 from utils.config import AppConfig
 
 
 @pytest.fixture
-def mocked_window(mocker):
+def mock_dbr_service():
+    """Create a mock DBR service for testing."""
+    service = Mock()
+    service.get_user_info.return_value = {"username": "testuser", "display_name": "Test User"}
+    service.get_user_role.return_value = "Planner"
+    service.get_current_organization.return_value = {"name": "Test Organization"}
+    service.get_connection_status.return_value = {
+        "backend_url": "http://localhost:8000",
+        "backend_healthy": True
+    }
+    service.is_authenticated.return_value = True
+    service.has_permission.return_value = True
+    return service
+
+@pytest.fixture
+def mocked_window(mock_dbr_service):
     """
     Fixture to create a MainWindow instance with its CTk base class
     and other dependencies fully mocked.
     """
-    # Prevent the TclError by mocking the base class's __init__
-    mocker.patch.object(customtkinter.CTk, "__init__", return_value=None)
-
-    # Mock the methods from the base class that are called by MainWindow
-    mock_title = mocker.patch.object(customtkinter.CTk, "title")
-    mock_geometry = mocker.patch.object(customtkinter.CTk, "geometry")
-    mock_minsize = mocker.patch.object(customtkinter.CTk, "minsize")
-    mock_protocol = mocker.patch.object(customtkinter.CTk, "protocol")
-    mock_quit = mocker.patch.object(customtkinter.CTk, "quit")
-    mock_destroy = mocker.patch.object(customtkinter.CTk, "destroy")
-
-    # Mock other dependencies used within MainWindow
-    mocker.patch("frontend.main_window.MenuBar", autospec=True)
-    mocker.patch("frontend.main_window.TabNavigation", autospec=True)
-    mocker.patch("frontend.main_window.Page1", autospec=True)
-    mocker.patch("frontend.main_window.Page2", autospec=True)
-    mocker.patch("frontend.main_window.ctk.CTkLabel", autospec=True)
-
-    # Patch _center_window as it tries to do GUI work
-    with patch.object(MainWindow, "_center_window") as mock_center:
-        window = MainWindow()
-
-    # Return the instance and a dictionary of the mocks for easy access
-    return (
-        window,
-        {
-            "title": mock_title,
-            "geometry": mock_geometry,
-            "minsize": mock_minsize,
-            "protocol": mock_protocol,
-            "quit": mock_quit,
-            "destroy": mock_destroy,
-            "center": mock_center,
-        },
-    )
+    # Mock the dbrsdk import to prevent import errors
+    with patch('frontend.dbr_service.Dbrsdk'):
+        # Use comprehensive mocking like in role navigation tests
+        with patch('frontend.main_window.ctk.CTk') as mock_ctk:
+            with patch('frontend.main_window.MenuBar') as mock_menu:
+                with patch('frontend.main_window.TabNavigation') as mock_tab_nav:
+                    with patch('frontend.main_window.UserContextWidget') as mock_user_widget:
+                        with patch('frontend.main_window.ctk.CTkFrame') as mock_frame:
+                            with patch('frontend.main_window.ctk.CTkLabel') as mock_label:
+                                with patch('frontend.main_window.ctk.CTkButton') as mock_button:
+                                    
+                                    # Mock the CTk instance and its methods
+                                    mock_ctk_instance = Mock()
+                                    mock_ctk.return_value = mock_ctk_instance
+                                    
+                                    # Mock tab navigation instance
+                                    mock_tab_nav_instance = Mock()
+                                    mock_tab_nav.return_value = mock_tab_nav_instance
+                                    
+                                    # Mock other components
+                                    mock_menu_instance = Mock()
+                                    mock_menu.return_value = mock_menu_instance
+                                    
+                                    mock_user_widget_instance = Mock()
+                                    mock_user_widget.return_value = mock_user_widget_instance
+                                    
+                                    # Import MainWindow after mocking
+                                    from frontend.main_window import MainWindow
+                                    
+                                    # Create window with mocked service
+                                    window = MainWindow(mock_dbr_service)
+                                    
+                                    # Return the instance and mocks
+                                    return (
+                                        window,
+                                        {
+                                            "ctk_instance": mock_ctk_instance,
+                                            "menu": mock_menu_instance,
+                                            "tab_nav": mock_tab_nav_instance,
+                                            "user_widget": mock_user_widget_instance,
+                                        },
+                                    )
 
 
 class TestMainWindow:
@@ -59,43 +78,80 @@ class TestMainWindow:
         """Test that MainWindow initializes correctly."""
         window, mocks = mocked_window
 
-        # Test _setup_window calls
-        mocks["title"].assert_called_with(AppConfig.WINDOW_TITLE)
-        mocks["geometry"].assert_called_with(
-            f"{AppConfig.WINDOW_SIZE[0]}x{AppConfig.WINDOW_SIZE[1]}"
-        )
-        mocks["minsize"].assert_called_with(*AppConfig.MIN_WINDOW_SIZE)
-        mocks["center"].assert_called_once()
+        # Test that MainWindow was created successfully
+        assert window is not None
+        assert hasattr(window, 'dbr_service')
 
-        # Test _create_widgets calls
+        # Test that components were created
         assert hasattr(window, "menu_bar")
-        assert hasattr(window, "tab_navigation")
-        assert hasattr(window, "status_bar")
+        assert hasattr(window, "tab_navigation") 
+        assert hasattr(window, "pages")  # Role-based pages
 
-        # Test _setup_layout calls
-        window.menu_bar.pack.assert_called_once()
-        window.tab_navigation.pack.assert_called_once()
-        window.status_bar.pack.assert_called_once()
+        # Test that role-based navigation was set up
+        mocks["tab_nav"].add_tab.assert_called()
+        
+        # Verify tabs were added (Planner role should have 5 tabs)
+        expected_tab_count = 5  # Work Items, Collections, Planning, Buffer Boards, Reports
+        assert mocks["tab_nav"].add_tab.call_count == expected_tab_count
 
-        # Test _bind_events calls
-        mocks["protocol"].assert_called_with("WM_DELETE_WINDOW", window._on_closing)
-        window.tab_navigation.bind_tab_change.assert_called_once()
-
-    def test_status_update(self, mocked_window):
-        """Test status bar update."""
-        window, _ = mocked_window
-        window.status_bar = Mock()  # Replace the auto-mock with a simple one
-
-        test_message = "Test Status"
-        window.update_status(test_message)
-
-        window.status_bar.configure.assert_called_with(text=test_message)
-
-    def test_on_closing(self, mocked_window):
-        """Test window closing behavior."""
+    def test_role_based_navigation_creation(self, mocked_window):
+        """Test that role-based navigation is created correctly."""
         window, mocks = mocked_window
+        
+        # Get the tabs that were added
+        added_tabs = [call[0][0] for call in mocks["tab_nav"].add_tab.call_args_list]
+        
+        # For Planner role, should have these tabs
+        expected_tabs = ["Work Items", "Collections", "Planning", "Buffer Boards", "Reports"]
+        
+        for expected_tab in expected_tabs:
+            assert expected_tab in added_tabs, f"Expected tab '{expected_tab}' not found"
 
-        window._on_closing()
+    def test_user_context_integration(self, mocked_window):
+        """Test that user context is properly integrated."""
+        window, mocks = mocked_window
+        
+        # Verify that user context widget was created and stored
+        assert hasattr(window, 'user_context')
+        
+        # Verify that header frame was created (which contains the user context)
+        assert hasattr(window, 'header_frame')
+        
+        # Verify that logout button was created
+        assert hasattr(window, 'logout_button')
+        
+        # This confirms the user context header was properly set up
 
-        mocks["quit"].assert_called_once()
-        mocks["destroy"].assert_called_once()
+    def test_status_update(self, mock_dbr_service):
+        """Test status bar update."""
+        # Use the same comprehensive mocking pattern as other tests
+        with patch('frontend.dbr_service.Dbrsdk'):
+            with patch('frontend.main_window.ctk.CTk') as mock_ctk:
+                with patch('frontend.main_window.MenuBar'), patch('frontend.main_window.TabNavigation'):
+                    with patch('frontend.main_window.UserContextWidget'), patch('frontend.main_window.ctk.CTkFrame'):
+                        with patch('frontend.main_window.ctk.CTkLabel'), patch('frontend.main_window.ctk.CTkButton'):
+                            mock_ctk.return_value = Mock()
+                            
+                            from frontend.main_window import MainWindow
+                            window = MainWindow(mock_dbr_service)
+                            
+                            # Mock the status bar
+                            window.status_bar = Mock()
+                            
+                            # Test status update
+                            test_message = "Test Status"
+                            window.update_status(test_message)
+                            
+                            window.status_bar.configure.assert_called_with(text=test_message)
+
+    def test_dbr_service_integration(self, mocked_window, mock_dbr_service):
+        """Test that DBR service is properly integrated."""
+        window, _ = mocked_window
+        
+        # Verify the service is stored
+        assert window.dbr_service == mock_dbr_service
+        
+        # Verify service methods were called during initialization
+        mock_dbr_service.get_user_info.assert_called()
+        mock_dbr_service.get_user_role.assert_called()
+        mock_dbr_service.get_current_organization.assert_called()

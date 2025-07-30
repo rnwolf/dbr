@@ -167,8 +167,9 @@ class TestUserContextDisplay:
 class TestAuthenticationFlow:
     """Test cases for complete authentication flow."""
 
+    @patch('frontend.authentication_ui.LoginDialog')
     @patch('frontend.authentication_ui.DBRService')
-    def test_complete_authentication_workflow(self, mock_dbr_service):
+    def test_complete_authentication_workflow(self, mock_dbr_service, mock_login_dialog):
         """Test complete authentication process from login to main window."""
         # Import after patching to avoid import issues
         from frontend.authentication_ui import AuthenticationManager
@@ -184,6 +185,11 @@ class TestAuthenticationFlow:
         mock_service_instance.get_current_organization.return_value = {
             "name": "Default Organization"
         }
+        
+        # Mock the login dialog to return the service without user interaction
+        mock_dialog_instance = mock_login_dialog.return_value
+        mock_dialog_instance.result = mock_service_instance
+        mock_dialog_instance.wait_window = lambda: None  # Don't actually wait
         
         # Act
         auth_manager = AuthenticationManager("http://localhost:8000")
