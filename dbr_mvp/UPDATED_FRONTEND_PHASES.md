@@ -22,7 +22,7 @@
 ✅ **Step 5.1 Complete**: DBR Application Bootstrap & Startup Sequence (DONE)
 ✅ **Step 5.2 Complete**: DBR Service Layer with SDK Integration (DONE)
 ✅ **Step 5.3 Complete**: Authentication UI with Test User Integration (DONE)
-❌ **Step 5.4 Pending**: Role-Based Navigation with Test User Validation
+✅ **Step 5.4 Complete**: Role-Based Navigation with Test User Validation (DONE)
 
 ### DBR Organization Admin Workflow (Refined)
 
@@ -309,10 +309,12 @@ Phase 5 establishes the foundation for Phase 6 (Organization Setup Workflow) by 
 - Complete test environment with 5 user roles and Default Organization
 - Enhanced backend logging for debugging setup workflows
 
+**Phase 5 is now complete.**
+
 ---
 
 ## Phase 6: Organization Setup Workflow (Days 17-19)
-*[Phases 6-8 to be detailed after Phase 5 implementation]*
+**MVP Approach for User Management**: For the MVP, "inviting" a user will mean an administrator directly creates the user and sets a temporary password. The administrator will be responsible for communicating these credentials to the user out-of-band (e.g., via a separate email or message). Full email integration for invitations and password resets will be deferred to Phase 9.
 
 ### Day 6A: User Management Setup (4 hours)
 #### Step 6.1: User Invitation & Role Assignment Interface (2 hours)
@@ -770,3 +772,32 @@ def test_data_consistency():
 - Performance and error handling validation
 
 This updated plan leverages the completed backend and aligns with the detailed Buffer Board Components specification while maintaining the TDD approach throughout.
+
+---
+
+## Phase 9: Production Hardening & Advanced Features (Post-MVP)
+
+### Day 9A: Email Integration & User Self-Service (Est. 2-3 Days)
+
+#### Step 9.1: Email Service Integration
+**Objective**: Integrate a transactional email service (e.g., SendGrid, Mailgun) into the backend.
+- **Tasks**:
+  - Configure email service provider.
+  - Create an email sending utility in the backend.
+  - Add API endpoints for sending templated emails.
+
+#### Step 9.2: User Invitation Flow
+**Objective**: Replace the manual user creation with a secure, email-based invitation system.
+- **Tasks**:
+  - Generate secure, single-use invitation tokens.
+  - Create an "Invite User" email template.
+  - Build a public-facing page for new users to accept invites and set their password.
+  - Update the Org Admin UI to send email invitations.
+
+#### Step 9.3: Password Reset Flow
+**Objective**: Implement a self-service password reset feature.
+- **Tasks**:
+  - Create a "Forgot Password" feature on the login screen.
+  - Generate secure password reset tokens.
+  - Create a password reset email template.
+  - Build a public-facing page for users to set a new password.
