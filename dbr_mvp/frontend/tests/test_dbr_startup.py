@@ -41,8 +41,8 @@ def mocked_window(mocker):
         "frontend.main_window.TabNavigation", autospec=True
     )
     mock_tab_navigation.return_value.content_frame = mocker.Mock()
-    mocker.patch("frontend.main_window.Page1", autospec=True)
-    mocker.patch("frontend.main_window.Page2", autospec=True)
+    # Note: Page1 and Page2 are not imported in main_window.py
+    # The main window creates placeholder pages dynamically
     mocker.patch("frontend.main_window.ctk.CTkLabel", autospec=True)
     mocker.patch("frontend.main_window.ctk.CTkFrame", autospec=True)
     mocker.patch("frontend.main_window.ctk.CTkButton", autospec=True)

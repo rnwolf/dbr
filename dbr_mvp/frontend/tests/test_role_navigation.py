@@ -31,7 +31,7 @@ class TestRoleBasedNavigation:
         )
 
         # Import and patch the MainWindow class
-        with patch("frontend.main_window.ctk.CTk"), patch("frontend.main_window.MenuBar"), patch("frontend.main_window.TabNavigation") as mock_tab_nav, patch("frontend.main_window.UserContextWidget"), patch("frontend.main_window.ctk.CTkFrame"), patch("frontend.main_window.ctk.CTkLabel"), patch("frontend.main_window.ctk.CTkButton"):
+        with patch("frontend.main_window.ctk.CTk") as mock_ctk, patch("frontend.main_window.MenuBar"), patch("frontend.main_window.TabNavigation") as mock_tab_nav, patch("frontend.main_window.UserContextWidget"), patch("frontend.main_window.ctk.CTkFrame"), patch("frontend.main_window.ctk.CTkLabel"), patch("frontend.main_window.ctk.CTkButton"):
                                     # Mock the CTk instance
                                     mock_ctk_instance = Mock()
                                     mock_ctk.return_value = mock_ctk_instance
@@ -93,7 +93,7 @@ class TestRoleBasedNavigation:
         ]
 
         # Import and patch the MainWindow class
-        with patch("frontend.main_window.ctk.CTk"), patch("frontend.main_window.MenuBar"), patch("frontend.main_window.TabNavigation") as mock_tab_nav, patch("frontend.main_window.UserContextWidget"), patch("frontend.main_window.ctk.CTkFrame"), patch("frontend.main_window.ctk.CTkLabel"), patch("frontend.main_window.ctk.CTkButton"):
+        with patch("frontend.main_window.ctk.CTk") as mock_ctk, patch("frontend.main_window.MenuBar"), patch("frontend.main_window.TabNavigation") as mock_tab_nav, patch("frontend.main_window.UserContextWidget"), patch("frontend.main_window.ctk.CTkFrame"), patch("frontend.main_window.ctk.CTkLabel"), patch("frontend.main_window.ctk.CTkButton"):
                                     # Mock instances
                                     mock_ctk_instance = Mock()
                                     mock_ctk.return_value = mock_ctk_instance

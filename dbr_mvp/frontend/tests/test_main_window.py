@@ -32,7 +32,7 @@ class TestMainWindow:
         """Test that MainWindow initializes correctly."""
         from frontend.main_window import MainWindow
 
-        MainWindow(mock_dbr_service)
+        window = MainWindow(mock_dbr_service)
 
         assert window is not None
         assert window.dbr_service is mock_dbr_service
@@ -75,7 +75,7 @@ class TestMainWindow:
         """Test that user context is properly integrated."""
         from frontend.main_window import MainWindow
 
-        MainWindow(mock_dbr_service)
+        window = MainWindow(mock_dbr_service)
 
         assert hasattr(window, "user_context")
         assert hasattr(window, "header_frame")
@@ -86,7 +86,7 @@ class TestMainWindow:
         """Test status bar update."""
         from frontend.main_window import MainWindow
 
-        MainWindow(mock_dbr_service)
+        window = MainWindow(mock_dbr_service)
 
         mock_status_label = window.status_bar
 
@@ -101,7 +101,7 @@ class TestMainWindow:
         """Test that DBR service is properly integrated."""
         from frontend.main_window import MainWindow
 
-        MainWindow(mock_dbr_service)
+        window = MainWindow(mock_dbr_service)
 
         assert window.dbr_service is mock_dbr_service
 
