@@ -8,6 +8,7 @@ dependencies = [
     "customtkinter>=5.2.0",
     "dbrsdk",
     "pillow>=10.0.0",
+    "pytest>=8.4.1",
     "tk>=0.1.0",
 ]
 

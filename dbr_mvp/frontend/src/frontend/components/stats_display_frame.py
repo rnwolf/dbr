@@ -1,6 +1,7 @@
 """
 Component for displaying real-time statistics from the grid.
 """
+
 from collections import Counter
 from typing import Dict
 

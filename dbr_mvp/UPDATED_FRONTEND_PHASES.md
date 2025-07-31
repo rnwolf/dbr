@@ -318,6 +318,43 @@ Phase 5 establishes the foundation for Phase 6 (Organization Setup Workflow) by 
 
 ### Day 6A: User Management Setup (4 hours)
 #### Step 6.1: User Invitation & Role Assignment Interface (2 hours)
+**Objective**: Create an interface for Org Admins to create new users and assign roles.
+
+**TDD Cycle:**
+```python
+# tests/test_user_management.py
+def test_user_creation_form_display():
+    """Test that the user creation form displays correctly."""
+    # Test: Form has fields for username, password, and role.
+    # Test: Role dropdown is populated with available roles.
+    # Test: "Create User" button is present.
+
+def test_user_creation_success():
+    """Test successful user creation."""
+    # Test: Calling the create_user method on the DBR service.
+    # Test: A success message is displayed.
+    # Test: The user list is refreshed.
+
+def test_user_creation_validation():
+    """Test form validation for user creation."""
+    # Test: Username is required.
+    # Test: Password is required and meets complexity rules.
+    # Test: Role is required.
+
+def test_user_creation_api_error():
+    """Test handling of API errors during user creation."""
+    # Test: An error message is displayed if the API call fails.
+    # Test: The form is not cleared on failure.
+```
+
+**Implementation Tasks:**
+- Create a `UserManagementPage` that will be shown in the "Setup" tab.
+- Design a `CreateUserDialog` with fields for username, temporary password, and role selection.
+- Populate the role selection dropdown with the available roles (excluding Super Admin for Org Admins).
+- Implement form validation for all fields.
+- Connect the "Create User" button to the `dbr_service.create_user` method.
+- Display appropriate success or error messages to the user.
+- Refresh the user list upon successful creation.
 #### Step 6.2: Organization Membership Management (2 hours)
 
 ### Day 6B: CCR & Time Unit Configuration (4 hours)  

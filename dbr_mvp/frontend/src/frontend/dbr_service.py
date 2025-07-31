@@ -1,6 +1,6 @@
 """Service layer for interacting with the DBR backend."""
 
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 from dbrsdk import Dbrsdk
 
 
@@ -21,7 +21,7 @@ class DBRService:
         """Performs a health check against the backend using the SDK."""
         try:
             response = self.client.health.get()
-            if isinstance(response, dict) and response.get('status') == 'healthy':
+            if isinstance(response, dict) and response.get("status") == "healthy":
                 print("Backend health check successful.")
                 return True
             print(f"Backend health check failed: Invalid response: {response}")
@@ -33,31 +33,32 @@ class DBRService:
     def login(self, username: str, password: str) -> bool:
         """Logs in the user and stores authentication context."""
         try:
-            response = self.client.authentication.login(username=username, password=password)
-            
-            if response and hasattr(response, 'access_token') and response.access_token:
+            response = self.client.authentication.login(
+                username=username, password=password
+            )
+
+            if response and hasattr(response, "access_token") and response.access_token:
                 self._token = response.access_token
-                
+
                 # Extract user information from login response
-                if hasattr(response, 'user') and response.user:
+                if hasattr(response, "user") and response.user:
                     self._user_info = response.user
-                
+
                 # Role information is not included in login response
                 # We'll need to fetch it separately or get it from user memberships
                 self._user_role = None  # Will be set by _fetch_user_role()
-                
+
                 # Create authenticated client for future API calls
                 self._authenticated_client = Dbrsdk(
-                    server_url=self.base_url,
-                    http_bearer=self._token
+                    server_url=self.base_url, http_bearer=self._token
                 )
-                
+
                 # Fetch additional user information including role
                 self._fetch_user_role()
-                
+
                 # Auto-select organization context (Default Organization for now)
                 self._setup_organization_context()
-                
+
                 print(f"Login successful for user: {username}")
                 return True
             return False
@@ -99,56 +100,60 @@ class DBRService:
         try:
             if not self._authenticated_client:
                 return
-            
+
             # Check if user info has role information directly
             if self._user_info:
                 # First try to get role from user info if available
-                if hasattr(self._user_info, 'role') and self._user_info.role:
+                if hasattr(self._user_info, "role") and self._user_info.role:
                     self._user_role = self._user_info.role
                     print(f"User role from login response: {self._user_role}")
                     return
-                elif isinstance(self._user_info, dict) and 'role' in self._user_info:
-                    self._user_role = self._user_info['role']
+                elif isinstance(self._user_info, dict) and "role" in self._user_info:
+                    self._user_role = self._user_info["role"]
                     print(f"User role from login response: {self._user_role}")
                     return
-                
+
                 # Fallback: map usernames to roles based on actual database users
                 # In a real implementation, this would query the backend for role info
-                username = self._user_info.get('username', '') if isinstance(self._user_info, dict) else getattr(self._user_info, 'username', '')
-                
+                username = (
+                    self._user_info.get("username", "")
+                    if isinstance(self._user_info, dict)
+                    else getattr(self._user_info, "username", "")
+                )
+
                 role_mapping = {
-                    'admin': 'Super Admin',
-                    'orgadmin': 'Org Admin', 
-                    'planner': 'Planner',
-                    'testuser': 'Org Admin',  # Based on test expectations
-                    'testuser_workitems': 'Planner',
-                    'testuser_system': 'Planner',
-                    'viewer': 'Viewer',
-                    'viewer2': 'Viewer'
+                    "admin": "Super Admin",
+                    "orgadmin": "Org Admin",
+                    "planner": "Planner",
+                    "testuser": "Org Admin",  # Based on test expectations
+                    "testuser_workitems": "Planner",
+                    "testuser_system": "Planner",
+                    "viewer": "Viewer",
+                    "viewer2": "Viewer",
                 }
-                
-                self._user_role = role_mapping.get(username, 'Unknown Role')
+
+                self._user_role = role_mapping.get(username, "Unknown Role")
                 print(f"User role determined from username mapping: {self._user_role}")
-            
+
         except Exception as e:
             print(f"Failed to fetch user role: {e}")
-            self._user_role = 'Unknown Role'
+            self._user_role = "Unknown Role"
 
     def _setup_organization_context(self) -> None:
         """Setup organization context after login."""
         try:
             if not self._authenticated_client:
                 return
-                
+
             # For now, assume single organization (Default Organization)
             # In future, this could query user's organizations and allow selection
             self._current_organization = {
                 "id": "default-org-id",
                 "name": "Default Organization",
-                "auto_selected": True
+                "auto_selected": True,
             }
             print(f"Organization context set to: {self._current_organization['name']}")
-            
+
         except Exception as e:
             print(f"Failed to setup organization context: {e}")
 
@@ -156,42 +161,66 @@ class DBRService:
         """Check if current user has specific permission based on role."""
         if not self._user_role:
             return False
-            
+
         # Role-based permission mapping
         role_permissions = {
-            "Super Admin": ["*"],  # All permissions including cross-organization management
+            "Super Admin": [
+                "*"
+            ],  # All permissions including cross-organization management
             "Organization Admin": [
-                "manage_organization", "manage_users", "manage_user_roles", 
-                "invite_users", "manage_ccrs", "manage_schedules", 
-                "manage_work_items", "manage_collections", "view_analytics",
-                "manage_organization_settings"
+                "manage_organization",
+                "manage_users",
+                "manage_user_roles",
+                "invite_users",
+                "manage_ccrs",
+                "manage_schedules",
+                "manage_work_items",
+                "manage_collections",
+                "view_analytics",
+                "manage_organization_settings",
             ],
             "Org Admin": [
-                "manage_organization", "manage_users", "manage_user_roles", 
-                "invite_users", "manage_ccrs", "manage_schedules", 
-                "manage_work_items", "manage_collections", "view_analytics",
-                "manage_organization_settings"
+                "manage_organization",
+                "manage_users",
+                "manage_user_roles",
+                "invite_users",
+                "manage_ccrs",
+                "manage_schedules",
+                "manage_work_items",
+                "manage_collections",
+                "view_analytics",
+                "manage_organization_settings",
             ],
             "Planner": [
-                "manage_schedules", "manage_work_items", "manage_collections", 
-                "view_analytics", "view_users", "view_ccrs"
+                "manage_schedules",
+                "manage_work_items",
+                "manage_collections",
+                "view_analytics",
+                "view_users",
+                "view_ccrs",
             ],
             "Worker": [
-                "update_work_items", "view_schedules", "view_work_items",
-                "view_collections"
+                "update_work_items",
+                "view_schedules",
+                "view_work_items",
+                "view_collections",
             ],
             "Viewer": [
-                "view_schedules", "view_work_items", "view_collections", 
-                "view_analytics", "view_users", "view_ccrs"
-            ]
+                "view_schedules",
+                "view_work_items",
+                "view_collections",
+                "view_analytics",
+                "view_users",
+                "view_ccrs",
+            ],
         }
-        
+
         user_permissions = role_permissions.get(self._user_role, [])
-        
+
         # Super Admin has all permissions
         if "*" in user_permissions:
             return True
-            
+
         return permission in user_permissions
 
     def get_authenticated_client(self) -> Optional[Dbrsdk]:
@@ -207,5 +236,5 @@ class DBRService:
             "user": self._user_info,
             "role": self._user_role,
             "organization": self._current_organization,
-            "token_available": self._token is not None
+            "token_available": self._token is not None,
         }

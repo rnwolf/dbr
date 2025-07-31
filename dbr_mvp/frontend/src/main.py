@@ -2,6 +2,7 @@
 """
 Main application entry point.
 """
+
 import customtkinter as ctk
 import tkinter as tk
 from frontend.main_window import MainWindow
@@ -20,7 +21,7 @@ def main():
     root = tk.Tk()
     root.title("DBR Buffer Management System")
     root.withdraw()  # Hide the root window
-    
+
     try:
         # Get backend URL from user first
         config_dialog = BackendConfigDialog(None)
@@ -30,21 +31,21 @@ def main():
             # Run authentication workflow
             auth_manager = AuthenticationManager(backend_url)
             authenticated_service = auth_manager.authenticate()
-            
+
             if authenticated_service:
                 # Don't destroy root - let MainWindow handle it
                 # The MainWindow will create its own window and the root will be unused
-                
+
                 # Create and run the main application
                 app = MainWindow(authenticated_service)
                 app.run()
-                
+
                 # Clean up the hidden root after main app closes
                 try:
                     if root.winfo_exists():
                         root.quit()
                         root.destroy()
-                except:
+                except Exception:
                     pass
             else:
                 print("Authentication cancelled or failed. Exiting application.")
@@ -60,7 +61,7 @@ def main():
             if root.winfo_exists():
                 root.quit()
                 root.destroy()
-        except:
+        except Exception:
             pass
 
 

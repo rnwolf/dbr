@@ -4,8 +4,6 @@ import customtkinter as ctk
 from typing import Optional
 from .menu_bar import MenuBar
 from .tab_navigation import TabNavigation
-from .pages.page1 import Page1
-from .pages.page2 import Page2
 from .authentication_ui import UserContextWidget
 from .dbr_service import DBRService
 from utils.config import AppConfig
@@ -16,7 +14,7 @@ class MainWindow(ctk.CTk):
 
     def __init__(self, dbr_service: DBRService):
         super().__init__()
-        
+
         self.dbr_service = dbr_service
 
         self._setup_window()
@@ -62,26 +60,26 @@ class MainWindow(ctk.CTk):
     def _create_user_context_header(self) -> None:
         """Create user context display header."""
         self.header_frame = ctk.CTkFrame(self, height=80)
-        
+
         # User context widget
         user_info = self.dbr_service.get_user_info() or {}
         user_role = self.dbr_service.get_user_role()
         org_info = self.dbr_service.get_current_organization() or {}
         org_name = org_info.get("name", "No Organization")
-        
+
         self.user_context = UserContextWidget(
             self.header_frame, user_info, user_role, org_name
         )
-        
+
         # Logout button
         self.logout_button = ctk.CTkButton(
             self.header_frame,
             text="Logout",
             command=self._on_logout,
             width=80,
-            height=30
+            height=30,
         )
-        
+
         # Layout header
         self.user_context.pack(side="left", fill="y", padx=10)
         self.logout_button.pack(side="right", padx=10, pady=25)
@@ -89,10 +87,10 @@ class MainWindow(ctk.CTk):
     def _create_role_based_navigation(self) -> None:
         """Create navigation tabs based on user role and permissions."""
         user_role = self.dbr_service.get_user_role()
-        
+
         # Define role-based tab configuration
         role_tabs = self._get_role_based_tabs(user_role)
-        
+
         # Create placeholder pages for each tab
         self.pages = {}
         for tab_name in role_tabs:
@@ -106,28 +104,31 @@ class MainWindow(ctk.CTk):
         """Get list of tabs based on user role and permissions."""
         if user_role == "Super Admin":
             return [
-                "Organizations", "Users", "System", "Setup", 
-                "Work Items", "Collections", "Planning", 
-                "Buffer Boards", "Reports"
+                "Organizations",
+                "Users",
+                "System",
+                "Setup",
+                "Work Items",
+                "Collections",
+                "Planning",
+                "Buffer Boards",
+                "Reports",
             ]
         elif user_role in ["Organization Admin", "Org Admin"]:
             return [
-                "Setup", "Work Items", "Collections", 
-                "Planning", "Buffer Boards", "Reports"
+                "Setup",
+                "Work Items",
+                "Collections",
+                "Planning",
+                "Buffer Boards",
+                "Reports",
             ]
         elif user_role == "Planner":
-            return [
-                "Work Items", "Collections", "Planning", 
-                "Buffer Boards", "Reports"
-            ]
+            return ["Work Items", "Collections", "Planning", "Buffer Boards", "Reports"]
         elif user_role == "Worker":
-            return [
-                "Work Items", "Buffer Boards", "Reports"
-            ]
+            return ["Work Items", "Buffer Boards", "Reports"]
         elif user_role == "Viewer":
-            return [
-                "Buffer Boards", "Reports"
-            ]
+            return ["Buffer Boards", "Reports"]
         else:
             # Default fallback for unknown roles
             return ["Buffer Boards", "Reports"]
@@ -136,41 +137,39 @@ class MainWindow(ctk.CTk):
         """Create a placeholder page for a tab."""
         # Create a simple frame with the correct parent
         page = ctk.CTkFrame(self.tab_navigation.content_frame)
-        
+
         try:
             # Add simple title
             title_label = ctk.CTkLabel(
-                page, 
-                text=f"{tab_name} Page",
-                font=ctk.CTkFont(size=20, weight="bold")
+                page, text=f"{tab_name} Page", font=ctk.CTkFont(size=20, weight="bold")
             )
             title_label.pack(pady=20)
-            
+
             # Add simple description
             desc_label = ctk.CTkLabel(
                 page,
                 text=f"This is the {tab_name} page for role-based navigation.",
-                font=ctk.CTkFont(size=12)
+                font=ctk.CTkFont(size=12),
             )
             desc_label.pack(pady=10)
-            
+
         except Exception as e:
             print(f"Error creating placeholder page for {tab_name}: {e}")
-        
+
         return page
 
     def _get_tab_description(self, tab_name: str, user_role: str) -> str:
         """Get description for a tab based on role."""
         descriptions = {
-            "Organizations": f"Manage multiple organizations (Super Admin only)",
-            "Users": f"Global user management across organizations",
-            "System": f"System-wide settings and time progression controls",
-            "Setup": f"Organization setup: Users → CCRs → Time Units → Board Configuration",
+            "Organizations": "Manage multiple organizations (Super Admin only)",
+            "Users": "Global user management across organizations",
+            "System": "System-wide settings and time progression controls",
+            "Setup": "Organization setup: Users → CCRs → Time Units → Board Configuration",
             "Work Items": f"{'Manage' if user_role in ['Super Admin', 'Organization Admin', 'Org Admin', 'Planner'] else 'View assigned'} work items and tasks",
             "Collections": f"{'Manage' if user_role in ['Super Admin', 'Organization Admin', 'Org Admin', 'Planner'] else 'View'} projects, epics, and releases",
-            "Planning": f"Create and manage schedules with capacity validation",
+            "Planning": "Create and manage schedules with capacity validation",
             "Buffer Boards": f"{'Monitor and manage' if user_role != 'Viewer' else 'View'} DBR buffer zones and capability channels",
-            "Reports": f"View analytics and metrics for {user_role.lower()} role"
+            "Reports": f"View analytics and metrics for {user_role.lower()} role",
         }
         return descriptions.get(tab_name, f"{tab_name} functionality for {user_role}")
 
@@ -182,34 +181,33 @@ class MainWindow(ctk.CTk):
             "System": "*",  # Super Admin only
             "Setup": "manage_organization",
             "Work Items": "manage_work_items",
-            "Collections": "manage_collections", 
+            "Collections": "manage_collections",
             "Planning": "manage_schedules",
             "Buffer Boards": "view_schedules",
-            "Reports": "view_analytics"
+            "Reports": "view_analytics",
         }
-        
+
         required_permission = permission_map.get(tab_name, "view_analytics")
-        
+
         # Super Admin permission (*) check
         if required_permission == "*":
             return self.dbr_service.get_user_role() == "Super Admin"
-        
+
         return self.dbr_service.has_permission(required_permission)
 
     def _create_status_bar(self) -> None:
         """Create status bar with connection info."""
         self.status_frame = ctk.CTkFrame(self, height=30, corner_radius=0)
-        
+
         # Connection status
         connection_status = self.dbr_service.get_connection_status()
         user_role = self.dbr_service.get_user_role() or "Unknown"
-        status_text = f"Connected to {connection_status['backend_url']} | {user_role} - Ready"
-        
+        status_text = (
+            f"Connected to {connection_status['backend_url']} | {user_role} - Ready"
+        )
+
         self.status_bar = ctk.CTkLabel(
-            self.status_frame, 
-            text=status_text, 
-            height=30, 
-            corner_radius=0
+            self.status_frame, text=status_text, height=30, corner_radius=0
         )
         self.status_bar.pack(fill="x", padx=10)
 
@@ -236,17 +234,15 @@ class MainWindow(ctk.CTk):
     def _on_logout(self) -> None:
         """Handle logout button click."""
         from tkinter import messagebox
-        
+
         result = messagebox.askyesno(
-            "Logout", 
-            "Are you sure you want to logout?",
-            parent=self
+            "Logout", "Are you sure you want to logout?", parent=self
         )
-        
+
         if result:
             # Logout from service
             self.dbr_service.logout()
-            
+
             # Close main window
             self._on_closing()
 
@@ -255,7 +251,7 @@ class MainWindow(ctk.CTk):
         # Ensure clean logout
         if self.dbr_service.is_authenticated():
             self.dbr_service.logout()
-        
+
         self.quit()
         self.destroy()
 

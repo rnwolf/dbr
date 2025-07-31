@@ -13,7 +13,9 @@ class TestGridCellWidget:
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_widget_initialization(self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font):
+    def test_widget_initialization(
+        self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font
+    ):
         """Test widget initialization."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
@@ -21,7 +23,7 @@ class TestGridCellWidget:
         parent.tk = Mock()
         parent.children = {}
         event_bus = EventBus()
-        
+
         widget = GridCellWidget(parent, row=5, col=3, event_bus=event_bus)
 
         assert widget.row == 5
@@ -37,14 +39,16 @@ class TestGridCellWidget:
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_button_click_handling(self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font):
+    def test_button_click_handling(
+        self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font
+    ):
         """Test button click functionality."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
         parent._last_child_ids = {}
         parent.tk = Mock()
         parent.children = {}
-        
+
         widget = GridCellWidget(parent, row=2, col=4)
 
         # Mock the button
@@ -61,7 +65,9 @@ class TestGridCellWidget:
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_combo_change_handling_and_event_publishing(self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font):
+    def test_combo_change_handling_and_event_publishing(
+        self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font
+    ):
         """Test combobox change functionality and event publishing."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
@@ -69,7 +75,7 @@ class TestGridCellWidget:
         parent.tk = Mock()
         parent.children = {}
         event_bus = Mock(spec=EventBus)
-        
+
         widget = GridCellWidget(parent, row=1, col=1, event_bus=event_bus)
         initial_value = widget._data["selected_option"]
 
@@ -80,7 +86,7 @@ class TestGridCellWidget:
         assert widget._data["selected_option"] == new_value
         event_bus.publish.assert_called_once_with(
             "grid_value_changed",
-            data={"old_value": initial_value, "new_value": new_value}
+            data={"old_value": initial_value, "new_value": new_value},
         )
 
     @patch("customtkinter.CTkFont")
@@ -88,14 +94,16 @@ class TestGridCellWidget:
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_action_callback(self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font):
+    def test_action_callback(
+        self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font
+    ):
         """Test action callback functionality."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
         parent._last_child_ids = {}
         parent.tk = Mock()
         parent.children = {}
-        
+
         widget = GridCellWidget(parent, row=0, col=0)
 
         callback = Mock()
@@ -117,14 +125,16 @@ class TestGridCellWidget:
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkButton")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_data_management(self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font):
+    def test_data_management(
+        self, mock_frame_init, mock_button, mock_label, mock_combo, mock_font
+    ):
         """Test data get/set functionality."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
         parent._last_child_ids = {}
         parent.tk = Mock()
         parent.children = {}
-        
+
         widget = GridCellWidget(parent, row=1, col=2)
 
         # Mock widgets for set_data test

@@ -1,6 +1,7 @@
 """
 Event Bus for decoupled component communication.
 """
+
 from typing import Any, Callable, Dict, List
 
 

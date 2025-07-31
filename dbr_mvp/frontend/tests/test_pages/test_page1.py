@@ -13,20 +13,28 @@ class TestPage1:
     @patch("customtkinter.CTkFont")
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_page_initialization(self, mock_frame_init, mock_label, mock_font, mock_canvas_frame, mock_grid_widget, mock_stats_frame):
+    def test_page_initialization(
+        self,
+        mock_frame_init,
+        mock_label,
+        mock_font,
+        mock_canvas_frame,
+        mock_grid_widget,
+        mock_stats_frame,
+    ):
         """Test page initialization."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
         parent._last_child_ids = {}
         parent.tk = Mock()
         parent.children = {}
-        
+
         # Mock the canvas frame methods
         mock_canvas_instance = Mock()
         mock_canvas_instance.get_canvas.return_value = Mock()
         mock_canvas_instance.pack = Mock()
         mock_canvas_frame.return_value = mock_canvas_instance
-        
+
         page = Page1(parent)
         # Add required tkinter attributes to the page object
         page.tk = Mock()
@@ -45,14 +53,22 @@ class TestPage1:
     @patch("customtkinter.CTkFont")
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_widget_addition(self, mock_frame_init, mock_label, mock_font, mock_widget, mock_canvas_frame, mock_stats_frame):
+    def test_widget_addition(
+        self,
+        mock_frame_init,
+        mock_label,
+        mock_font,
+        mock_widget,
+        mock_canvas_frame,
+        mock_stats_frame,
+    ):
         """Test adding widgets to grid."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()
         parent._last_child_ids = {}
         parent.tk = Mock()
         parent.children = {}
-        
+
         page = Page1(parent)
         # Add required tkinter attributes to the page object
         page.tk = Mock()
@@ -78,7 +94,15 @@ class TestPage1:
     @patch("customtkinter.CTkFont")
     @patch("customtkinter.CTkLabel")
     @patch("customtkinter.CTkFrame.__init__", return_value=None)
-    def test_widget_action_handling(self, mock_frame_init, mock_label, mock_font, mock_canvas_frame, mock_grid_widget, mock_stats_frame):
+    def test_widget_action_handling(
+        self,
+        mock_frame_init,
+        mock_label,
+        mock_font,
+        mock_canvas_frame,
+        mock_grid_widget,
+        mock_stats_frame,
+    ):
         """Test widget action handling."""
         # Create a proper mock parent with required tkinter attributes
         parent = Mock()

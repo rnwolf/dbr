@@ -13,11 +13,11 @@ def mocked_window(mocker):
     """
     # Mock the dbrsdk import at the module level first
     mocker.patch("dbrsdk.Dbrsdk")
-    
+
     # Mock UserContextWidget before any imports
     mocker.patch("frontend.authentication_ui.UserContextWidget")
-    
-    # Mock the DBR service 
+
+    # Mock the DBR service
     mock_dbr_service = mocker.patch("frontend.dbr_service.DBRService")
     mock_service_instance = mock_dbr_service.return_value
     mock_service_instance.get_user_info.return_value = {"username": "testuser"}
@@ -25,7 +25,7 @@ def mocked_window(mocker):
     mock_service_instance.get_current_organization.return_value = {"name": "Test Org"}
     mock_service_instance.get_connection_status.return_value = {
         "backend_url": "http://localhost:8000",
-        "backend_healthy": True
+        "backend_healthy": True,
     }
 
     # Mock CustomTkinter components
@@ -37,7 +37,9 @@ def mocked_window(mocker):
 
     # Mock all UI components used in MainWindow
     mocker.patch("frontend.main_window.MenuBar", autospec=True)
-    mock_tab_navigation = mocker.patch("frontend.main_window.TabNavigation", autospec=True)
+    mock_tab_navigation = mocker.patch(
+        "frontend.main_window.TabNavigation", autospec=True
+    )
     mock_tab_navigation.return_value.content_frame = mocker.Mock()
     mocker.patch("frontend.main_window.Page1", autospec=True)
     mocker.patch("frontend.main_window.Page2", autospec=True)
@@ -47,7 +49,7 @@ def mocked_window(mocker):
 
     # Import after mocking
     from frontend.main_window import MainWindow
-    
+
     with patch.object(MainWindow, "_center_window") as mock_center:
         window = MainWindow(mock_service_instance)
 
@@ -66,13 +68,16 @@ class TestDbrStartup:
     def test_application_branding(self, mocked_window):
         """Test that MainWindow is correctly branded."""
         from utils.config import AppConfig
+
         _, mocks = mocked_window
         mocks["title"].assert_called_with(AppConfig.WINDOW_TITLE)
 
-    @patch('main.MainWindow')
-    @patch('main.BackendConfigDialog')
-    @patch('main.AuthenticationManager')
-    def test_startup_sequence_and_health_check(self, mock_auth_manager, mock_backend_dialog, mock_main_window):
+    @patch("main.MainWindow")
+    @patch("main.BackendConfigDialog")
+    @patch("main.AuthenticationManager")
+    def test_startup_sequence_and_health_check(
+        self, mock_auth_manager, mock_backend_dialog, mock_main_window
+    ):
         """Tests the startup sequence including the health check."""
         import main as app_main
 

@@ -50,10 +50,14 @@ class Page1(ctk.CTkFrame):
     def _create_grid(self) -> None:
         """Create the grid with colored cell backgrounds and dashed borders."""
         canvas = self.canvas_frame.get_canvas()
-        
+
         # Define the light colors for cell backgrounds
-        colors = ["#FFE6E6", "#E6FFE6", "#FFFFE6"]  # light red, light green, light yellow
-        
+        colors = [
+            "#FFE6E6",
+            "#E6FFE6",
+            "#FFFFE6",
+        ]  # light red, light green, light yellow
+
         # Create cell backgrounds with random colors
         for row in range(self.grid_rows):
             for col in range(self.grid_cols):
@@ -61,18 +65,15 @@ class Page1(ctk.CTkFrame):
                 y1 = row * self.cell_size
                 x2 = x1 + self.cell_size
                 y2 = y1 + self.cell_size
-                
+
                 # Random color selection
                 bg_color = random.choice(colors)
-                
+
                 # Create colored background rectangle
                 canvas.create_rectangle(
-                    x1, y1, x2, y2,
-                    fill=bg_color,
-                    outline="",
-                    width=0
+                    x1, y1, x2, y2, fill=bg_color, outline="", width=0
                 )
-        
+
         # Create dashed borders around each cell
         for row in range(self.grid_rows):
             for col in range(self.grid_cols):
@@ -80,23 +81,22 @@ class Page1(ctk.CTkFrame):
                 y1 = row * self.cell_size
                 x2 = x1 + self.cell_size
                 y2 = y1 + self.cell_size
-                
+
                 # Create dashed white border (outer)
                 canvas.create_rectangle(
-                    x1, y1, x2, y2,
-                    outline="white",
-                    width=2,
-                    dash=(3, 3),
-                    fill=""
+                    x1, y1, x2, y2, outline="white", width=2, dash=(3, 3), fill=""
                 )
-                
+
                 # Create dashed black border (inner, slightly offset)
                 canvas.create_rectangle(
-                    x1 + 1, y1 + 1, x2 - 1, y2 - 1,
+                    x1 + 1,
+                    y1 + 1,
+                    x2 - 1,
+                    y2 - 1,
                     outline="black",
                     width=1,
                     dash=(2, 2),
-                    fill=""
+                    fill="",
                 )
 
     def _populate_sample_widgets(self) -> None:
@@ -113,7 +113,10 @@ class Page1(ctk.CTkFrame):
         for widget in self.grid_widgets.values():
             initial_value = widget.get_data().get("selected_option")
             if initial_value:
-                self.event_bus.publish("grid_value_changed", data={"old_value": None, "new_value": initial_value})
+                self.event_bus.publish(
+                    "grid_value_changed",
+                    data={"old_value": None, "new_value": initial_value},
+                )
 
     def _add_grid_widget(self, row: int, col: int) -> None:
         """Add a custom widget to the specified grid cell."""
@@ -146,14 +149,20 @@ class Page1(ctk.CTkFrame):
         for widget in self.grid_widgets.values():
             initial_value = widget.get_data().get("selected_option")
             if initial_value:
-                self.event_bus.publish("grid_value_changed", data={"old_value": None, "new_value": initial_value})
+                self.event_bus.publish(
+                    "grid_value_changed",
+                    data={"old_value": None, "new_value": initial_value},
+                )
 
     def _initialize_stats_display(self) -> None:
         """Initializes the StatsDisplayFrame with current combobox values."""
         for widget in self.grid_widgets.values():
             initial_value = widget.get_data().get("selected_option")
             if initial_value:
-                self.event_bus.publish("grid_value_changed", data={"old_value": None, "new_value": initial_value})
+                self.event_bus.publish(
+                    "grid_value_changed",
+                    data={"old_value": None, "new_value": initial_value},
+                )
 
     def _on_widget_action(
         self, row: int, col: int, action: str, value: str = ""

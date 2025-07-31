@@ -1,18 +1,17 @@
 """Tests for the DBRService class."""
 
-import pytest
 from unittest.mock import patch, MagicMock
 
 
 class TestDBRService:
     """Test cases for the DBRService."""
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_authentication_service_login_success(self, mock_dbrsdk):
         """Tests that the login method correctly calls the SDK and stores the token."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_login_response = MagicMock()
@@ -33,12 +32,12 @@ class TestDBRService:
         assert service.is_authenticated() is True
         mock_sdk_instance.authentication.login.assert_called_once()
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_health_check_success(self, mock_dbrsdk):
         """Tests that the health check method works correctly."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_health_response = {"status": "healthy", "service": "DBR API"}
@@ -53,12 +52,12 @@ class TestDBRService:
         assert result is True
         mock_sdk_instance.health.get.assert_called_once()
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_health_check_failure(self, mock_dbrsdk):
         """Tests that the health check method handles failures correctly."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_sdk_instance.health.get.side_effect = Exception("Connection failed")
@@ -72,12 +71,12 @@ class TestDBRService:
         assert result is False
         mock_sdk_instance.health.get.assert_called_once()
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_health_check_invalid_response(self, mock_dbrsdk):
         """Tests that the health check method handles invalid responses correctly."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_health_response = {"status": "unhealthy"}  # Wrong status
@@ -92,12 +91,12 @@ class TestDBRService:
         assert result is False
         mock_sdk_instance.health.get.assert_called_once()
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_organization_context_setup(self, mock_dbrsdk):
         """Test organization context management after login."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_login_response = MagicMock()
@@ -118,12 +117,12 @@ class TestDBRService:
         assert org_context["name"] == "Default Organization"
         assert org_context["auto_selected"] is True
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_role_based_permissions(self, mock_dbrsdk):
         """Test role-based permission checking."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_login_response = MagicMock()
@@ -141,12 +140,12 @@ class TestDBRService:
         assert service.has_permission("view_analytics") is True
         assert service.has_permission("manage_users") is False  # Only Org Admin+
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_super_admin_permissions(self, mock_dbrsdk):
         """Test Super Admin has all permissions."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_login_response = MagicMock()
@@ -163,12 +162,12 @@ class TestDBRService:
         assert service.has_permission("manage_schedules") is True
         assert service.has_permission("any_permission") is True
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_viewer_permissions(self, mock_dbrsdk):
         """Test Viewer has only read permissions."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_login_response = MagicMock()
@@ -186,12 +185,12 @@ class TestDBRService:
         assert service.has_permission("manage_schedules") is False
         assert service.has_permission("manage_work_items") is False
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_logout_clears_context(self, mock_dbrsdk):
         """Test logout clears all authentication context."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_login_response = MagicMock()
@@ -217,17 +216,17 @@ class TestDBRService:
         assert service.get_user_role() is None
         assert service.get_current_organization() is None
 
-    @patch('frontend.dbr_service.Dbrsdk')
+    @patch("frontend.dbr_service.Dbrsdk")
     def test_connection_status(self, mock_dbrsdk):
         """Test comprehensive connection status reporting."""
         # Import after patching to avoid import issues
         from frontend.dbr_service import DBRService
-        
+
         # Arrange
         mock_sdk_instance = mock_dbrsdk.return_value
         mock_health_response = {"status": "healthy", "service": "DBR API"}
         mock_sdk_instance.health.get.return_value = mock_health_response
-        
+
         mock_login_response = MagicMock()
         mock_login_response.access_token = "fake_token"
         mock_login_response.user = MagicMock()

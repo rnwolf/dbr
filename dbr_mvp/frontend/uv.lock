@@ -123,6 +123,7 @@ dependencies = [
     { name = "customtkinter" },
     { name = "dbrsdk" },
     { name = "pillow" },
+    { name = "pytest" },
     { name = "tk" },
 ]
 
@@ -139,6 +140,7 @@ requires-dist = [
     { name = "customtkinter", specifier = ">=5.2.0" },
     { name = "dbrsdk", path = "../../dbrsdk-python/dist/dbrsdk-0.2.5-py3-none-any.whl" },
     { name = "pillow", specifier = ">=10.0.0" },
+    { name = "pytest", specifier = ">=8.4.1" },
     { name = "tk", specifier = ">=0.1.0" },
 ]
 

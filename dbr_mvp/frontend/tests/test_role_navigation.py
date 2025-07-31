@@ -1,8 +1,7 @@
 """Tests for role-based navigation with test user validation."""
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-import customtkinter as ctk
+from unittest.mock import Mock, patch
 
 
 class TestRoleBasedNavigation:
@@ -12,11 +11,14 @@ class TestRoleBasedNavigation:
     def mock_dbr_service(self):
         """Create a mock DBR service for testing."""
         service = Mock()
-        service.get_user_info.return_value = {"username": "testuser", "display_name": "Test User"}
+        service.get_user_info.return_value = {
+            "username": "testuser",
+            "display_name": "Test User",
+        }
         service.get_current_organization.return_value = {"name": "Default Organization"}
         service.get_connection_status.return_value = {
             "backend_url": "http://localhost:8000",
-            "backend_healthy": True
+            "backend_healthy": True,
         }
         return service
 
@@ -24,121 +26,169 @@ class TestRoleBasedNavigation:
         """Test Super Admin sees all navigation tabs."""
         # Arrange
         mock_dbr_service.get_user_role.return_value = "Super Admin"
-        mock_dbr_service.has_permission.return_value = True  # Super Admin has all permissions
-        
+        mock_dbr_service.has_permission.return_value = (
+            True  # Super Admin has all permissions
+        )
+
         # Import and patch the MainWindow class
-        with patch('frontend.main_window.ctk.CTk') as mock_ctk:
-            with patch('frontend.main_window.MenuBar') as mock_menu:
-                with patch('frontend.main_window.TabNavigation') as mock_tab_nav:
-                    with patch('frontend.main_window.UserContextWidget') as mock_user_widget:
-                        with patch('frontend.main_window.ctk.CTkFrame') as mock_frame:
-                            with patch('frontend.main_window.ctk.CTkLabel') as mock_label:
-                                with patch('frontend.main_window.ctk.CTkButton') as mock_button:
+        with patch("frontend.main_window.ctk.CTk"), patch("frontend.main_window.MenuBar"), patch("frontend.main_window.TabNavigation") as mock_tab_nav, patch("frontend.main_window.UserContextWidget"), patch("frontend.main_window.ctk.CTkFrame"), patch("frontend.main_window.ctk.CTkLabel"), patch("frontend.main_window.ctk.CTkButton"):
                                     # Mock the CTk instance
                                     mock_ctk_instance = Mock()
                                     mock_ctk.return_value = mock_ctk_instance
-                                    
+
                                     # Mock tab navigation instance
                                     mock_tab_nav_instance = Mock()
                                     mock_tab_nav.return_value = mock_tab_nav_instance
-                                    
+
                                     from frontend.main_window import MainWindow
-                                    
+
                                     # Act
                                     window = MainWindow(mock_dbr_service)
-                                    
+
                                     # Assert - Check that the correct tabs were added
                                     expected_tabs = [
-                                        "Organizations", "Users", "System", "Setup", 
-                                        "Work Items", "Collections", "Planning", 
-                                        "Buffer Boards", "Reports"
+                                        "Organizations",
+                                        "Users",
+                                        "System",
+                                        "Setup",
+                                        "Work Items",
+                                        "Collections",
+                                        "Planning",
+                                        "Buffer Boards",
+                                        "Reports",
                                     ]
-                                    
+
                                     # Verify add_tab was called for each expected tab
-                                    assert mock_tab_nav_instance.add_tab.call_count == len(expected_tabs)
-                                    
+                                    assert (
+                                        mock_tab_nav_instance.add_tab.call_count
+                                        == len(expected_tabs)
+                                    )
+
                                     # Get all the tab names that were added
-                                    added_tabs = [call[0][0] for call in mock_tab_nav_instance.add_tab.call_args_list]
-                                    
+                                    added_tabs = [
+                                        call[0][0]
+                                        for call in mock_tab_nav_instance.add_tab.call_args_list
+                                    ]
+
                                     # Verify all expected tabs were added
                                     for expected_tab in expected_tabs:
-                                        assert expected_tab in added_tabs, f"Expected tab '{expected_tab}' not found in added tabs: {added_tabs}"
+                                        assert expected_tab in added_tabs, (
+                                            f"Expected tab '{expected_tab}' not found in added tabs: {added_tabs}"
+                                        )
 
     def test_org_admin_navigation(self, mock_dbr_service):
         """Test Organization Admin navigation (no system-wide management)."""
         # Arrange
         mock_dbr_service.get_user_role.return_value = "Organization Admin"
         mock_dbr_service.has_permission.side_effect = lambda perm: perm in [
-            "manage_organization", "manage_users", "manage_user_roles", 
-            "invite_users", "manage_ccrs", "manage_schedules", 
-            "manage_work_items", "manage_collections", "view_analytics"
+            "manage_organization",
+            "manage_users",
+            "manage_user_roles",
+            "invite_users",
+            "manage_ccrs",
+            "manage_schedules",
+            "manage_work_items",
+            "manage_collections",
+            "view_analytics",
         ]
-        
+
         # Import and patch the MainWindow class
-        with patch('frontend.main_window.ctk.CTk') as mock_ctk:
-            with patch('frontend.main_window.MenuBar') as mock_menu:
-                with patch('frontend.main_window.TabNavigation') as mock_tab_nav:
-                    with patch('frontend.main_window.UserContextWidget') as mock_user_widget:
-                        with patch('frontend.main_window.ctk.CTkFrame') as mock_frame:
-                            with patch('frontend.main_window.ctk.CTkLabel') as mock_label:
-                                with patch('frontend.main_window.ctk.CTkButton') as mock_button:
+        with patch("frontend.main_window.ctk.CTk"), patch("frontend.main_window.MenuBar"), patch("frontend.main_window.TabNavigation") as mock_tab_nav, patch("frontend.main_window.UserContextWidget"), patch("frontend.main_window.ctk.CTkFrame"), patch("frontend.main_window.ctk.CTkLabel"), patch("frontend.main_window.ctk.CTkButton"):
                                     # Mock instances
                                     mock_ctk_instance = Mock()
                                     mock_ctk.return_value = mock_ctk_instance
                                     mock_tab_nav_instance = Mock()
                                     mock_tab_nav.return_value = mock_tab_nav_instance
-                                    
+
                                     from frontend.main_window import MainWindow
-                                    
+
                                     # Act
                                     window = MainWindow(mock_dbr_service)
-                                    
+
                                     # Assert - Org Admin should see specific tabs
                                     expected_tabs = [
-                                        "Setup", "Work Items", "Collections", 
-                                        "Planning", "Buffer Boards", "Reports"
+                                        "Setup",
+                                        "Work Items",
+                                        "Collections",
+                                        "Planning",
+                                        "Buffer Boards",
+                                        "Reports",
                                     ]
-                                    
+
                                     # Verify system-wide tabs are NOT included
-                                    forbidden_tabs = ["Organizations", "Users", "System"]
-                                    
+                                    forbidden_tabs = [
+                                        "Organizations",
+                                        "Users",
+                                        "System",
+                                    ]
+
                                     # Get all the tab names that were added
-                                    added_tabs = [call[0][0] for call in mock_tab_nav_instance.add_tab.call_args_list]
-                                    
+                                    added_tabs = [
+                                        call[0][0]
+                                        for call in mock_tab_nav_instance.add_tab.call_args_list
+                                    ]
+
                                     # Verify expected tabs are present
                                     for expected_tab in expected_tabs:
-                                        assert expected_tab in added_tabs, f"Expected tab '{expected_tab}' not found"
-                                    
+                                        assert expected_tab in added_tabs, (
+                                            f"Expected tab '{expected_tab}' not found"
+                                        )
+
                                     # Verify forbidden tabs are NOT present
                                     for forbidden_tab in forbidden_tabs:
-                                        assert forbidden_tab not in added_tabs, f"Forbidden tab '{forbidden_tab}' found in tabs"
+                                        assert forbidden_tab not in added_tabs, (
+                                            f"Forbidden tab '{forbidden_tab}' found in tabs"
+                                        )
 
     def test_planner_navigation(self, mock_dbr_service):
         """Test Planner navigation (no setup or system management)."""
         # Arrange
         mock_dbr_service.get_user_role.return_value = "Planner"
         mock_dbr_service.has_permission.side_effect = lambda perm: perm in [
-            "manage_schedules", "manage_work_items", "manage_collections", 
-            "view_analytics", "view_users", "view_ccrs"
+            "manage_schedules",
+            "manage_work_items",
+            "manage_collections",
+            "view_analytics",
+            "view_users",
+            "view_ccrs",
         ]
-        
+
         # Test with comprehensive mocking
-        with patch('frontend.main_window.ctk.CTk') as mock_ctk:
-            with patch('frontend.main_window.MenuBar'), patch('frontend.main_window.TabNavigation') as mock_tab_nav:
-                with patch('frontend.main_window.UserContextWidget'), patch('frontend.main_window.ctk.CTkFrame'):
-                    with patch('frontend.main_window.ctk.CTkLabel'), patch('frontend.main_window.ctk.CTkButton'):
+        with patch("frontend.main_window.ctk.CTk") as mock_ctk:
+            with (
+                patch("frontend.main_window.MenuBar"),
+                patch("frontend.main_window.TabNavigation") as mock_tab_nav,
+            ):
+                with (
+                    patch("frontend.main_window.UserContextWidget"),
+                    patch("frontend.main_window.ctk.CTkFrame"),
+                ):
+                    with (
+                        patch("frontend.main_window.ctk.CTkLabel"),
+                        patch("frontend.main_window.ctk.CTkButton"),
+                    ):
                         mock_ctk.return_value = Mock()
                         mock_tab_nav_instance = Mock()
                         mock_tab_nav.return_value = mock_tab_nav_instance
-                        
+
                         from frontend.main_window import MainWindow
+
                         window = MainWindow(mock_dbr_service)
-                        
+
                         # Assert
-                        expected_tabs = ["Work Items", "Collections", "Planning", "Buffer Boards", "Reports"]
+                        expected_tabs = [
+                            "Work Items",
+                            "Collections",
+                            "Planning",
+                            "Buffer Boards",
+                            "Reports",
+                        ]
                         forbidden_tabs = ["Organizations", "Users", "System", "Setup"]
-                        
-                        added_tabs = [call[0][0] for call in mock_tab_nav_instance.add_tab.call_args_list]
+
+                        added_tabs = [
+                            call[0][0]
+                            for call in mock_tab_nav_instance.add_tab.call_args_list
+                        ]
                         for expected_tab in expected_tabs:
                             assert expected_tab in added_tabs
                         for forbidden_tab in forbidden_tabs:
@@ -149,26 +199,49 @@ class TestRoleBasedNavigation:
         # Arrange
         mock_dbr_service.get_user_role.return_value = "Worker"
         mock_dbr_service.has_permission.side_effect = lambda perm: perm in [
-            "update_work_items", "view_schedules", "view_work_items", "view_collections"
+            "update_work_items",
+            "view_schedules",
+            "view_work_items",
+            "view_collections",
         ]
-        
+
         # Test with comprehensive mocking
-        with patch('frontend.main_window.ctk.CTk') as mock_ctk:
-            with patch('frontend.main_window.MenuBar'), patch('frontend.main_window.TabNavigation') as mock_tab_nav:
-                with patch('frontend.main_window.UserContextWidget'), patch('frontend.main_window.ctk.CTkFrame'):
-                    with patch('frontend.main_window.ctk.CTkLabel'), patch('frontend.main_window.ctk.CTkButton'):
+        with patch("frontend.main_window.ctk.CTk") as mock_ctk:
+            with (
+                patch("frontend.main_window.MenuBar"),
+                patch("frontend.main_window.TabNavigation") as mock_tab_nav,
+            ):
+                with (
+                    patch("frontend.main_window.UserContextWidget"),
+                    patch("frontend.main_window.ctk.CTkFrame"),
+                ):
+                    with (
+                        patch("frontend.main_window.ctk.CTkLabel"),
+                        patch("frontend.main_window.ctk.CTkButton"),
+                    ):
                         mock_ctk.return_value = Mock()
                         mock_tab_nav_instance = Mock()
                         mock_tab_nav.return_value = mock_tab_nav_instance
-                        
+
                         from frontend.main_window import MainWindow
+
                         window = MainWindow(mock_dbr_service)
-                        
+
                         # Assert
                         expected_tabs = ["Work Items", "Buffer Boards", "Reports"]
-                        forbidden_tabs = ["Organizations", "Users", "System", "Setup", "Collections", "Planning"]
-                        
-                        added_tabs = [call[0][0] for call in mock_tab_nav_instance.add_tab.call_args_list]
+                        forbidden_tabs = [
+                            "Organizations",
+                            "Users",
+                            "System",
+                            "Setup",
+                            "Collections",
+                            "Planning",
+                        ]
+
+                        added_tabs = [
+                            call[0][0]
+                            for call in mock_tab_nav_instance.add_tab.call_args_list
+                        ]
                         for expected_tab in expected_tabs:
                             assert expected_tab in added_tabs
                         for forbidden_tab in forbidden_tabs:
@@ -179,27 +252,52 @@ class TestRoleBasedNavigation:
         # Arrange
         mock_dbr_service.get_user_role.return_value = "Viewer"
         mock_dbr_service.has_permission.side_effect = lambda perm: perm in [
-            "view_schedules", "view_work_items", "view_collections", 
-            "view_analytics", "view_users", "view_ccrs"
+            "view_schedules",
+            "view_work_items",
+            "view_collections",
+            "view_analytics",
+            "view_users",
+            "view_ccrs",
         ]
-        
+
         # Test with comprehensive mocking
-        with patch('frontend.main_window.ctk.CTk') as mock_ctk:
-            with patch('frontend.main_window.MenuBar'), patch('frontend.main_window.TabNavigation') as mock_tab_nav:
-                with patch('frontend.main_window.UserContextWidget'), patch('frontend.main_window.ctk.CTkFrame'):
-                    with patch('frontend.main_window.ctk.CTkLabel'), patch('frontend.main_window.ctk.CTkButton'):
+        with patch("frontend.main_window.ctk.CTk") as mock_ctk:
+            with (
+                patch("frontend.main_window.MenuBar"),
+                patch("frontend.main_window.TabNavigation") as mock_tab_nav,
+            ):
+                with (
+                    patch("frontend.main_window.UserContextWidget"),
+                    patch("frontend.main_window.ctk.CTkFrame"),
+                ):
+                    with (
+                        patch("frontend.main_window.ctk.CTkLabel"),
+                        patch("frontend.main_window.ctk.CTkButton"),
+                    ):
                         mock_ctk.return_value = Mock()
                         mock_tab_nav_instance = Mock()
                         mock_tab_nav.return_value = mock_tab_nav_instance
-                        
+
                         from frontend.main_window import MainWindow
+
                         window = MainWindow(mock_dbr_service)
-                        
+
                         # Assert
                         expected_tabs = ["Buffer Boards", "Reports"]
-                        forbidden_tabs = ["Organizations", "Users", "System", "Setup", "Work Items", "Collections", "Planning"]
-                        
-                        added_tabs = [call[0][0] for call in mock_tab_nav_instance.add_tab.call_args_list]
+                        forbidden_tabs = [
+                            "Organizations",
+                            "Users",
+                            "System",
+                            "Setup",
+                            "Work Items",
+                            "Collections",
+                            "Planning",
+                        ]
+
+                        added_tabs = [
+                            call[0][0]
+                            for call in mock_tab_nav_instance.add_tab.call_args_list
+                        ]
                         for expected_tab in expected_tabs:
                             assert expected_tab in added_tabs
                         for forbidden_tab in forbidden_tabs:
@@ -228,9 +326,9 @@ class TestNavigationPermissions:
         # Arrange
         mock_dbr_service.get_current_organization.return_value = {
             "name": "Test Organization",
-            "id": "test-org-123"
+            "id": "test-org-123",
         }
-        
+
         # This will test that the organization name is displayed
         # in the navigation header or context area
         pass
@@ -241,9 +339,9 @@ class TestNavigationPermissions:
         mock_dbr_service.get_user_role.return_value = "Planner"
         mock_dbr_service.get_user_info.return_value = {
             "username": "planner",
-            "display_name": "Test Planner"
+            "display_name": "Test Planner",
         }
-        
+
         # This will test that the user role is visible in the UI
         pass
 
@@ -251,7 +349,7 @@ class TestNavigationPermissions:
 class TestNavigationIntegration:
     """Test cases for navigation integration with authentication."""
 
-    @patch('frontend.main_window.ctk.CTk.__init__', return_value=None)
+    @patch("frontend.main_window.ctk.CTk.__init__", return_value=None)
     def test_navigation_updates_on_role_change(self, mock_ctk_init):
         """Test navigation updates when user role changes."""
         # This would test dynamic role changes (future feature)

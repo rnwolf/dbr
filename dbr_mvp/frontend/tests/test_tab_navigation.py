@@ -18,15 +18,15 @@ class TestTabNavigation:
         parent.tk = Mock()
         parent.children = {}
         parent._w = "mock_window"
-        
+
         # Create mock button instance
         mock_button_instance = Mock()
         mock_button_instance.pack = Mock()
         mock_button_instance.configure = Mock()
         mock_button.return_value = mock_button_instance
-        
+
         tab_nav = TabNavigation(parent)
-        
+
         # Manually set up the frame attributes since _setup_navigation is mocked
         tab_nav.tab_button_frame = Mock()
         tab_nav.content_frame = Mock()
@@ -35,7 +35,7 @@ class TestTabNavigation:
         mock_content = Mock()
         mock_content.place = Mock()
         mock_content.place_forget = Mock()
-        
+
         tab_nav.add_tab("Test Tab", mock_content)
 
         assert "Test Tab" in tab_nav._tabs
@@ -53,15 +53,15 @@ class TestTabNavigation:
         parent.tk = Mock()
         parent.children = {}
         parent._w = "mock_window"
-        
+
         # Create mock button instance
         mock_button_instance = Mock()
         mock_button_instance.pack = Mock()
         mock_button_instance.configure = Mock()
         mock_button.return_value = mock_button_instance
-        
+
         tab_nav = TabNavigation(parent)
-        
+
         # Manually set up the frame attributes since _setup_navigation is mocked
         tab_nav.tab_button_frame = Mock()
         tab_nav.content_frame = Mock()
@@ -73,7 +73,7 @@ class TestTabNavigation:
         content2 = Mock()
         content2.place = Mock()
         content2.place_forget = Mock()
-        
+
         tab_nav.add_tab("Tab 1", content1)
         tab_nav.add_tab("Tab 2", content2)
 
@@ -92,15 +92,15 @@ class TestTabNavigation:
         parent.tk = Mock()
         parent.children = {}
         parent._w = "mock_window"
-        
+
         # Create mock button instance
         mock_button_instance = Mock()
         mock_button_instance.pack = Mock()
         mock_button_instance.configure = Mock()
         mock_button.return_value = mock_button_instance
-        
+
         tab_nav = TabNavigation(parent)
-        
+
         # Manually set up the frame attributes since _setup_navigation is mocked
         tab_nav.tab_button_frame = Mock()
         tab_nav.content_frame = Mock()
@@ -111,7 +111,7 @@ class TestTabNavigation:
         content = Mock()
         content.place = Mock()
         content.place_forget = Mock()
-        
+
         tab_nav.add_tab("Test Tab", content)
 
         # Callback should be called when tab is added (auto-activated)

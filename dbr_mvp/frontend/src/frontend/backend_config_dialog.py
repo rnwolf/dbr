@@ -2,6 +2,7 @@
 
 import customtkinter as ctk
 
+
 class BackendConfigDialog(ctk.CTkToplevel):
     """A dialog to get the backend URL from the user."""
 
@@ -11,7 +12,7 @@ class BackendConfigDialog(ctk.CTkToplevel):
         self.title("DBR Backend Configuration")
         self.geometry("400x200")
         self.url = None
-        
+
         # If no parent, set this as the main window temporarily
         if parent is None:
             self.wm_title("DBR Backend Configuration")
