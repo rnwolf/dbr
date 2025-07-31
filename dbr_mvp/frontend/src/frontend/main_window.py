@@ -134,8 +134,8 @@ class MainWindow(ctk.CTk):
 
     def _create_placeholder_page(self, tab_name: str) -> ctk.CTkFrame:
         """Create a placeholder page for a tab."""
-        # Create a simple frame - avoid complex initialization that might cause recursion
-        page = ctk.CTkFrame(None)  # Create without parent first
+        # Create a simple frame with the correct parent
+        page = ctk.CTkFrame(self.tab_navigation.content_frame)
         
         try:
             # Add simple title

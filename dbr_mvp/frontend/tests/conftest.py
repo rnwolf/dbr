@@ -18,20 +18,41 @@ def mock_dbrsdk():
         yield mock
 
 @pytest.fixture
-def mock_tk():
-    """Mock tkinter to avoid GUI during tests."""
-    with patch("tkinter.Tk"), patch("customtkinter.CTk"):
-        yield
-
-
-@pytest.fixture
-def sample_app():
-    """Create a sample application for testing."""
-    with patch("customtkinter.CTk"):
-        from frontend.main_window import MainWindow
-
-        app = MainWindow()
-        yield app
+def mocked_main_window_dependencies():
+    """Provides a comprehensive set of mocks for all CustomTkinter widgets
+    and methods used in the MainWindow, preventing any actual GUI rendering.
+    """
+    with patch('customtkinter.CTk.__init__', return_value=None), \
+         patch('customtkinter.CTk.title'), \
+         patch('customtkinter.CTk.geometry'), \
+         patch('customtkinter.CTk.minsize'), \
+         patch('customtkinter.CTk.update_idletasks'), \
+         patch('customtkinter.CTk.winfo_width', return_value=1280), \
+         patch('customtkinter.CTk.winfo_height', return_value=720), \
+         patch('customtkinter.CTk.winfo_screenwidth', return_value=1920), \
+         patch('customtkinter.CTk.winfo_screenheight', return_value=1080), \
+         patch('customtkinter.CTk.protocol'), \
+         patch('customtkinter.CTkFrame') as mock_frame, \
+         patch('customtkinter.CTkLabel') as mock_label, \
+         patch('customtkinter.CTkButton') as mock_button, \
+         patch('customtkinter.CTkFont') as mock_font, \
+         patch('customtkinter.CTkOptionMenu') as mock_option_menu, \
+         patch('customtkinter.CTkScrollableFrame') as mock_scrollable_frame, \
+         patch('frontend.main_window.MenuBar') as mock_menu_bar, \
+         patch('frontend.main_window.TabNavigation') as mock_tab_navigation, \
+         patch('frontend.main_window.UserContextWidget') as mock_user_context_widget:
+        
+        yield {
+            "CTkFrame": mock_frame,
+            "CTkLabel": mock_label,
+            "CTkButton": mock_button,
+            "CTkFont": mock_font,
+            "CTkOptionMenu": mock_option_menu,
+            "CTkScrollableFrame": mock_scrollable_frame,
+            "MenuBar": mock_menu_bar,
+            "TabNavigation": mock_tab_navigation,
+            "UserContextWidget": mock_user_context_widget,
+        }
 
 
 @pytest.fixture

@@ -37,7 +37,8 @@ def mocked_window(mocker):
 
     # Mock all UI components used in MainWindow
     mocker.patch("frontend.main_window.MenuBar", autospec=True)
-    mocker.patch("frontend.main_window.TabNavigation", autospec=True)
+    mock_tab_navigation = mocker.patch("frontend.main_window.TabNavigation", autospec=True)
+    mock_tab_navigation.return_value.content_frame = mocker.Mock()
     mocker.patch("frontend.main_window.Page1", autospec=True)
     mocker.patch("frontend.main_window.Page2", autospec=True)
     mocker.patch("frontend.main_window.ctk.CTkLabel", autospec=True)
