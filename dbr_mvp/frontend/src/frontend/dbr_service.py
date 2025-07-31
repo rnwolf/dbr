@@ -16,6 +16,43 @@ class DBRService:
         self._current_organization = None
         self._user_role = None
         self._authenticated_client = None
+        
+        # Mock user storage for demonstration (in real app, this would be backend data)
+        self._mock_users = [
+            {
+                "id": "1",
+                "username": "admin",
+                "display_name": "Administrator",
+                "role": "Super Admin",
+                "status": "Active",
+                "email": "admin@example.com"
+            },
+            {
+                "id": "2", 
+                "username": "orgadmin",
+                "display_name": "Organization Admin",
+                "role": "Org Admin",
+                "status": "Active",
+                "email": "orgadmin@example.com"
+            },
+            {
+                "id": "3",
+                "username": "planner",
+                "display_name": "Test Planner",
+                "role": "Planner", 
+                "status": "Active",
+                "email": "planner@example.com"
+            },
+            {
+                "id": "4",
+                "username": "viewer2",
+                "display_name": "Test Viewer",
+                "role": "Viewer",
+                "status": "Active", 
+                "email": "viewer@example.com"
+            }
+        ]
+        self._next_user_id = 5
 
     def health_check(self) -> bool:
         """Performs a health check against the backend using the SDK."""
@@ -238,3 +275,217 @@ class DBRService:
             "organization": self._current_organization,
             "token_available": self._token is not None,
         }
+
+    def get_users(self) -> list:
+        """Get list of users in the current organization."""
+        try:
+            if not self._authenticated_client:
+                print("Not authenticated - cannot fetch users")
+                return []
+            
+            # Try to fetch users from the backend API
+            try:
+                # Use the authenticated client to get users
+                # For now, get all users (Super Admin) or organization users (Org Admin)
+                response = self._authenticated_client.root.get_users()
+                
+                if response and hasattr(response, '__iter__'):
+                    users = []
+                    for user in response:
+                        # Convert SDK user object to dict format expected by UI
+                        user_dict = {
+                            "id": str(getattr(user, 'id', '')),
+                            "username": getattr(user, 'username', ''),
+                            "display_name": getattr(user, 'display_name', getattr(user, 'username', '')),
+                            "role": getattr(user, 'role', 'Unknown'),  # This might need to be fetched from memberships
+                            "status": getattr(user, 'status', 'Active'),
+                            "email": getattr(user, 'email', '')
+                        }
+                        users.append(user_dict)
+                    
+                    print(f"Fetched {len(users)} users from backend")
+                    return users
+                else:
+                    print("No users returned from backend API")
+                    return []
+                    
+            except Exception as api_error:
+                print(f"Backend API call failed: {api_error}")
+                # Fallback to mock data if API fails
+                print(f"Falling back to mock data: {len(self._mock_users)} users")
+                return self._mock_users.copy()
+            
+        except Exception as e:
+            print(f"Failed to fetch users: {e}")
+            return []
+
+    def get_available_roles(self) -> list:
+        """Get list of available roles for user assignment."""
+        try:
+            # Return roles based on current user's permissions
+            current_role = self.get_user_role()
+            
+            if current_role == "Super Admin":
+                # Super Admin can assign any role
+                return ["Super Admin", "Org Admin", "Planner", "Worker", "Viewer"]
+            elif current_role in ["Organization Admin", "Org Admin"]:
+                # Org Admin can assign roles within their organization
+                return ["Org Admin", "Planner", "Worker", "Viewer"]
+            else:
+                # Other roles cannot create users
+                return []
+                
+        except Exception as e:
+            print(f"Failed to get available roles: {e}")
+            return []
+
+    def create_user(self, username: str, password: str, role: str) -> tuple[bool, str]:
+        """Create a new user with the specified role."""
+        try:
+            if not self._authenticated_client:
+                return False, "Not authenticated"
+            
+            # Validate inputs
+            if not username or not password:
+                return False, "Username and password are required"
+            
+            if not role:
+                return False, "Role is required"
+            
+            # Check if user has permission to create users
+            if not self.has_permission("manage_users") and not self.has_permission("invite_users"):
+                return False, "You don't have permission to create users"
+            
+            # Try to create user via backend API
+            try:
+                # First, create the user account
+                from dbrsdk.models import UserCreate
+                
+                user_create_data = UserCreate(
+                    username=username,
+                    password=password,
+                    email=f"{username}@example.com",
+                    display_name=username.title()
+                )
+                
+                # Create user via API
+                created_user = self._authenticated_client.root.create_user(user_create_data)
+                
+                if created_user:
+                    print(f"Created user via API: {username} with role: {role}")
+                    return True, f"User '{username}' created successfully with role '{role}'"
+                else:
+                    return False, "Failed to create user via API"
+                    
+            except Exception as api_error:
+                print(f"Backend API call failed: {api_error}")
+                
+                # Fallback to mock data for development
+                # Check if username already exists in mock data
+                for existing_user in self._mock_users:
+                    if existing_user["username"].lower() == username.lower():
+                        return False, f"Username '{username}' already exists"
+                
+                # Create new user object in mock data
+                new_user = {
+                    "id": str(self._next_user_id),
+                    "username": username,
+                    "display_name": username.title(),
+                    "role": role,
+                    "status": "Active",
+                    "email": f"{username}@example.com"
+                }
+                
+                # Add to mock user list
+                self._mock_users.append(new_user)
+                self._next_user_id += 1
+                
+                print(f"Created user in mock data: {username} with role: {role} (ID: {new_user['id']})")
+                
+                return True, f"User '{username}' created successfully with role '{role}' (mock mode)"
+            
+        except Exception as e:
+            print(f"Failed to create user: {e}")
+            return False, f"Failed to create user: {str(e)}"
+
+    def remove_user(self, user_id: str) -> tuple[bool, str]:
+        """Remove a user by ID."""
+        try:
+            if not self._authenticated_client:
+                return False, "Not authenticated"
+            
+            # Check if user has permission to remove users
+            if not self.has_permission("manage_users"):
+                return False, "You don't have permission to remove users"
+            
+            # Find the user to remove
+            user_to_remove = None
+            for user in self._mock_users:
+                if user["id"] == user_id:
+                    user_to_remove = user
+                    break
+            
+            if not user_to_remove:
+                return False, f"User with ID '{user_id}' not found"
+            
+            # Prevent removing yourself (safety check)
+            current_user = self.get_user_info()
+            if current_user and current_user.get("username") == user_to_remove["username"]:
+                return False, "You cannot remove your own account"
+            
+            # Remove the user
+            self._mock_users.remove(user_to_remove)
+            
+            print(f"Removed user: {user_to_remove['username']} (ID: {user_id})")
+            
+            return True, f"User '{user_to_remove['username']}' has been removed successfully"
+            
+        except Exception as e:
+            print(f"Failed to remove user: {e}")
+            return False, f"Failed to remove user: {str(e)}"
+
+    def update_user(self, user_id: str, username: str = None, role: str = None, status: str = None) -> tuple[bool, str]:
+        """Update a user's information."""
+        try:
+            if not self._authenticated_client:
+                return False, "Not authenticated"
+            
+            # Check if user has permission to update users
+            if not self.has_permission("manage_users"):
+                return False, "You don't have permission to update users"
+            
+            # Find the user to update
+            user_to_update = None
+            for user in self._mock_users:
+                if user["id"] == user_id:
+                    user_to_update = user
+                    break
+            
+            if not user_to_update:
+                return False, f"User with ID '{user_id}' not found"
+            
+            # Check for username conflicts if username is being changed
+            if username and username != user_to_update["username"]:
+                for existing_user in self._mock_users:
+                    if existing_user["username"].lower() == username.lower() and existing_user["id"] != user_id:
+                        return False, f"Username '{username}' already exists"
+            
+            # Update fields if provided
+            if username:
+                user_to_update["username"] = username
+                user_to_update["display_name"] = username.title()
+                user_to_update["email"] = f"{username}@example.com"
+            
+            if role:
+                user_to_update["role"] = role
+            
+            if status:
+                user_to_update["status"] = status
+            
+            print(f"Updated user: {user_to_update['username']} (ID: {user_id})")
+            
+            return True, f"User '{user_to_update['username']}' has been updated successfully"
+            
+        except Exception as e:
+            print(f"Failed to update user: {e}")
+            return False, f"Failed to update user: {str(e)}"

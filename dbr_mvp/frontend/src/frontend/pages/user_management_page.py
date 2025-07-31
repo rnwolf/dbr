@@ -2,6 +2,7 @@
 
 import customtkinter as ctk
 from frontend.components.create_user_dialog import CreateUserDialog
+from frontend.components.edit_user_dialog import EditUserDialog
 
 
 class UserManagementPage(ctk.CTkFrame):
@@ -76,7 +77,25 @@ class UserManagementPage(ctk.CTkFrame):
     def edit_user(self, user):
         """Callback to edit a user."""
         print(f"Editing user: {user['username']}")
+        # Create and show edit dialog
+        dialog = EditUserDialog(self, self.dbr_service, user)
+        dialog.grab_set()
 
     def remove_user(self, user):
         """Callback to remove a user."""
-        print(f"Removing user: {user['username']}")
+        from tkinter import messagebox
+        
+        # Confirm deletion
+        result = messagebox.askyesno(
+            "Confirm Deletion",
+            f"Are you sure you want to remove user '{user['username']}'?\n\nThis action cannot be undone.",
+            parent=self
+        )
+        
+        if result:
+            success, message = self.dbr_service.remove_user(user['id'])
+            if success:
+                messagebox.showinfo("Success", message, parent=self)
+                self.refresh_user_list()
+            else:
+                messagebox.showerror("Error", message, parent=self)

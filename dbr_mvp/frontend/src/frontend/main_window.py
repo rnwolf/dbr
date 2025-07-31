@@ -6,6 +6,7 @@ from .menu_bar import MenuBar
 from .tab_navigation import TabNavigation
 from .authentication_ui import UserContextWidget
 from .dbr_service import DBRService
+from .pages.user_management_page import UserManagementPage
 from utils.config import AppConfig
 
 
@@ -134,11 +135,17 @@ class MainWindow(ctk.CTk):
             return ["Buffer Boards", "Reports"]
 
     def _create_placeholder_page(self, tab_name: str) -> ctk.CTkFrame:
-        """Create a placeholder page for a tab."""
-        # Create a simple frame with the correct parent
-        page = ctk.CTkFrame(self.tab_navigation.content_frame)
-
+        """Create a page for a tab - either a real page or placeholder."""
         try:
+            # Create actual pages for specific tabs
+            if tab_name == "Users":
+                # Create the actual UserManagementPage for Super Admin
+                page = UserManagementPage(self.tab_navigation.content_frame, self.dbr_service)
+                return page
+            
+            # Create placeholder for other tabs (for now)
+            page = ctk.CTkFrame(self.tab_navigation.content_frame)
+            
             # Add simple title
             title_label = ctk.CTkLabel(
                 page, text=f"{tab_name} Page", font=ctk.CTkFont(size=20, weight="bold")
@@ -154,7 +161,9 @@ class MainWindow(ctk.CTk):
             desc_label.pack(pady=10)
 
         except Exception as e:
-            print(f"Error creating placeholder page for {tab_name}: {e}")
+            print(f"Error creating page for {tab_name}: {e}")
+            # Fallback to basic frame if there's an error
+            page = ctk.CTkFrame(self.tab_navigation.content_frame)
 
         return page
 
