@@ -52,11 +52,11 @@ We need a comprehensive testing strategy that supports TDD frontend development 
 
 ###### TDD Cycle Maintained:
 
-# 1. Fast TDD loop (unit tests only)
+- 1. Fast TDD loop (unit tests only)
 pytest tests/test_frontend/test_data_models.py -v
-# 2. Integration validation (with backend)
+- 2. Integration validation (with backend)
 pytest tests/test_integration/ -v
-# 3. Full confidence (before commits)
+- 3. Full confidence (before commits)
 pytest tests/ -v
 
 ###### Test Markers for Control:
