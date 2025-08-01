@@ -18,6 +18,7 @@ Get all work items with optional filtering
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_work_items_api_v1_workitems_get" method="get" path="/api/v1/workitems" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -66,6 +67,7 @@ Create a new work item
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="create_work_item_api_v1_workitems_post" method="post" path="/api/v1/workitems" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -122,6 +124,7 @@ Get a specific work item by ID
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_work_item_api_v1_workitems__work_item_id__get" method="get" path="/api/v1/workitems/{work_item_id}" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -167,6 +170,7 @@ Update a work item by ID
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="update_work_item_api_v1_workitems__work_item_id__put" method="put" path="/api/v1/workitems/{work_item_id}" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -224,6 +228,7 @@ Delete a work item by ID
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="delete_work_item_api_v1_workitems__work_item_id__delete" method="delete" path="/api/v1/workitems/{work_item_id}" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -264,6 +269,7 @@ Update a specific task within a work item
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="update_work_item_task_api_v1_workitems__work_item_id__tasks__task_id__put" method="put" path="/api/v1/workitems/{work_item_id}/tasks/{task_id}" -->
 ```python
 from dbrsdk import Dbrsdk
 import os

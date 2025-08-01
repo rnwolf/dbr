@@ -208,6 +208,22 @@ with Dbrsdk(
 
 * [get](docs/sdks/health/README.md#get) - Health Check
 
+### [memberships](docs/sdks/memberships/README.md)
+
+* [get](docs/sdks/memberships/README.md#get) - Get Memberships
+* [create](docs/sdks/memberships/README.md#create) - Create Membership
+* [get_membership](docs/sdks/memberships/README.md#get_membership) - Get Membership
+* [update_membership](docs/sdks/memberships/README.md#update_membership) - Update Membership
+* [delete](docs/sdks/memberships/README.md#delete) - Delete Membership
+
+### [organizations](docs/sdks/organizations/README.md)
+
+* [get](docs/sdks/organizations/README.md#get) - Get Organizations
+* [create](docs/sdks/organizations/README.md#create) - Create Organization
+* [get_by_id](docs/sdks/organizations/README.md#get_by_id) - Get Organization
+* [update](docs/sdks/organizations/README.md#update) - Update Organization
+* [delete](docs/sdks/organizations/README.md#delete) - Delete Organization
+
 ### [root](docs/sdks/root/README.md)
 
 * [get](docs/sdks/root/README.md#get) - Read Root
@@ -230,6 +246,14 @@ with Dbrsdk(
 * [advance_time_unit](docs/sdks/system/README.md#advance_time_unit) - Advance Time Unit
 * [get_time](docs/sdks/system/README.md#get_time) - Get Current Time
 * [set_time](docs/sdks/system/README.md#set_time) - Set System Time
+
+### [users](docs/sdks/users/README.md)
+
+* [get](docs/sdks/users/README.md#get) - Get Users
+* [create](docs/sdks/users/README.md#create) - Create User
+* [get_by_id](docs/sdks/users/README.md#get_by_id) - Get User
+* [update](docs/sdks/users/README.md#update) - Update User
+* [delete](docs/sdks/users/README.md#delete) - Delete User
 
 ### [work_items](docs/sdks/workitems/README.md)
 
@@ -336,12 +360,9 @@ with Dbrsdk(
 ### Error Classes
 **Primary errors:**
 * [`DbrsdkError`](./src/dbrsdk/errors/dbrsdkerror.py): The base class for HTTP error responses.
-  * [`BadRequestError`](./src/dbrsdk/errors/badrequesterror.py): Invalid request.
-  * [`UnauthorizedError`](./src/dbrsdk/errors/unauthorizederror.py): Permission denied or not authenticated.
-  * [`NotFoundError`](./src/dbrsdk/errors/notfounderror.py): Not found. Status code `404`.
-  * [`RateLimitedError`](./src/dbrsdk/errors/ratelimitederror.py): Rate limit exceeded. Status code `429`.
+  * [`HTTPValidationError`](./src/dbrsdk/errors/httpvalidationerror.py): Validation Error. Status code `422`. *
 
-<details><summary>Less common errors (6)</summary>
+<details><summary>Less common errors (9)</summary>
 
 <br />
 
@@ -352,7 +373,10 @@ with Dbrsdk(
 
 
 **Inherit from [`DbrsdkError`](./src/dbrsdk/errors/dbrsdkerror.py)**:
-* [`HTTPValidationError`](./src/dbrsdk/errors/httpvalidationerror.py): Validation Error. Status code `422`. Applicable to 16 of 22 methods.*
+* [`BadRequestError`](./src/dbrsdk/errors/badrequesterror.py): Invalid request. Applicable to 22 of 37 methods.*
+* [`UnauthorizedError`](./src/dbrsdk/errors/unauthorizederror.py): Permission denied or not authenticated. Applicable to 22 of 37 methods.*
+* [`NotFoundError`](./src/dbrsdk/errors/notfounderror.py): Not found. Status code `404`. Applicable to 22 of 37 methods.*
+* [`RateLimitedError`](./src/dbrsdk/errors/ratelimitederror.py): Rate limit exceeded. Status code `429`. Applicable to 22 of 37 methods.*
 * [`ResponseValidationError`](./src/dbrsdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>

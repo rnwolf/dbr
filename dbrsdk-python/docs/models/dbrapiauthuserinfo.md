@@ -1,4 +1,4 @@
-# UserInfo
+# DbrAPIAuthUserInfo
 
 User information model
 

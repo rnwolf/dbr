@@ -812,7 +812,7 @@ paths:
           description: "Successful Response"
           content:
             "application/json":
-              schema: {"$ref": "#/components/schemas/UserInfo"}
+              schema: {"$ref": "#/components/schemas/dbr__api__auth__UserInfo"}
         '400':
           $ref: '#/components/responses/BadRequest'
         '422':
@@ -856,6 +856,486 @@ paths:
       security:
         - HTTPBearer: []
       x-speakeasy-name-override: "logout"
+  "/api/v1/users/":
+    get:
+      tags:
+        - "Users"
+      summary: "Get Users"
+      description: "Get list of users (with organization filtering)"
+      operationId: "get_users_api_v1_users__get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "organization_id"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            description: "Organization ID to filter users"
+            title: "Organization Id"
+          description: "Organization ID to filter users"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema:
+                type: "array"
+                items: {"$ref": "#/components/schemas/UserResponse"}
+                title: "Response Get Users Api V1 Users  Get"
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: get
+    post:
+      tags:
+        - "Users"
+      summary: "Create User"
+      description: "Create a new user"
+      operationId: "create_user_api_v1_users__post"
+      security:
+        - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/UserCreate"}
+      responses:
+        "201":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/UserResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: create
+  "/api/v1/users/{user_id}":
+    get:
+      tags:
+        - "Users"
+      summary: "Get User"
+      description: "Get a specific user by ID"
+      operationId: "get_user_api_v1_users__user_id__get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "User Id"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/UserResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: getById
+    put:
+      tags:
+        - "Users"
+      summary: "Update User"
+      description: "Update a user"
+      operationId: "update_user_api_v1_users__user_id__put"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "User Id"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/UserUpdate"}
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/UserResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: update
+    delete:
+      tags:
+        - "Users"
+      summary: "Delete User"
+      description: "Delete a user"
+      operationId: "delete_user_api_v1_users__user_id__delete"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "User Id"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: delete
+  "/api/v1/organizations/":
+    get:
+      tags:
+        - "Organizations"
+      summary: "Get Organizations"
+      description: "Get list of organizations (filtered by user permissions)"
+      operationId: "get_organizations_api_v1_organizations__get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "status"
+          in: "query"
+          required: false
+          schema:
+            anyOf:
+              - type: "string"
+              - type: "null"
+            description: "Filter by organization status"
+            title: "Status"
+          description: "Filter by organization status"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema:
+                type: "array"
+                items: {"$ref": "#/components/schemas/OrganizationResponse"}
+                title: "Response Get Organizations Api V1 Organizations  Get"
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: get
+    post:
+      tags:
+        - "Organizations"
+      summary: "Create Organization"
+      description: "Create a new organization (Super Admin only)"
+      operationId: "create_organization_api_v1_organizations__post"
+      security:
+        - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/OrganizationCreate"}
+      responses:
+        "201":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/OrganizationResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: create
+  "/api/v1/organizations/{org_id}":
+    get:
+      tags:
+        - "Organizations"
+      summary: "Get Organization"
+      description: "Get a specific organization by ID"
+      operationId: "get_organization_api_v1_organizations__org_id__get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/OrganizationResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: getById
+    put:
+      tags:
+        - "Organizations"
+      summary: "Update Organization"
+      description: "Update an organization"
+      operationId: "update_organization_api_v1_organizations__org_id__put"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/OrganizationUpdate"}
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/OrganizationResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: update
+    delete:
+      tags:
+        - "Organizations"
+      summary: "Delete Organization"
+      description: "Delete an organization (Super Admin only)"
+      operationId: "delete_organization_api_v1_organizations__org_id__delete"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: delete
+  "/api/v1/organizations/{org_id}/memberships":
+    get:
+      tags:
+        - "Memberships"
+      summary: "Get Memberships"
+      description: "Get list of organization memberships"
+      operationId: "get_memberships_api_v1_organizations__org_id__memberships_get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+        - name: "role_id"
+          in: "query"
+          required: false
+          schema:
+            anyOf:
+              - type: "string"
+              - type: "null"
+            description: "Filter by role ID"
+            title: "Role Id"
+          description: "Filter by role ID"
+        - name: "status"
+          in: "query"
+          required: false
+          schema:
+            anyOf:
+              - type: "string"
+              - type: "null"
+            description: "Filter by invitation status"
+            title: "Status"
+          description: "Filter by invitation status"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema:
+                type: "array"
+                items: {"$ref": "#/components/schemas/MembershipResponse"}
+                title: "Response Get Memberships Api V1 Organizations  Org Id  Memberships Get"
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: get
+    post:
+      tags:
+        - "Memberships"
+      summary: "Create Membership"
+      description: "Create a new organization membership"
+      operationId: "create_membership_api_v1_organizations__org_id__memberships_post"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/MembershipCreate"}
+      responses:
+        "201":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/MembershipResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: create
+  "/api/v1/organizations/{org_id}/memberships/{user_id}":
+    get:
+      tags:
+        - "Memberships"
+      summary: "Get Membership"
+      description: "Get a specific organization membership"
+      operationId: "get_membership_api_v1_organizations__org_id__memberships__user_id__get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "User Id"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/MembershipResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: getMembership
+    put:
+      tags:
+        - "Memberships"
+      summary: "Update Membership"
+      description: "Update an organization membership"
+      operationId: "update_membership_api_v1_organizations__org_id__memberships__user_id__put"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "User Id"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/MembershipUpdate"}
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/MembershipResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: updateMembership
+    delete:
+      tags:
+        - "Memberships"
+      summary: "Delete Membership"
+      description: "Delete an organization membership"
+      operationId: "delete_membership_api_v1_organizations__org_id__memberships__user_id__delete"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "org_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Org Id"
+        - name: "user_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "User Id"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: delete
   "/":
     get:
       summary: "Read Root"
@@ -1021,6 +1501,238 @@ components:
         - "user"
       title: "LoginResponse"
       description: "Login response model"
+    "MembershipCreate":
+      properties:
+        "user_id":
+          type: "string"
+          title: "User Id"
+          description: "User ID to add to organization"
+        "role_id":
+          type: "string"
+          title: "Role Id"
+          description: "Role ID to assign to user"
+      type: "object"
+      required:
+        - "user_id"
+        - "role_id"
+      title: "MembershipCreate"
+      description: "Schema for creating a new membership"
+    "MembershipResponse":
+      properties:
+        "id":
+          type: "string"
+          title: "Id"
+        "organization_id":
+          type: "string"
+          title: "Organization Id"
+        "user_id":
+          type: "string"
+          title: "User Id"
+        "role_id":
+          type: "string"
+          title: "Role Id"
+        "invitation_status":
+          type: "string"
+          title: "Invitation Status"
+        "invited_by_user_id":
+          type: "string"
+          title: "Invited By User Id"
+        "joined_date":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Joined Date"
+        "created_date":
+          type: "string"
+          title: "Created Date"
+        "updated_date":
+          type: "string"
+          title: "Updated Date"
+        "user": {"$ref": "#/components/schemas/dbr__api__memberships__UserInfo"}
+        "role": {"$ref": "#/components/schemas/RoleInfo"}
+      type: "object"
+      required:
+        - "id"
+        - "organization_id"
+        - "user_id"
+        - "role_id"
+        - "invitation_status"
+        - "invited_by_user_id"
+        - "joined_date"
+        - "created_date"
+        - "updated_date"
+        - "user"
+        - "role"
+      title: "MembershipResponse"
+      description: "Schema for membership response"
+    "MembershipUpdate":
+      properties:
+        "role_id":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Role Id"
+          description: "Role ID to assign to user"
+        "invitation_status":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Invitation Status"
+          description: "Invitation status"
+      type: "object"
+      title: "MembershipUpdate"
+      description: "Schema for updating a membership"
+    "OrganizationCreate":
+      properties:
+        "name":
+          type: "string"
+          maxLength: 255
+          minLength: 1
+          title: "Name"
+          description: "Organization name"
+        "description":
+          anyOf:
+            - type: "string"
+              maxLength: 1000
+            - type: "null"
+          title: "Description"
+          description: "Organization description"
+        "contact_email":
+          type: "string"
+          title: "Contact Email"
+          description: "Contact email address"
+        "country":
+          type: "string"
+          maxLength: 2
+          minLength: 2
+          title: "Country"
+          description: "ISO country code"
+        "subscription_level":
+          type: "string"
+          title: "Subscription Level"
+          description: "Subscription level"
+          default: "basic"
+      type: "object"
+      required:
+        - "name"
+        - "contact_email"
+        - "country"
+      title: "OrganizationCreate"
+      description: "Schema for creating a new organization"
+    "OrganizationResponse":
+      properties:
+        "id":
+          type: "string"
+          title: "Id"
+        "name":
+          type: "string"
+          title: "Name"
+        "description":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Description"
+        "status":
+          type: "string"
+          title: "Status"
+        "contact_email":
+          type: "string"
+          title: "Contact Email"
+        "country":
+          type: "string"
+          title: "Country"
+        "subscription_level":
+          type: "string"
+          title: "Subscription Level"
+        "default_board_id":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Default Board Id"
+        "created_date":
+          type: "string"
+          title: "Created Date"
+        "updated_date":
+          type: "string"
+          title: "Updated Date"
+      type: "object"
+      required:
+        - "id"
+        - "name"
+        - "description"
+        - "status"
+        - "contact_email"
+        - "country"
+        - "subscription_level"
+        - "default_board_id"
+        - "created_date"
+        - "updated_date"
+      title: "OrganizationResponse"
+      description: "Schema for organization response"
+    "OrganizationUpdate":
+      properties:
+        "name":
+          anyOf:
+            - type: "string"
+              maxLength: 255
+              minLength: 1
+            - type: "null"
+          title: "Name"
+          description: "Organization name"
+        "description":
+          anyOf:
+            - type: "string"
+              maxLength: 1000
+            - type: "null"
+          title: "Description"
+          description: "Organization description"
+        "contact_email":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Contact Email"
+          description: "Contact email address"
+        "country":
+          anyOf:
+            - type: "string"
+              maxLength: 2
+              minLength: 2
+            - type: "null"
+          title: "Country"
+          description: "ISO country code"
+        "subscription_level":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Subscription Level"
+          description: "Subscription level"
+        "status":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Status"
+          description: "Organization status"
+      type: "object"
+      title: "OrganizationUpdate"
+      description: "Schema for updating an organization"
+    "RoleInfo":
+      properties:
+        "id":
+          type: "string"
+          title: "Id"
+        "name":
+          type: "string"
+          title: "Name"
+        "description":
+          type: "string"
+          title: "Description"
+      type: "object"
+      required:
+        - "id"
+        - "name"
+        - "description"
+      title: "RoleInfo"
+      description: "Schema for role information in membership response"
     "ScheduleAnalytics":
       properties:
         "work_item_count":
@@ -1220,7 +1932,53 @@ components:
           description: "Task completion status"
       type: "object"
       title: "TaskUpdate"
-    "UserInfo":
+    "UserCreate":
+      properties:
+        "organization_id":
+          type: "string"
+          title: "Organization Id"
+          description: "Organization ID"
+        "username":
+          type: "string"
+          maxLength: 50
+          minLength: 3
+          title: "Username"
+          description: "Username"
+        "email":
+          type: "string"
+          title: "Email"
+          description: "Email address"
+        "display_name":
+          type: "string"
+          maxLength: 255
+          minLength: 1
+          title: "Display Name"
+          description: "Display name"
+        "password":
+          type: "string"
+          minLength: 6
+          title: "Password"
+          description: "Password"
+        "system_role_id":
+          type: "string"
+          title: "System Role Id"
+          description: "System role ID"
+        "active_status":
+          type: "boolean"
+          title: "Active Status"
+          description: "Active status"
+          default: true
+      type: "object"
+      required:
+        - "organization_id"
+        - "username"
+        - "email"
+        - "display_name"
+        - "password"
+        - "system_role_id"
+      title: "UserCreate"
+      description: "Schema for creating a new user"
+    "UserResponse":
       properties:
         "id":
           type: "string"
@@ -1232,13 +1990,20 @@ components:
           type: "string"
           title: "Email"
         "display_name":
-          anyOf:
-            - type: "string"
-            - type: "null"
+          type: "string"
           title: "Display Name"
         "active_status":
           type: "boolean"
           title: "Active Status"
+        "system_role_id":
+          type: "string"
+          title: "System Role Id"
+        "created_date":
+          type: "string"
+          title: "Created Date"
+        "updated_date":
+          type: "string"
+          title: "Updated Date"
       type: "object"
       required:
         - "id"
@@ -1246,8 +2011,50 @@ components:
         - "email"
         - "display_name"
         - "active_status"
-      title: "UserInfo"
-      description: "User information model"
+        - "system_role_id"
+        - "created_date"
+        - "updated_date"
+      title: "UserResponse"
+      description: "Schema for user response"
+    "UserUpdate":
+      properties:
+        "username":
+          anyOf:
+            - type: "string"
+              maxLength: 50
+              minLength: 3
+            - type: "null"
+          title: "Username"
+          description: "Username"
+        "email":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Email"
+          description: "Email address"
+        "display_name":
+          anyOf:
+            - type: "string"
+              maxLength: 255
+              minLength: 1
+            - type: "null"
+          title: "Display Name"
+          description: "Display name"
+        "system_role_id":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "System Role Id"
+          description: "System role ID"
+        "active_status":
+          anyOf:
+            - type: "boolean"
+            - type: "null"
+          title: "Active Status"
+          description: "Active status"
+      type: "object"
+      title: "UserUpdate"
+      description: "Schema for updating a user"
     "ValidationError":
       properties:
         "loc":
@@ -1531,6 +2338,60 @@ components:
           description: "External URL"
       type: "object"
       title: "WorkItemUpdate"
+    "dbr__api__auth__UserInfo":
+      properties:
+        "id":
+          type: "string"
+          title: "Id"
+        "username":
+          type: "string"
+          title: "Username"
+        "email":
+          type: "string"
+          title: "Email"
+        "display_name":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Display Name"
+        "active_status":
+          type: "boolean"
+          title: "Active Status"
+      type: "object"
+      required:
+        - "id"
+        - "username"
+        - "email"
+        - "display_name"
+        - "active_status"
+      title: "UserInfo"
+      description: "User information model"
+    "dbr__api__memberships__UserInfo":
+      properties:
+        "id":
+          type: "string"
+          title: "Id"
+        "username":
+          type: "string"
+          title: "Username"
+        "email":
+          type: "string"
+          title: "Email"
+        "display_name":
+          type: "string"
+          title: "Display Name"
+        "active_status":
+          type: "boolean"
+          title: "Active Status"
+      type: "object"
+      required:
+        - "id"
+        - "username"
+        - "email"
+        - "display_name"
+        - "active_status"
+      title: "UserInfo"
+      description: "Schema for user information in membership response"
     BadRequest:
       type: object
       x-speakeasy-suggested-error: true

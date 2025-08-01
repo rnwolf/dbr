@@ -13,6 +13,7 @@ API-specific health check endpoint
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="api_health_check_api_v1_health_get" method="get" path="/api/v1/health" -->
 ```python
 from dbrsdk import Dbrsdk
 import os

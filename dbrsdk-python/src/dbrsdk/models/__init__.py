@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING
 from importlib import import_module
+import builtins
 
 if TYPE_CHECKING:
     from .advance_time_unit_api_v1_system_advance_time_unit_postop import (
@@ -10,9 +11,30 @@ if TYPE_CHECKING:
     )
     from .advancetimeresponse import AdvanceTimeResponse, AdvanceTimeResponseTypedDict
     from .boardanalytics import BoardAnalytics, BoardAnalyticsTypedDict
+    from .create_membership_api_v1_organizations_org_id_memberships_postop import (
+        CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest,
+        CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequestTypedDict,
+    )
+    from .dbr_api_auth_userinfo import DbrAPIAuthUserInfo, DbrAPIAuthUserInfoTypedDict
+    from .dbr_api_memberships_userinfo import (
+        DbrAPIMembershipsUserInfo,
+        DbrAPIMembershipsUserInfoTypedDict,
+    )
+    from .delete_membership_api_v1_organizations_org_id_memberships_user_id_deleteop import (
+        DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequest,
+        DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequestTypedDict,
+    )
+    from .delete_organization_api_v1_organizations_org_id_deleteop import (
+        DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequest,
+        DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequestTypedDict,
+    )
     from .delete_schedule_api_v1_schedules_schedule_id_deleteop import (
         DeleteScheduleAPIV1SchedulesScheduleIDDeleteRequest,
         DeleteScheduleAPIV1SchedulesScheduleIDDeleteRequestTypedDict,
+    )
+    from .delete_user_api_v1_users_user_id_deleteop import (
+        DeleteUserAPIV1UsersUserIDDeleteRequest,
+        DeleteUserAPIV1UsersUserIDDeleteRequestTypedDict,
     )
     from .delete_work_item_api_v1_workitems_work_item_id_deleteop import (
         DeleteWorkItemAPIV1WorkitemsWorkItemIDDeleteRequest,
@@ -21,6 +43,22 @@ if TYPE_CHECKING:
     from .get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop import (
         GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequest,
         GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequestTypedDict,
+    )
+    from .get_membership_api_v1_organizations_org_id_memberships_user_id_getop import (
+        GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequest,
+        GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequestTypedDict,
+    )
+    from .get_memberships_api_v1_organizations_org_id_memberships_getop import (
+        GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequest,
+        GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequestTypedDict,
+    )
+    from .get_organization_api_v1_organizations_org_id_getop import (
+        GetOrganizationAPIV1OrganizationsOrgIDGetRequest,
+        GetOrganizationAPIV1OrganizationsOrgIDGetRequestTypedDict,
+    )
+    from .get_organizations_api_v1_organizations_getop import (
+        GetOrganizationsAPIV1OrganizationsGetRequest,
+        GetOrganizationsAPIV1OrganizationsGetRequestTypedDict,
     )
     from .get_schedule_analytics_api_v1_schedules_schedule_id_analytics_getop import (
         GetScheduleAnalyticsAPIV1SchedulesScheduleIDAnalyticsGetRequest,
@@ -34,6 +72,14 @@ if TYPE_CHECKING:
         GetSchedulesAPIV1SchedulesGetRequest,
         GetSchedulesAPIV1SchedulesGetRequestTypedDict,
     )
+    from .get_user_api_v1_users_user_id_getop import (
+        GetUserAPIV1UsersUserIDGetRequest,
+        GetUserAPIV1UsersUserIDGetRequestTypedDict,
+    )
+    from .get_users_api_v1_users_getop import (
+        GetUsersAPIV1UsersGetRequest,
+        GetUsersAPIV1UsersGetRequestTypedDict,
+    )
     from .get_work_item_api_v1_workitems_work_item_id_getop import (
         GetWorkItemAPIV1WorkitemsWorkItemIDGetRequest,
         GetWorkItemAPIV1WorkitemsWorkItemIDGetRequestTypedDict,
@@ -44,6 +90,16 @@ if TYPE_CHECKING:
     )
     from .loginrequest import LoginRequest, LoginRequestTypedDict
     from .loginresponse import LoginResponse, LoginResponseTypedDict
+    from .membershipcreate import MembershipCreate, MembershipCreateTypedDict
+    from .membershipresponse import MembershipResponse, MembershipResponseTypedDict
+    from .membershipupdate import MembershipUpdate, MembershipUpdateTypedDict
+    from .organizationcreate import OrganizationCreate, OrganizationCreateTypedDict
+    from .organizationresponse import (
+        OrganizationResponse,
+        OrganizationResponseTypedDict,
+    )
+    from .organizationupdate import OrganizationUpdate, OrganizationUpdateTypedDict
+    from .roleinfo import RoleInfo, RoleInfoTypedDict
     from .scheduleanalytics import ScheduleAnalytics, ScheduleAnalyticsTypedDict
     from .schedulecreate import ScheduleCreate, ScheduleCreateTypedDict
     from .scheduleresponse import ScheduleResponse, ScheduleResponseTypedDict
@@ -56,9 +112,21 @@ if TYPE_CHECKING:
     from .taskcreate import TaskCreate, TaskCreateTypedDict
     from .taskresponse import TaskResponse, TaskResponseTypedDict
     from .taskupdate import TaskUpdate, TaskUpdateTypedDict
+    from .update_membership_api_v1_organizations_org_id_memberships_user_id_putop import (
+        UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequest,
+        UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequestTypedDict,
+    )
+    from .update_organization_api_v1_organizations_org_id_putop import (
+        UpdateOrganizationAPIV1OrganizationsOrgIDPutRequest,
+        UpdateOrganizationAPIV1OrganizationsOrgIDPutRequestTypedDict,
+    )
     from .update_schedule_api_v1_schedules_schedule_id_putop import (
         UpdateScheduleAPIV1SchedulesScheduleIDPutRequest,
         UpdateScheduleAPIV1SchedulesScheduleIDPutRequestTypedDict,
+    )
+    from .update_user_api_v1_users_user_id_putop import (
+        UpdateUserAPIV1UsersUserIDPutRequest,
+        UpdateUserAPIV1UsersUserIDPutRequestTypedDict,
     )
     from .update_work_item_api_v1_workitems_work_item_id_putop import (
         UpdateWorkItemAPIV1WorkitemsWorkItemIDPutRequest,
@@ -68,7 +136,9 @@ if TYPE_CHECKING:
         UpdateWorkItemTaskAPIV1WorkitemsWorkItemIDTasksTaskIDPutRequest,
         UpdateWorkItemTaskAPIV1WorkitemsWorkItemIDTasksTaskIDPutRequestTypedDict,
     )
-    from .userinfo import UserInfo, UserInfoTypedDict
+    from .usercreate import UserCreate, UserCreateTypedDict
+    from .userresponse import UserResponse, UserResponseTypedDict
+    from .userupdate import UserUpdate, UserUpdateTypedDict
     from .validationerror import (
         Loc,
         LocTypedDict,
@@ -86,18 +156,42 @@ __all__ = [
     "AdvanceTimeUnitAPIV1SystemAdvanceTimeUnitPostRequestTypedDict",
     "BoardAnalytics",
     "BoardAnalyticsTypedDict",
+    "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest",
+    "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequestTypedDict",
+    "DbrAPIAuthUserInfo",
+    "DbrAPIAuthUserInfoTypedDict",
+    "DbrAPIMembershipsUserInfo",
+    "DbrAPIMembershipsUserInfoTypedDict",
+    "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequest",
+    "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequestTypedDict",
+    "DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequest",
+    "DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequestTypedDict",
     "DeleteScheduleAPIV1SchedulesScheduleIDDeleteRequest",
     "DeleteScheduleAPIV1SchedulesScheduleIDDeleteRequestTypedDict",
+    "DeleteUserAPIV1UsersUserIDDeleteRequest",
+    "DeleteUserAPIV1UsersUserIDDeleteRequestTypedDict",
     "DeleteWorkItemAPIV1WorkitemsWorkItemIDDeleteRequest",
     "DeleteWorkItemAPIV1WorkitemsWorkItemIDDeleteRequestTypedDict",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequest",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequestTypedDict",
+    "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequest",
+    "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequestTypedDict",
+    "GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequest",
+    "GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequestTypedDict",
+    "GetOrganizationAPIV1OrganizationsOrgIDGetRequest",
+    "GetOrganizationAPIV1OrganizationsOrgIDGetRequestTypedDict",
+    "GetOrganizationsAPIV1OrganizationsGetRequest",
+    "GetOrganizationsAPIV1OrganizationsGetRequestTypedDict",
     "GetScheduleAPIV1SchedulesScheduleIDGetRequest",
     "GetScheduleAPIV1SchedulesScheduleIDGetRequestTypedDict",
     "GetScheduleAnalyticsAPIV1SchedulesScheduleIDAnalyticsGetRequest",
     "GetScheduleAnalyticsAPIV1SchedulesScheduleIDAnalyticsGetRequestTypedDict",
     "GetSchedulesAPIV1SchedulesGetRequest",
     "GetSchedulesAPIV1SchedulesGetRequestTypedDict",
+    "GetUserAPIV1UsersUserIDGetRequest",
+    "GetUserAPIV1UsersUserIDGetRequestTypedDict",
+    "GetUsersAPIV1UsersGetRequest",
+    "GetUsersAPIV1UsersGetRequestTypedDict",
     "GetWorkItemAPIV1WorkitemsWorkItemIDGetRequest",
     "GetWorkItemAPIV1WorkitemsWorkItemIDGetRequestTypedDict",
     "GetWorkItemsAPIV1WorkitemsGetRequest",
@@ -108,6 +202,20 @@ __all__ = [
     "LoginRequestTypedDict",
     "LoginResponse",
     "LoginResponseTypedDict",
+    "MembershipCreate",
+    "MembershipCreateTypedDict",
+    "MembershipResponse",
+    "MembershipResponseTypedDict",
+    "MembershipUpdate",
+    "MembershipUpdateTypedDict",
+    "OrganizationCreate",
+    "OrganizationCreateTypedDict",
+    "OrganizationResponse",
+    "OrganizationResponseTypedDict",
+    "OrganizationUpdate",
+    "OrganizationUpdateTypedDict",
+    "RoleInfo",
+    "RoleInfoTypedDict",
     "ScheduleAnalytics",
     "ScheduleAnalyticsTypedDict",
     "ScheduleCreate",
@@ -126,14 +234,24 @@ __all__ = [
     "TaskResponseTypedDict",
     "TaskUpdate",
     "TaskUpdateTypedDict",
+    "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequest",
+    "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequestTypedDict",
+    "UpdateOrganizationAPIV1OrganizationsOrgIDPutRequest",
+    "UpdateOrganizationAPIV1OrganizationsOrgIDPutRequestTypedDict",
     "UpdateScheduleAPIV1SchedulesScheduleIDPutRequest",
     "UpdateScheduleAPIV1SchedulesScheduleIDPutRequestTypedDict",
+    "UpdateUserAPIV1UsersUserIDPutRequest",
+    "UpdateUserAPIV1UsersUserIDPutRequestTypedDict",
     "UpdateWorkItemAPIV1WorkitemsWorkItemIDPutRequest",
     "UpdateWorkItemAPIV1WorkitemsWorkItemIDPutRequestTypedDict",
     "UpdateWorkItemTaskAPIV1WorkitemsWorkItemIDTasksTaskIDPutRequest",
     "UpdateWorkItemTaskAPIV1WorkitemsWorkItemIDTasksTaskIDPutRequestTypedDict",
-    "UserInfo",
-    "UserInfoTypedDict",
+    "UserCreate",
+    "UserCreateTypedDict",
+    "UserResponse",
+    "UserResponseTypedDict",
+    "UserUpdate",
+    "UserUpdateTypedDict",
     "ValidationError",
     "ValidationErrorTypedDict",
     "WorkItemCreate",
@@ -151,18 +269,42 @@ _dynamic_imports: dict[str, str] = {
     "AdvanceTimeResponseTypedDict": ".advancetimeresponse",
     "BoardAnalytics": ".boardanalytics",
     "BoardAnalyticsTypedDict": ".boardanalytics",
+    "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest": ".create_membership_api_v1_organizations_org_id_memberships_postop",
+    "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequestTypedDict": ".create_membership_api_v1_organizations_org_id_memberships_postop",
+    "DbrAPIAuthUserInfo": ".dbr_api_auth_userinfo",
+    "DbrAPIAuthUserInfoTypedDict": ".dbr_api_auth_userinfo",
+    "DbrAPIMembershipsUserInfo": ".dbr_api_memberships_userinfo",
+    "DbrAPIMembershipsUserInfoTypedDict": ".dbr_api_memberships_userinfo",
+    "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequest": ".delete_membership_api_v1_organizations_org_id_memberships_user_id_deleteop",
+    "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequestTypedDict": ".delete_membership_api_v1_organizations_org_id_memberships_user_id_deleteop",
+    "DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequest": ".delete_organization_api_v1_organizations_org_id_deleteop",
+    "DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequestTypedDict": ".delete_organization_api_v1_organizations_org_id_deleteop",
     "DeleteScheduleAPIV1SchedulesScheduleIDDeleteRequest": ".delete_schedule_api_v1_schedules_schedule_id_deleteop",
     "DeleteScheduleAPIV1SchedulesScheduleIDDeleteRequestTypedDict": ".delete_schedule_api_v1_schedules_schedule_id_deleteop",
+    "DeleteUserAPIV1UsersUserIDDeleteRequest": ".delete_user_api_v1_users_user_id_deleteop",
+    "DeleteUserAPIV1UsersUserIDDeleteRequestTypedDict": ".delete_user_api_v1_users_user_id_deleteop",
     "DeleteWorkItemAPIV1WorkitemsWorkItemIDDeleteRequest": ".delete_work_item_api_v1_workitems_work_item_id_deleteop",
     "DeleteWorkItemAPIV1WorkitemsWorkItemIDDeleteRequestTypedDict": ".delete_work_item_api_v1_workitems_work_item_id_deleteop",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequest": ".get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequestTypedDict": ".get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop",
+    "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequest": ".get_membership_api_v1_organizations_org_id_memberships_user_id_getop",
+    "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequestTypedDict": ".get_membership_api_v1_organizations_org_id_memberships_user_id_getop",
+    "GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequest": ".get_memberships_api_v1_organizations_org_id_memberships_getop",
+    "GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequestTypedDict": ".get_memberships_api_v1_organizations_org_id_memberships_getop",
+    "GetOrganizationAPIV1OrganizationsOrgIDGetRequest": ".get_organization_api_v1_organizations_org_id_getop",
+    "GetOrganizationAPIV1OrganizationsOrgIDGetRequestTypedDict": ".get_organization_api_v1_organizations_org_id_getop",
+    "GetOrganizationsAPIV1OrganizationsGetRequest": ".get_organizations_api_v1_organizations_getop",
+    "GetOrganizationsAPIV1OrganizationsGetRequestTypedDict": ".get_organizations_api_v1_organizations_getop",
     "GetScheduleAnalyticsAPIV1SchedulesScheduleIDAnalyticsGetRequest": ".get_schedule_analytics_api_v1_schedules_schedule_id_analytics_getop",
     "GetScheduleAnalyticsAPIV1SchedulesScheduleIDAnalyticsGetRequestTypedDict": ".get_schedule_analytics_api_v1_schedules_schedule_id_analytics_getop",
     "GetScheduleAPIV1SchedulesScheduleIDGetRequest": ".get_schedule_api_v1_schedules_schedule_id_getop",
     "GetScheduleAPIV1SchedulesScheduleIDGetRequestTypedDict": ".get_schedule_api_v1_schedules_schedule_id_getop",
     "GetSchedulesAPIV1SchedulesGetRequest": ".get_schedules_api_v1_schedules_getop",
     "GetSchedulesAPIV1SchedulesGetRequestTypedDict": ".get_schedules_api_v1_schedules_getop",
+    "GetUserAPIV1UsersUserIDGetRequest": ".get_user_api_v1_users_user_id_getop",
+    "GetUserAPIV1UsersUserIDGetRequestTypedDict": ".get_user_api_v1_users_user_id_getop",
+    "GetUsersAPIV1UsersGetRequest": ".get_users_api_v1_users_getop",
+    "GetUsersAPIV1UsersGetRequestTypedDict": ".get_users_api_v1_users_getop",
     "GetWorkItemAPIV1WorkitemsWorkItemIDGetRequest": ".get_work_item_api_v1_workitems_work_item_id_getop",
     "GetWorkItemAPIV1WorkitemsWorkItemIDGetRequestTypedDict": ".get_work_item_api_v1_workitems_work_item_id_getop",
     "GetWorkItemsAPIV1WorkitemsGetRequest": ".get_work_items_api_v1_workitems_getop",
@@ -171,6 +313,20 @@ _dynamic_imports: dict[str, str] = {
     "LoginRequestTypedDict": ".loginrequest",
     "LoginResponse": ".loginresponse",
     "LoginResponseTypedDict": ".loginresponse",
+    "MembershipCreate": ".membershipcreate",
+    "MembershipCreateTypedDict": ".membershipcreate",
+    "MembershipResponse": ".membershipresponse",
+    "MembershipResponseTypedDict": ".membershipresponse",
+    "MembershipUpdate": ".membershipupdate",
+    "MembershipUpdateTypedDict": ".membershipupdate",
+    "OrganizationCreate": ".organizationcreate",
+    "OrganizationCreateTypedDict": ".organizationcreate",
+    "OrganizationResponse": ".organizationresponse",
+    "OrganizationResponseTypedDict": ".organizationresponse",
+    "OrganizationUpdate": ".organizationupdate",
+    "OrganizationUpdateTypedDict": ".organizationupdate",
+    "RoleInfo": ".roleinfo",
+    "RoleInfoTypedDict": ".roleinfo",
     "ScheduleAnalytics": ".scheduleanalytics",
     "ScheduleAnalyticsTypedDict": ".scheduleanalytics",
     "ScheduleCreate": ".schedulecreate",
@@ -189,14 +345,24 @@ _dynamic_imports: dict[str, str] = {
     "TaskResponseTypedDict": ".taskresponse",
     "TaskUpdate": ".taskupdate",
     "TaskUpdateTypedDict": ".taskupdate",
+    "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequest": ".update_membership_api_v1_organizations_org_id_memberships_user_id_putop",
+    "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequestTypedDict": ".update_membership_api_v1_organizations_org_id_memberships_user_id_putop",
+    "UpdateOrganizationAPIV1OrganizationsOrgIDPutRequest": ".update_organization_api_v1_organizations_org_id_putop",
+    "UpdateOrganizationAPIV1OrganizationsOrgIDPutRequestTypedDict": ".update_organization_api_v1_organizations_org_id_putop",
     "UpdateScheduleAPIV1SchedulesScheduleIDPutRequest": ".update_schedule_api_v1_schedules_schedule_id_putop",
     "UpdateScheduleAPIV1SchedulesScheduleIDPutRequestTypedDict": ".update_schedule_api_v1_schedules_schedule_id_putop",
+    "UpdateUserAPIV1UsersUserIDPutRequest": ".update_user_api_v1_users_user_id_putop",
+    "UpdateUserAPIV1UsersUserIDPutRequestTypedDict": ".update_user_api_v1_users_user_id_putop",
     "UpdateWorkItemAPIV1WorkitemsWorkItemIDPutRequest": ".update_work_item_api_v1_workitems_work_item_id_putop",
     "UpdateWorkItemAPIV1WorkitemsWorkItemIDPutRequestTypedDict": ".update_work_item_api_v1_workitems_work_item_id_putop",
     "UpdateWorkItemTaskAPIV1WorkitemsWorkItemIDTasksTaskIDPutRequest": ".update_work_item_task_api_v1_workitems_work_item_id_tasks_task_id_putop",
     "UpdateWorkItemTaskAPIV1WorkitemsWorkItemIDTasksTaskIDPutRequestTypedDict": ".update_work_item_task_api_v1_workitems_work_item_id_tasks_task_id_putop",
-    "UserInfo": ".userinfo",
-    "UserInfoTypedDict": ".userinfo",
+    "UserCreate": ".usercreate",
+    "UserCreateTypedDict": ".usercreate",
+    "UserResponse": ".userresponse",
+    "UserResponseTypedDict": ".userresponse",
+    "UserUpdate": ".userupdate",
+    "UserUpdateTypedDict": ".userupdate",
     "Loc": ".validationerror",
     "LocTypedDict": ".validationerror",
     "ValidationError": ".validationerror",
@@ -232,5 +398,5 @@ def __getattr__(attr_name: str) -> object:
 
 
 def __dir__():
-    lazy_attrs = list(_dynamic_imports.keys())
-    return sorted(lazy_attrs)
+    lazy_attrs = builtins.list(_dynamic_imports.keys())
+    return builtins.sorted(lazy_attrs)

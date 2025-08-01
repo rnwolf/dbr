@@ -44,7 +44,7 @@ markers = [
 ]
 
 [tool.uv.sources]
-dbrsdk = { path = "../../dbrsdk-python/dist/dbrsdk-0.2.5-py3-none-any.whl" }
+dbrsdk = { path = "../../dbrsdk-python" }
 
 [project.scripts]
 app = "main:main"

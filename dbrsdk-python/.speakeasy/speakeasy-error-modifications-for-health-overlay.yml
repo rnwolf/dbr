@@ -1,7 +1,7 @@
 overlay: 1.0.0
 info:
   title: Response Codes Overlay
-  version: 0.0.2
+  version: 0.0.4
 actions:
   - target: $["paths"]["/health"]["get"]["responses"]
     update:
@@ -68,4 +68,139 @@ actions:
       before: sdk.<no_group>.api_health_check_api_v1_health_get()
       created_at: 1753560031022
       reviewed_at: 1753560039279
+      type: method-name
+  - target: $["paths"]["/api/v1/users/{user_id}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.users.delete()
+      before: sdk.Users.delete_user_api_v1_users__user_id__delete()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}/memberships"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.memberships.get()
+      before: sdk.Memberships.get_memberships_api_v1_organizations__org_id__memberships_get()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}"]["get"]
+    update:
+      x-speakeasy-name-override: getById
+    x-speakeasy-metadata:
+      after: sdk.organizations.getById()
+      before: sdk.Organizations.get_organization_api_v1_organizations__org_id__get()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.organizations.delete()
+      before: sdk.Organizations.delete_organization_api_v1_organizations__org_id__delete()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/users/{user_id}"]["get"]
+    update:
+      x-speakeasy-name-override: getById
+    x-speakeasy-metadata:
+      after: sdk.users.getById()
+      before: sdk.Users.get_user_api_v1_users__user_id__get()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}/memberships/{user_id}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.memberships.delete()
+      before: sdk.Memberships.delete_membership_api_v1_organizations__org_id__memberships__user_id__delete()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}/memberships/{user_id}"]["get"]
+    update:
+      x-speakeasy-name-override: getMembership
+    x-speakeasy-metadata:
+      after: sdk.memberships.getMembership()
+      before: sdk.Memberships.get_membership_api_v1_organizations__org_id__memberships__user_id__get()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/users/{user_id}"]["put"]
+    update:
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      after: sdk.users.update()
+      before: sdk.Users.update_user_api_v1_users__user_id__put()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/users/"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.users.create()
+      before: sdk.Users.create_user_api_v1_users__post()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}"]["put"]
+    update:
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      after: sdk.organizations.update()
+      before: sdk.Organizations.update_organization_api_v1_organizations__org_id__put()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.organizations.create()
+      before: sdk.Organizations.create_organization_api_v1_organizations__post()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}/memberships/{user_id}"]["put"]
+    update:
+      x-speakeasy-name-override: updateMembership
+    x-speakeasy-metadata:
+      after: sdk.memberships.updateMembership()
+      before: sdk.Memberships.update_membership_api_v1_organizations__org_id__memberships__user_id__put()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/{org_id}/memberships"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.memberships.create()
+      before: sdk.Memberships.create_membership_api_v1_organizations__org_id__memberships_post()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/organizations/"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.organizations.get()
+      before: sdk.Organizations.get_organizations_api_v1_organizations__get()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/users/"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.users.get()
+      before: sdk.Users.get_users_api_v1_users__get()
+      created_at: 1754065369042
+      reviewed_at: 1754065388641
       type: method-name

@@ -255,7 +255,7 @@ class Authentication(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UserInfo:
+    ) -> models.DbrAPIAuthUserInfo:
         r"""Get Current User Info
 
         Get current user information
@@ -319,7 +319,7 @@ class Authentication(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UserInfo, http_res)
+            return unmarshal_json_response(models.DbrAPIAuthUserInfo, http_res)
         if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.UnauthorizedErrorData, http_res
@@ -354,7 +354,7 @@ class Authentication(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UserInfo:
+    ) -> models.DbrAPIAuthUserInfo:
         r"""Get Current User Info
 
         Get current user information
@@ -418,7 +418,7 @@ class Authentication(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UserInfo, http_res)
+            return unmarshal_json_response(models.DbrAPIAuthUserInfo, http_res)
         if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.UnauthorizedErrorData, http_res

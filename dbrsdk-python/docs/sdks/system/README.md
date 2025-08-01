@@ -19,6 +19,7 @@ one time slot to the left on the DBR board. This can be triggered manually
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="advance_time_unit_api_v1_system_advance_time_unit_post" method="post" path="/api/v1/system/advance_time_unit" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -64,6 +65,7 @@ Get the current system time
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_current_time_api_v1_system_time_get" method="get" path="/api/v1/system/time" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -106,6 +108,7 @@ Set the system time (for testing purposes)
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="set_system_time_api_v1_system_time_post" method="post" path="/api/v1/system/time" -->
 ```python
 from dbrsdk import Dbrsdk
 import os

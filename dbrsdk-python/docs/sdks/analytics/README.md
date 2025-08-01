@@ -13,6 +13,7 @@ Get analytics for a specific schedule
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_schedule_analytics_api_v1_schedules__schedule_id__analytics_get" method="get" path="/api/v1/schedules/{schedule_id}/analytics" -->
 ```python
 from dbrsdk import Dbrsdk
 import os

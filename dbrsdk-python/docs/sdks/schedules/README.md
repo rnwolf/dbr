@@ -18,6 +18,7 @@ Get all schedules with optional filtering
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_schedules_api_v1_schedules_get" method="get" path="/api/v1/schedules" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -64,6 +65,7 @@ Create a new schedule
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="create_schedule_api_v1_schedules_post" method="post" path="/api/v1/schedules" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -115,6 +117,7 @@ Get a specific schedule by ID
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_schedule_api_v1_schedules__schedule_id__get" method="get" path="/api/v1/schedules/{schedule_id}" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -160,6 +163,7 @@ Update a schedule by ID
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="update_schedule_api_v1_schedules__schedule_id__put" method="put" path="/api/v1/schedules/{schedule_id}" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -210,6 +214,7 @@ Delete a schedule by ID
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="delete_schedule_api_v1_schedules__schedule_id__delete" method="delete" path="/api/v1/schedules/{schedule_id}" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -250,6 +255,7 @@ Get analytics for all schedules on a specific board
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_board_analytics_api_v1_schedules_board__board_config_id__analytics_get" method="get" path="/api/v1/schedules/board/{board_config_id}/analytics" -->
 ```python
 from dbrsdk import Dbrsdk
 import os

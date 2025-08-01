@@ -1,9 +1,9 @@
-speakeasyVersion: 1.590.0
+speakeasyVersion: 1.595.3
 sources:
     DBR Buffer Management System API:
         sourceNamespace: dbr-buffer-management-system-api
-        sourceRevisionDigest: sha256:45a0588542f0b35ca3ddc2e7b630bd113f5fb666c5ba6668e7ec1b7a182b4e6f
-        sourceBlobDigest: sha256:3dbae8e2eadf2bc356f568db749b0730aa2ff31359b6e411021a9d80648326b5
+        sourceRevisionDigest: sha256:4a75b91e83a4a77c3b30060ff6a9e542103dafb9665aca0b223397140432be7c
+        sourceBlobDigest: sha256:1da1f2892ab1ff50410aba3c34079b095649680ff0ed186ad3583edb8d1810fd
         tags:
             - latest
             - 1.0.0
@@ -11,10 +11,10 @@ targets:
     dbrsdk:
         source: DBR Buffer Management System API
         sourceNamespace: dbr-buffer-management-system-api
-        sourceRevisionDigest: sha256:45a0588542f0b35ca3ddc2e7b630bd113f5fb666c5ba6668e7ec1b7a182b4e6f
-        sourceBlobDigest: sha256:3dbae8e2eadf2bc356f568db749b0730aa2ff31359b6e411021a9d80648326b5
+        sourceRevisionDigest: sha256:4a75b91e83a4a77c3b30060ff6a9e542103dafb9665aca0b223397140432be7c
+        sourceBlobDigest: sha256:1da1f2892ab1ff50410aba3c34079b095649680ff0ed186ad3583edb8d1810fd
         codeSamplesNamespace: dbr-buffer-management-system-api-python-code-samples
-        codeSamplesRevisionDigest: sha256:ae1154843835ff59e17b6f19e90f35487138a2f1e28d3380e431dacdc92692c3
+        codeSamplesRevisionDigest: sha256:3b34bda892297c397b508f6ddb5ac66b21071b12f7dbf6f193b02995421debe5
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest

@@ -1,0 +1,20 @@
+# MembershipResponse
+
+Schema for membership response
+
+
+## Fields
+
+| Field                                                                      | Type                                                                       | Required                                                                   | Description                                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `id`                                                                       | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `organization_id`                                                          | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `user_id`                                                                  | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `role_id`                                                                  | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `invitation_status`                                                        | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `invited_by_user_id`                                                       | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `joined_date`                                                              | *Nullable[str]*                                                            | :heavy_check_mark:                                                         | N/A                                                                        |
+| `created_date`                                                             | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `updated_date`                                                             | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |
+| `user`                                                                     | [models.DbrAPIMembershipsUserInfo](../models/dbrapimembershipsuserinfo.md) | :heavy_check_mark:                                                         | Schema for user information in membership response                         |
+| `role`                                                                     | [models.RoleInfo](../models/roleinfo.md)                                   | :heavy_check_mark:                                                         | Schema for role information in membership response                         |

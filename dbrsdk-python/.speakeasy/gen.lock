@@ -1,18 +1,18 @@
 lockVersion: 2.0.0
 id: fab7d25f-d11a-41b6-92bb-ecf4cef91e4c
 management:
-  docChecksum: 1ac88351b0cc7ac4cd452dc10bcee86e
+  docChecksum: 89d3c14183890af3eb724d72e781d47d
   docVersion: 1.0.0
-  speakeasyVersion: 1.590.0
-  generationVersion: 2.666.0
-  releaseVersion: 0.2.5
-  configChecksum: d03dd8b2ff6b8d8b70fc64ccee049759
+  speakeasyVersion: 1.595.3
+  generationVersion: 2.671.2
+  releaseVersion: 0.2.8
+  configChecksum: 73188ad2581dfd8e33e188773be71fe5
 features:
   python:
     additionalDependencies: 1.0.0
     additionalProperties: 1.0.1
     constsAndDefaults: 1.0.5
-    core: 5.19.4
+    core: 5.19.6
     defaultEnabledRetries: 0.2.0
     devContainers: 3.0.0
     envVarSecurityUsage: 0.3.2
@@ -45,17 +45,36 @@ generatedFiles:
   - docs/models/advancetimeresponse.md
   - docs/models/advancetimeunitapiv1systemadvancetimeunitpostrequest.md
   - docs/models/boardanalytics.md
+  - docs/models/createmembershipapiv1organizationsorgidmembershipspostrequest.md
+  - docs/models/dbrapiauthuserinfo.md
+  - docs/models/dbrapimembershipsuserinfo.md
+  - docs/models/deletemembershipapiv1organizationsorgidmembershipsuseriddeleterequest.md
+  - docs/models/deleteorganizationapiv1organizationsorgiddeleterequest.md
   - docs/models/deletescheduleapiv1schedulesscheduleiddeleterequest.md
+  - docs/models/deleteuserapiv1usersuseriddeleterequest.md
   - docs/models/deleteworkitemapiv1workitemsworkitemiddeleterequest.md
   - docs/models/getboardanalyticsapiv1schedulesboardboardconfigidanalyticsgetrequest.md
+  - docs/models/getmembershipapiv1organizationsorgidmembershipsuseridgetrequest.md
+  - docs/models/getmembershipsapiv1organizationsorgidmembershipsgetrequest.md
+  - docs/models/getorganizationapiv1organizationsorgidgetrequest.md
+  - docs/models/getorganizationsapiv1organizationsgetrequest.md
   - docs/models/getscheduleanalyticsapiv1schedulesscheduleidanalyticsgetrequest.md
   - docs/models/getscheduleapiv1schedulesscheduleidgetrequest.md
   - docs/models/getschedulesapiv1schedulesgetrequest.md
+  - docs/models/getuserapiv1usersuseridgetrequest.md
+  - docs/models/getusersapiv1usersgetrequest.md
   - docs/models/getworkitemapiv1workitemsworkitemidgetrequest.md
   - docs/models/getworkitemsapiv1workitemsgetrequest.md
   - docs/models/loc.md
   - docs/models/loginrequest.md
   - docs/models/loginresponse.md
+  - docs/models/membershipcreate.md
+  - docs/models/membershipresponse.md
+  - docs/models/membershipupdate.md
+  - docs/models/organizationcreate.md
+  - docs/models/organizationresponse.md
+  - docs/models/organizationupdate.md
+  - docs/models/roleinfo.md
   - docs/models/scheduleanalytics.md
   - docs/models/schedulecreate.md
   - docs/models/scheduleresponse.md
@@ -65,10 +84,15 @@ generatedFiles:
   - docs/models/taskcreate.md
   - docs/models/taskresponse.md
   - docs/models/taskupdate.md
+  - docs/models/updatemembershipapiv1organizationsorgidmembershipsuseridputrequest.md
+  - docs/models/updateorganizationapiv1organizationsorgidputrequest.md
   - docs/models/updatescheduleapiv1schedulesscheduleidputrequest.md
+  - docs/models/updateuserapiv1usersuseridputrequest.md
   - docs/models/updateworkitemapiv1workitemsworkitemidputrequest.md
   - docs/models/updateworkitemtaskapiv1workitemsworkitemidtaskstaskidputrequest.md
-  - docs/models/userinfo.md
+  - docs/models/usercreate.md
+  - docs/models/userresponse.md
+  - docs/models/userupdate.md
   - docs/models/utils/retryconfig.md
   - docs/models/validationerror.md
   - docs/models/workitemcreate.md
@@ -79,9 +103,12 @@ generatedFiles:
   - docs/sdks/authentication/README.md
   - docs/sdks/dbrsdk/README.md
   - docs/sdks/health/README.md
+  - docs/sdks/memberships/README.md
+  - docs/sdks/organizations/README.md
   - docs/sdks/root/README.md
   - docs/sdks/schedules/README.md
   - docs/sdks/system/README.md
+  - docs/sdks/users/README.md
   - docs/sdks/workitems/README.md
   - poetry.toml
   - py.typed
@@ -109,20 +136,40 @@ generatedFiles:
   - src/dbrsdk/errors/unauthorized_error.py
   - src/dbrsdk/health.py
   - src/dbrsdk/httpclient.py
+  - src/dbrsdk/memberships.py
   - src/dbrsdk/models/__init__.py
   - src/dbrsdk/models/advance_time_unit_api_v1_system_advance_time_unit_postop.py
   - src/dbrsdk/models/advancetimeresponse.py
   - src/dbrsdk/models/boardanalytics.py
+  - src/dbrsdk/models/create_membership_api_v1_organizations_org_id_memberships_postop.py
+  - src/dbrsdk/models/dbr_api_auth_userinfo.py
+  - src/dbrsdk/models/dbr_api_memberships_userinfo.py
+  - src/dbrsdk/models/delete_membership_api_v1_organizations_org_id_memberships_user_id_deleteop.py
+  - src/dbrsdk/models/delete_organization_api_v1_organizations_org_id_deleteop.py
   - src/dbrsdk/models/delete_schedule_api_v1_schedules_schedule_id_deleteop.py
+  - src/dbrsdk/models/delete_user_api_v1_users_user_id_deleteop.py
   - src/dbrsdk/models/delete_work_item_api_v1_workitems_work_item_id_deleteop.py
   - src/dbrsdk/models/get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop.py
+  - src/dbrsdk/models/get_membership_api_v1_organizations_org_id_memberships_user_id_getop.py
+  - src/dbrsdk/models/get_memberships_api_v1_organizations_org_id_memberships_getop.py
+  - src/dbrsdk/models/get_organization_api_v1_organizations_org_id_getop.py
+  - src/dbrsdk/models/get_organizations_api_v1_organizations_getop.py
   - src/dbrsdk/models/get_schedule_analytics_api_v1_schedules_schedule_id_analytics_getop.py
   - src/dbrsdk/models/get_schedule_api_v1_schedules_schedule_id_getop.py
   - src/dbrsdk/models/get_schedules_api_v1_schedules_getop.py
+  - src/dbrsdk/models/get_user_api_v1_users_user_id_getop.py
+  - src/dbrsdk/models/get_users_api_v1_users_getop.py
   - src/dbrsdk/models/get_work_item_api_v1_workitems_work_item_id_getop.py
   - src/dbrsdk/models/get_work_items_api_v1_workitems_getop.py
   - src/dbrsdk/models/loginrequest.py
   - src/dbrsdk/models/loginresponse.py
+  - src/dbrsdk/models/membershipcreate.py
+  - src/dbrsdk/models/membershipresponse.py
+  - src/dbrsdk/models/membershipupdate.py
+  - src/dbrsdk/models/organizationcreate.py
+  - src/dbrsdk/models/organizationresponse.py
+  - src/dbrsdk/models/organizationupdate.py
+  - src/dbrsdk/models/roleinfo.py
   - src/dbrsdk/models/scheduleanalytics.py
   - src/dbrsdk/models/schedulecreate.py
   - src/dbrsdk/models/scheduleresponse.py
@@ -132,14 +179,20 @@ generatedFiles:
   - src/dbrsdk/models/taskcreate.py
   - src/dbrsdk/models/taskresponse.py
   - src/dbrsdk/models/taskupdate.py
+  - src/dbrsdk/models/update_membership_api_v1_organizations_org_id_memberships_user_id_putop.py
+  - src/dbrsdk/models/update_organization_api_v1_organizations_org_id_putop.py
   - src/dbrsdk/models/update_schedule_api_v1_schedules_schedule_id_putop.py
+  - src/dbrsdk/models/update_user_api_v1_users_user_id_putop.py
   - src/dbrsdk/models/update_work_item_api_v1_workitems_work_item_id_putop.py
   - src/dbrsdk/models/update_work_item_task_api_v1_workitems_work_item_id_tasks_task_id_putop.py
-  - src/dbrsdk/models/userinfo.py
+  - src/dbrsdk/models/usercreate.py
+  - src/dbrsdk/models/userresponse.py
+  - src/dbrsdk/models/userupdate.py
   - src/dbrsdk/models/validationerror.py
   - src/dbrsdk/models/workitemcreate.py
   - src/dbrsdk/models/workitemresponse.py
   - src/dbrsdk/models/workitemupdate.py
+  - src/dbrsdk/organizations.py
   - src/dbrsdk/py.typed
   - src/dbrsdk/root.py
   - src/dbrsdk/schedules.py
@@ -148,6 +201,7 @@ generatedFiles:
   - src/dbrsdk/system.py
   - src/dbrsdk/types/__init__.py
   - src/dbrsdk/types/basemodel.py
+  - src/dbrsdk/users.py
   - src/dbrsdk/utils/__init__.py
   - src/dbrsdk/utils/annotations.py
   - src/dbrsdk/utils/datetimes.py
@@ -550,5 +604,161 @@ examples:
         "400":
           application/json: {}
         "429":
+          application/json: {}
+  get_users_api_v1_users__get:
+    speakeasy-default-get-users-api-v1-users-get:
+      parameters:
+        query:
+          organization_id: "<id>"
+      responses:
+        "200":
+          application/json: [{"id": "<id>", "username": "Annetta_Dibbert", "email": "Columbus17@yahoo.com", "display_name": "Tyree_Herman", "active_status": true, "system_role_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}]
+        "422":
+          application/json: {}
+  create_user_api_v1_users__post:
+    speakeasy-default-create-user-api-v1-users-post:
+      requestBody:
+        application/json: {"organization_id": "<id>", "username": "Rahsaan.Stamm56", "email": "Jaquan_Stiedemann@hotmail.com", "display_name": "Amelia0", "password": "rc6Gq0W9r6yWRcF", "system_role_id": "<id>", "active_status": true}
+      responses:
+        "201":
+          application/json: {"id": "<id>", "username": "Dillan.Veum", "email": "Sabrina.Brown@hotmail.com", "display_name": "Deondre.Quigley", "active_status": true, "system_role_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+  get_user_api_v1_users__user_id__get:
+    speakeasy-default-get-user-api-v1-users-user-id-get:
+      parameters:
+        path:
+          user_id: "<id>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "username": "Edd.Ferry", "email": "Sarai80@gmail.com", "display_name": "Kenya.Upton", "active_status": false, "system_role_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+  update_user_api_v1_users__user_id__put:
+    speakeasy-default-update-user-api-v1-users-user-id-put:
+      parameters:
+        path:
+          user_id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "username": "Hailey_Farrell", "email": "Armani_Quitzon76@gmail.com", "display_name": "Wendell.Wintheiser", "active_status": false, "system_role_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+  delete_user_api_v1_users__user_id__delete:
+    speakeasy-default-delete-user-api-v1-users-user-id-delete:
+      parameters:
+        path:
+          user_id: "<id>"
+      responses:
+        "200":
+          application/json: "<value>"
+        "422":
+          application/json: {}
+  get_organizations_api_v1_organizations__get:
+    speakeasy-default-get-organizations-api-v1-organizations-get:
+      responses:
+        "200":
+          application/json: [{"id": "<id>", "name": "<value>", "description": "expostulate limply ugh dime steeple bah regarding before", "status": "<value>", "contact_email": "<value>", "country": "Egypt", "subscription_level": "<value>", "default_board_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}]
+        "422":
+          application/json: {}
+  create_organization_api_v1_organizations__post:
+    speakeasy-default-create-organization-api-v1-organizations-post:
+      requestBody:
+        application/json: {"name": "<value>", "contact_email": "<value>", "country": "Taiwan", "subscription_level": "basic"}
+      responses:
+        "201":
+          application/json: {"id": "<id>", "name": "<value>", "description": "huzzah although since huzzah cash", "status": "<value>", "contact_email": "<value>", "country": "Zambia", "subscription_level": "<value>", "default_board_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+  get_organization_api_v1_organizations__org_id__get:
+    speakeasy-default-get-organization-api-v1-organizations-org-id-get:
+      parameters:
+        path:
+          org_id: "<id>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "name": "<value>", "description": "dispose knowledgeable limply dispense", "status": "<value>", "contact_email": "<value>", "country": "Guinea", "subscription_level": "<value>", "default_board_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+  update_organization_api_v1_organizations__org_id__put:
+    speakeasy-default-update-organization-api-v1-organizations-org-id-put:
+      parameters:
+        path:
+          org_id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "name": "<value>", "description": "psst inwardly with beneath yet woot psst broadcast hence appreciate", "status": "<value>", "contact_email": "<value>", "country": "Algeria", "subscription_level": "<value>", "default_board_id": "<id>", "created_date": "<value>", "updated_date": "<value>"}
+        "422":
+          application/json: {}
+  delete_organization_api_v1_organizations__org_id__delete:
+    speakeasy-default-delete-organization-api-v1-organizations-org-id-delete:
+      parameters:
+        path:
+          org_id: "<id>"
+      responses:
+        "200":
+          application/json: "<value>"
+        "422":
+          application/json: {}
+  get_memberships_api_v1_organizations__org_id__memberships_get:
+    speakeasy-default-get-memberships-api-v1-organizations-org-id-memberships-get:
+      parameters:
+        path:
+          org_id: "<id>"
+      responses:
+        "200":
+          application/json: [{"id": "<id>", "organization_id": "<id>", "user_id": "<id>", "role_id": "<id>", "invitation_status": "<value>", "invited_by_user_id": "<id>", "joined_date": "<value>", "created_date": "<value>", "updated_date": "<value>", "user": {"id": "<id>", "username": "Rowan_Huels", "email": "Megane.Johnston1@gmail.com", "display_name": "Kenya57", "active_status": false}, "role": {"id": "<id>", "name": "<value>", "description": "under although interestingly psst since unsightly"}}]
+        "422":
+          application/json: {}
+  create_membership_api_v1_organizations__org_id__memberships_post:
+    speakeasy-default-create-membership-api-v1-organizations-org-id-memberships-post:
+      parameters:
+        path:
+          org_id: "<id>"
+      requestBody:
+        application/json: {"user_id": "<id>", "role_id": "<id>"}
+      responses:
+        "201":
+          application/json: {"id": "<id>", "organization_id": "<id>", "user_id": "<id>", "role_id": "<id>", "invitation_status": "<value>", "invited_by_user_id": "<id>", "joined_date": "<value>", "created_date": "<value>", "updated_date": "<value>", "user": {"id": "<id>", "username": "Karianne_Daniel99", "email": "Reina_Davis12@yahoo.com", "display_name": "Laverne_Cummerata-Corkery", "active_status": true}, "role": {"id": "<id>", "name": "<value>", "description": "tune-up phew alongside probate"}}
+        "422":
+          application/json: {}
+  get_membership_api_v1_organizations__org_id__memberships__user_id__get:
+    speakeasy-default-get-membership-api-v1-organizations-org-id-memberships-user-id-get:
+      parameters:
+        path:
+          org_id: "<id>"
+          user_id: "<id>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "organization_id": "<id>", "user_id": "<id>", "role_id": "<id>", "invitation_status": "<value>", "invited_by_user_id": "<id>", "joined_date": "<value>", "created_date": "<value>", "updated_date": "<value>", "user": {"id": "<id>", "username": "Jailyn37", "email": "Lura59@gmail.com", "display_name": "Gabrielle88", "active_status": false}, "role": {"id": "<id>", "name": "<value>", "description": "upbeat minister morning scoop along zowie tenderly boldly gah swine"}}
+        "422":
+          application/json: {}
+  update_membership_api_v1_organizations__org_id__memberships__user_id__put:
+    speakeasy-default-update-membership-api-v1-organizations-org-id-memberships-user-id-put:
+      parameters:
+        path:
+          org_id: "<id>"
+          user_id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "organization_id": "<id>", "user_id": "<id>", "role_id": "<id>", "invitation_status": "<value>", "invited_by_user_id": "<id>", "joined_date": "<value>", "created_date": "<value>", "updated_date": "<value>", "user": {"id": "<id>", "username": "Tevin.Metz42", "email": "Celia10@hotmail.com", "display_name": "Howell14", "active_status": true}, "role": {"id": "<id>", "name": "<value>", "description": "out carpool apud only solvency fondly mammoth royal"}}
+        "422":
+          application/json: {}
+  delete_membership_api_v1_organizations__org_id__memberships__user_id__delete:
+    speakeasy-default-delete-membership-api-v1-organizations-org-id-memberships-user-id-delete:
+      parameters:
+        path:
+          org_id: "<id>"
+          user_id: "<id>"
+      responses:
+        "200":
+          application/json: "<value>"
+        "422":
           application/json: {}
 examplesVersion: 1.0.2

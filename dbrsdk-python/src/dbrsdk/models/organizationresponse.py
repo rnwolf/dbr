@@ -6,33 +6,48 @@ from pydantic import model_serializer
 from typing_extensions import TypedDict
 
 
-class UserInfoTypedDict(TypedDict):
-    r"""User information model"""
+class OrganizationResponseTypedDict(TypedDict):
+    r"""Schema for organization response"""
 
     id: str
-    username: str
-    email: str
-    display_name: Nullable[str]
-    active_status: bool
+    name: str
+    description: Nullable[str]
+    status: str
+    contact_email: str
+    country: str
+    subscription_level: str
+    default_board_id: Nullable[str]
+    created_date: str
+    updated_date: str
 
 
-class UserInfo(BaseModel):
-    r"""User information model"""
+class OrganizationResponse(BaseModel):
+    r"""Schema for organization response"""
 
     id: str
 
-    username: str
+    name: str
 
-    email: str
+    description: Nullable[str]
 
-    display_name: Nullable[str]
+    status: str
 
-    active_status: bool
+    contact_email: str
+
+    country: str
+
+    subscription_level: str
+
+    default_board_id: Nullable[str]
+
+    created_date: str
+
+    updated_date: str
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = []
-        nullable_fields = ["display_name"]
+        nullable_fields = ["description", "default_board_id"]
         null_default_fields = []
 
         serialized = handler(self)

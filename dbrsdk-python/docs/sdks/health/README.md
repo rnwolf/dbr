@@ -13,6 +13,7 @@ Health check endpoint for monitoring and frontend connectivity tests
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="health_check_health_get" method="get" path="/health" -->
 ```python
 from dbrsdk import Dbrsdk
 import os

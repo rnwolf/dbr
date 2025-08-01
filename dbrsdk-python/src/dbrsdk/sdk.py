@@ -17,9 +17,12 @@ if TYPE_CHECKING:
     from dbrsdk.apihealth import APIHealth
     from dbrsdk.authentication import Authentication
     from dbrsdk.health import Health
+    from dbrsdk.memberships import Memberships
+    from dbrsdk.organizations import Organizations
     from dbrsdk.root import Root
     from dbrsdk.schedules import Schedules
     from dbrsdk.system import System
+    from dbrsdk.users import Users
     from dbrsdk.workitems import WorkItems
 
 
@@ -30,6 +33,9 @@ class Dbrsdk(BaseSDK):
     schedules: "Schedules"
     system: "System"
     authentication: "Authentication"
+    users: "Users"
+    organizations: "Organizations"
+    memberships: "Memberships"
     root: "Root"
     health: "Health"
     api_health: "APIHealth"
@@ -38,6 +44,9 @@ class Dbrsdk(BaseSDK):
         "schedules": ("dbrsdk.schedules", "Schedules"),
         "system": ("dbrsdk.system", "System"),
         "authentication": ("dbrsdk.authentication", "Authentication"),
+        "users": ("dbrsdk.users", "Users"),
+        "organizations": ("dbrsdk.organizations", "Organizations"),
+        "memberships": ("dbrsdk.memberships", "Memberships"),
         "root": ("dbrsdk.root", "Root"),
         "health": ("dbrsdk.health", "Health"),
         "api_health": ("dbrsdk.apihealth", "APIHealth"),

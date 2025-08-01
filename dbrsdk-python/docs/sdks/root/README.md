@@ -13,6 +13,7 @@ Read Root
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="read_root__get" method="get" path="/" -->
 ```python
 from dbrsdk import Dbrsdk
 import os

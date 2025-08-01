@@ -97,15 +97,12 @@ wheels = [
 
 [[package]]
 name = "dbrsdk"
-version = "0.2.5"
-source = { path = "../../dbrsdk-python/dist/dbrsdk-0.2.5-py3-none-any.whl" }
+version = "0.2.8"
+source = { directory = "../../dbrsdk-python" }
 dependencies = [
     { name = "httpcore" },
     { name = "httpx" },
     { name = "pydantic" },
-]
-wheels = [
-    { filename = "dbrsdk-0.2.5-py3-none-any.whl", hash = "sha256:3836f4fcce39828ad07834cd1e0357e400175a6bae6127d72258b162159a05be" },
 ]
 
 [package.metadata]
@@ -138,7 +135,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "customtkinter", specifier = ">=5.2.0" },
-    { name = "dbrsdk", path = "../../dbrsdk-python/dist/dbrsdk-0.2.5-py3-none-any.whl" },
+    { name = "dbrsdk", directory = "../../dbrsdk-python" },
     { name = "pillow", specifier = ">=10.0.0" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "tk", specifier = ">=0.1.0" },

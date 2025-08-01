@@ -17,6 +17,7 @@ Accepts either username or email address as the username field.
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="login_api_v1_auth_login_post" method="post" path="/api/v1/auth/login" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -62,6 +63,7 @@ Get current user information
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="get_current_user_info_api_v1_auth_me_get" method="get" path="/api/v1/auth/me" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
@@ -86,7 +88,7 @@ with Dbrsdk(
 
 ### Response
 
-**[models.UserInfo](../../models/userinfo.md)**
+**[models.DbrAPIAuthUserInfo](../../models/dbrapiauthuserinfo.md)**
 
 ### Errors
 
@@ -104,6 +106,7 @@ Logout endpoint (JWT tokens are stateless, so this is mainly for client-side cle
 
 ### Example Usage
 
+<!-- UsageSnippet language="python" operationID="logout_api_v1_auth_logout_post" method="post" path="/api/v1/auth/logout" -->
 ```python
 from dbrsdk import Dbrsdk
 import os
