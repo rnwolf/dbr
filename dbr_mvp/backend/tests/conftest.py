@@ -19,15 +19,47 @@ def client():
     return TestClient(app)
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def session():
     """Create a test database session"""
-    create_tables()
-    session = SessionLocal()
+    # Use a test database file that can be shared between test and API
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from dbr.models.base import Base
+    import tempfile
+    import os
+    
+    # Create a temporary database file
+    db_fd, db_path = tempfile.mkstemp(suffix='.db')
+    os.close(db_fd)
+    
     try:
-        yield session
+        engine = create_engine(f"sqlite:///{db_path}", echo=False)
+        Base.metadata.create_all(engine)
+        TestSessionLocal = sessionmaker(bind=engine)
+        
+        # Patch the main app's database to use our test database
+        import dbr.core.database
+        original_session_local = dbr.core.database.SessionLocal
+        dbr.core.database.SessionLocal = TestSessionLocal
+        
+        session = TestSessionLocal()
+        try:
+            yield session
+        finally:
+            session.close()
+            # Restore original session
+            dbr.core.database.SessionLocal = original_session_local
+            # Close the engine to release database connections
+            engine.dispose()
     finally:
-        session.close()
+        # Clean up the temporary database file
+        try:
+            if os.path.exists(db_path):
+                os.unlink(db_path)
+        except PermissionError:
+            # On Windows, sometimes the file is still locked
+            pass
 
 
 @pytest.fixture

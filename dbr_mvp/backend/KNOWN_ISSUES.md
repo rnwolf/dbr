@@ -5,13 +5,17 @@ This document tracks known issues and bugs that need to be investigated and reso
 ## 🐛 Active Issues
 
 ### Issue #1: Work Item Task Update API Not Persisting Changes
-**Status:** Open  
+**Status:** Resolved  
 **Priority:** Medium  
 **Component:** Work Item API (`/api/v1/workitems/{id}/tasks/{task_id}`)  
 **Date Reported:** 2025-07-20  
+**Date Resolved:** 2025-08-01
 
 **Description:**
-The individual task update endpoint `PUT /api/v1/workitems/{work_item_id}/tasks/{task_id}` is not properly persisting task completion status changes to the database. When updating a task's `completed` status from `false` to `true`, the change is not reflected in the work item's progress calculation.
+The individual task update endpoint `PUT /api/v1/workitems/{work_item_id}/tasks/{task_id}` was not properly persisting task completion status changes to the database. When updating a task's `completed` status from `false` to `true`, the change was not reflected in the work item's progress calculation.
+
+**Resolution:**
+The issue was resolved by ensuring that the `tasks` field of the `WorkItem` object was explicitly marked as modified. This was achieved by re-assigning the `tasks` list to itself after modification, which signals to SQLAlchemy that the JSON field has been updated. The fix was verified by running the `test_work_item_tasks_api` test.
 
 **Expected Behavior:**
 - Update task completion status via API

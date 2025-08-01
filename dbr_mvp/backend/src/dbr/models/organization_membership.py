@@ -26,11 +26,11 @@ class OrganizationMembership(BaseModel):
     invited_by_user_id = Column(String(36), ForeignKey('users.id'), nullable=False)
     joined_date = Column(DateTime, nullable=True)
     
-    # Relationships (can be added later when needed)
-    # organization = relationship("Organization", back_populates="memberships")
-    # user = relationship("User", back_populates="memberships")
-    # role = relationship("Role", back_populates="memberships")
-    # invited_by = relationship("User", foreign_keys=[invited_by_user_id])
+    # Relationships
+    organization = relationship("Organization", foreign_keys=[organization_id])
+    user = relationship("User", foreign_keys=[user_id])
+    role = relationship("Role", foreign_keys=[role_id])
+    invited_by = relationship("User", foreign_keys=[invited_by_user_id])
     
     def __repr__(self):
         return f"<OrganizationMembership(id={self.id}, user_id={self.user_id}, org_id={self.organization_id}, status={self.invitation_status.value})>"

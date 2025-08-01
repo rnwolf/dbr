@@ -378,8 +378,9 @@ def update_work_item_task(
     # Find and update task
     task_found = False
     if work_item.tasks:
+        # Create a new list to ensure SQLAlchemy detects the change
+        updated_tasks = []
         for task in work_item.tasks:
-            # Convert both to int for comparison (handle type mismatches)
             stored_task_id = task.get("id")
             if stored_task_id is not None and int(stored_task_id) == int(task_id):
                 # Update task fields
@@ -390,13 +391,15 @@ def update_work_item_task(
                     task["completed"] = task_data.completed
                 
                 task_found = True
-                break
-    
+            updated_tasks.append(task)
+
+        if task_found:
+            work_item.tasks = updated_tasks
+            # Force SQLAlchemy to detect the change in the JSON field
+            flag_modified(work_item, "tasks")
+
     if not task_found:
         raise HTTPException(status_code=404, detail="Task not found")
-    
-    # Force SQLAlchemy to detect the change in the JSON field
-    flag_modified(work_item, "tasks")
     
     # Mark the work item as updated and commit
     session.commit()

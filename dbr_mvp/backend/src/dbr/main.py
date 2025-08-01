@@ -75,6 +75,18 @@ app.include_router(schedules_router, prefix="/api/v1")
 app.include_router(system_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 
+# Import and include users router
+from dbr.api.users import router as users_router
+app.include_router(users_router, prefix="/api/v1")
+
+# Import and include organizations router
+from dbr.api.organizations import router as organizations_router
+app.include_router(organizations_router, prefix="/api/v1")
+
+# Import and include memberships router
+from dbr.api.memberships import router as memberships_router
+app.include_router(memberships_router, prefix="/api/v1")
+
 
 @app.get("/")
 def read_root():
