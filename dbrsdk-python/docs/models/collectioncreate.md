@@ -1,0 +1,14 @@
+# CollectionCreate
+
+
+## Fields
+
+| Field                                                                      | Type                                                                       | Required                                                                   | Description                                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `organization_id`                                                          | *str*                                                                      | :heavy_check_mark:                                                         | Organization ID                                                            |
+| `name`                                                                     | *str*                                                                      | :heavy_check_mark:                                                         | Collection name                                                            |
+| `description`                                                              | *OptionalNullable[str]*                                                    | :heavy_minus_sign:                                                         | Collection description                                                     |
+| `type`                                                                     | [Optional[models.CollectionType]](../models/collectiontype.md)             | :heavy_minus_sign:                                                         | Collection type enumeration                                                |
+| `status`                                                                   | [OptionalNullable[models.CollectionStatus]](../models/collectionstatus.md) | :heavy_minus_sign:                                                         | Collection status                                                          |
+| `estimated_sales_price`                                                    | *OptionalNullable[float]*                                                  | :heavy_minus_sign:                                                         | Estimated sales price                                                      |
+| `estimated_variable_cost`                                                  | *OptionalNullable[float]*                                                  | :heavy_minus_sign:                                                         | Estimated variable cost                                                    |

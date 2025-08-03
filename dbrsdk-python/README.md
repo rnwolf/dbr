@@ -203,6 +203,14 @@ with Dbrsdk(
 * [get_current_user_info](docs/sdks/authentication/README.md#get_current_user_info) - Get Current User Info
 * [logout](docs/sdks/authentication/README.md#logout) - Logout
 
+### [collections](docs/sdks/collections/README.md)
+
+* [get_all](docs/sdks/collections/README.md#get_all) - Get Collections
+* [create](docs/sdks/collections/README.md#create) - Create Collection
+* [get_by_id](docs/sdks/collections/README.md#get_by_id) - Get Collection
+* [update](docs/sdks/collections/README.md#update) - Update Collection
+* [delete](docs/sdks/collections/README.md#delete) - Delete Collection
+
 
 ### [health](docs/sdks/health/README.md)
 
@@ -373,10 +381,10 @@ with Dbrsdk(
 
 
 **Inherit from [`DbrsdkError`](./src/dbrsdk/errors/dbrsdkerror.py)**:
-* [`BadRequestError`](./src/dbrsdk/errors/badrequesterror.py): Invalid request. Applicable to 22 of 37 methods.*
-* [`UnauthorizedError`](./src/dbrsdk/errors/unauthorizederror.py): Permission denied or not authenticated. Applicable to 22 of 37 methods.*
-* [`NotFoundError`](./src/dbrsdk/errors/notfounderror.py): Not found. Status code `404`. Applicable to 22 of 37 methods.*
-* [`RateLimitedError`](./src/dbrsdk/errors/ratelimitederror.py): Rate limit exceeded. Status code `429`. Applicable to 22 of 37 methods.*
+* [`BadRequestError`](./src/dbrsdk/errors/badrequesterror.py): Invalid request. Applicable to 22 of 42 methods.*
+* [`UnauthorizedError`](./src/dbrsdk/errors/unauthorizederror.py): Permission denied or not authenticated. Applicable to 22 of 42 methods.*
+* [`NotFoundError`](./src/dbrsdk/errors/notfounderror.py): Not found. Status code `404`. Applicable to 22 of 42 methods.*
+* [`RateLimitedError`](./src/dbrsdk/errors/ratelimitederror.py): Rate limit exceeded. Status code `429`. Applicable to 22 of 42 methods.*
 * [`ResponseValidationError`](./src/dbrsdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>

@@ -326,6 +326,182 @@ paths:
           $ref: '#/components/responses/RateLimited'
       x-speakeasy-group: "workItems"
       x-speakeasy-name-override: "updateTask"
+  "/api/v1/collections/":
+    get:
+      tags:
+        - "Collections"
+      summary: "Get Collections"
+      description: "Get all collections for an organization"
+      operationId: "get_collections_api_v1_collections__get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "organization_id"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            description: "Organization ID to filter by"
+            title: "Organization Id"
+          description: "Organization ID to filter by"
+        - name: "status"
+          in: "query"
+          required: false
+          schema:
+            anyOf:
+              - type: "string"
+              - type: "null"
+            description: "Filter by collection status"
+            title: "Status"
+          description: "Filter by collection status"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema:
+                type: "array"
+                items: {"$ref": "#/components/schemas/CollectionResponse"}
+                title: "Response Get Collections Api V1 Collections  Get"
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: getAll
+    post:
+      tags:
+        - "Collections"
+      summary: "Create Collection"
+      description: "Create a new collection"
+      operationId: "create_collection_api_v1_collections__post"
+      security:
+        - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/CollectionCreate"}
+      responses:
+        "201":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/CollectionResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: create
+  "/api/v1/collections/{collection_id}":
+    get:
+      tags:
+        - "Collections"
+      summary: "Get Collection"
+      description: "Get a specific collection by ID"
+      operationId: "get_collection_api_v1_collections__collection_id__get"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "collection_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Collection Id"
+        - name: "organization_id"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            description: "Organization ID to scope the request"
+            title: "Organization Id"
+          description: "Organization ID to scope the request"
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/CollectionResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: getById
+    put:
+      tags:
+        - "Collections"
+      summary: "Update Collection"
+      description: "Update a collection by ID"
+      operationId: "update_collection_api_v1_collections__collection_id__put"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "collection_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Collection Id"
+        - name: "organization_id"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            description: "Organization ID to scope the request"
+            title: "Organization Id"
+          description: "Organization ID to scope the request"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema: {"$ref": "#/components/schemas/CollectionUpdate"}
+      responses:
+        "200":
+          description: "Successful Response"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/CollectionResponse"}
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: update
+    delete:
+      tags:
+        - "Collections"
+      summary: "Delete Collection"
+      description: "Delete a collection by ID"
+      operationId: "delete_collection_api_v1_collections__collection_id__delete"
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: "collection_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            title: "Collection Id"
+        - name: "organization_id"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            description: "Organization ID to scope the request"
+            title: "Organization Id"
+          description: "Organization ID to scope the request"
+      responses:
+        "204":
+          description: "Successful Response"
+        "422":
+          description: "Validation Error"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/HTTPValidationError"}
+      x-speakeasy-name-override: delete
   "/api/v1/schedules":
     get:
       tags:
@@ -1455,6 +1631,159 @@ components:
         - "zone_occupancy"
         - "capacity_utilization"
       title: "BoardAnalytics"
+    "CollectionCreate":
+      properties:
+        "organization_id":
+          type: "string"
+          title: "Organization Id"
+          description: "Organization ID"
+        "name":
+          type: "string"
+          title: "Name"
+          description: "Collection name"
+        "description":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Description"
+          description: "Collection description"
+        "type": {"$ref": "#/components/schemas/CollectionType", "description": "Collection type", "default": "Project"}
+        "status":
+          anyOf:
+            - {"$ref": "#/components/schemas/CollectionStatus"}
+            - type: "null"
+          description: "Collection status"
+          default: "planning"
+        "estimated_sales_price":
+          anyOf:
+            - type: "number"
+            - type: "null"
+          title: "Estimated Sales Price"
+          description: "Estimated sales price"
+          default: 0
+        "estimated_variable_cost":
+          anyOf:
+            - type: "number"
+            - type: "null"
+          title: "Estimated Variable Cost"
+          description: "Estimated variable cost"
+          default: 0
+      type: "object"
+      required:
+        - "organization_id"
+        - "name"
+      title: "CollectionCreate"
+    "CollectionResponse":
+      properties:
+        "id":
+          type: "string"
+          title: "Id"
+        "organization_id":
+          type: "string"
+          title: "Organization Id"
+        "name":
+          type: "string"
+          title: "Name"
+        "description":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Description"
+        "type":
+          type: "string"
+          title: "Type"
+        "status":
+          type: "string"
+          title: "Status"
+        "estimated_sales_price":
+          anyOf:
+            - type: "number"
+            - type: "null"
+          title: "Estimated Sales Price"
+        "estimated_variable_cost":
+          anyOf:
+            - type: "number"
+            - type: "null"
+          title: "Estimated Variable Cost"
+        "throughput":
+          type: "number"
+          title: "Throughput"
+        "created_date":
+          type: "string"
+          title: "Created Date"
+        "updated_date":
+          type: "string"
+          title: "Updated Date"
+      type: "object"
+      required:
+        - "id"
+        - "organization_id"
+        - "name"
+        - "description"
+        - "type"
+        - "status"
+        - "estimated_sales_price"
+        - "estimated_variable_cost"
+        - "throughput"
+        - "created_date"
+        - "updated_date"
+      title: "CollectionResponse"
+    "CollectionStatus":
+      type: "string"
+      enum:
+        - "planning"
+        - "active"
+        - "on-hold"
+        - "completed"
+      title: "CollectionStatus"
+      description: "Collection status enumeration"
+    "CollectionType":
+      type: "string"
+      enum:
+        - "Project"
+        - "MOVE"
+        - "Epic"
+        - "Release"
+      title: "CollectionType"
+      description: "Collection type enumeration"
+    "CollectionUpdate":
+      properties:
+        "name":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Name"
+          description: "Collection name"
+        "description":
+          anyOf:
+            - type: "string"
+            - type: "null"
+          title: "Description"
+          description: "Collection description"
+        "type":
+          anyOf:
+            - {"$ref": "#/components/schemas/CollectionType"}
+            - type: "null"
+          description: "Collection type"
+        "status":
+          anyOf:
+            - {"$ref": "#/components/schemas/CollectionStatus"}
+            - type: "null"
+          description: "Collection status"
+        "estimated_sales_price":
+          anyOf:
+            - type: "number"
+            - type: "null"
+          title: "Estimated Sales Price"
+          description: "Estimated sales price"
+        "estimated_variable_cost":
+          anyOf:
+            - type: "number"
+            - type: "null"
+          title: "Estimated Variable Cost"
+          description: "Estimated variable cost"
+      type: "object"
+      title: "CollectionUpdate"
     "HTTPValidationError":
       properties:
         "detail":

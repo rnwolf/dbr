@@ -1,7 +1,7 @@
 overlay: 1.0.0
 info:
   title: Response Codes Overlay
-  version: 0.0.4
+  version: 0.0.6
 actions:
   - target: $["paths"]["/health"]["get"]["responses"]
     update:
@@ -203,4 +203,49 @@ actions:
       before: sdk.Users.get_users_api_v1_users__get()
       created_at: 1754065369042
       reviewed_at: 1754065388641
+      type: method-name
+  - target: $["paths"]["/api/v1/collections/{collection_id}"]["get"]
+    update:
+      x-speakeasy-name-override: getById
+    x-speakeasy-metadata:
+      after: sdk.collections.getById()
+      before: sdk.Collections.get_collection_api_v1_collections__collection_id__get()
+      created_at: 1754230072994
+      reviewed_at: 1754230081899
+      type: method-name
+  - target: $["paths"]["/api/v1/collections/{collection_id}"]["put"]
+    update:
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      after: sdk.collections.update()
+      before: sdk.Collections.update_collection_api_v1_collections__collection_id__put()
+      created_at: 1754230072994
+      reviewed_at: 1754230081899
+      type: method-name
+  - target: $["paths"]["/api/v1/collections/"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.collections.create()
+      before: sdk.Collections.create_collection_api_v1_collections__post()
+      created_at: 1754230072994
+      reviewed_at: 1754230081899
+      type: method-name
+  - target: $["paths"]["/api/v1/collections/"]["get"]
+    update:
+      x-speakeasy-name-override: getAll
+    x-speakeasy-metadata:
+      after: sdk.collections.getAll()
+      before: sdk.Collections.get_collections_api_v1_collections__get()
+      created_at: 1754230072994
+      reviewed_at: 1754230081899
+      type: method-name
+  - target: $["paths"]["/api/v1/collections/{collection_id}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.collections.delete()
+      before: sdk.Collections.delete_collection_api_v1_collections__collection_id__delete()
+      created_at: 1754230072994
+      reviewed_at: 1754230081899
       type: method-name

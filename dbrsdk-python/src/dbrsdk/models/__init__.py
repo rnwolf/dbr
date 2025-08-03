@@ -11,6 +11,11 @@ if TYPE_CHECKING:
     )
     from .advancetimeresponse import AdvanceTimeResponse, AdvanceTimeResponseTypedDict
     from .boardanalytics import BoardAnalytics, BoardAnalyticsTypedDict
+    from .collectioncreate import CollectionCreate, CollectionCreateTypedDict
+    from .collectionresponse import CollectionResponse, CollectionResponseTypedDict
+    from .collectionstatus import CollectionStatus
+    from .collectiontype import CollectionType
+    from .collectionupdate import CollectionUpdate, CollectionUpdateTypedDict
     from .create_membership_api_v1_organizations_org_id_memberships_postop import (
         CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest,
         CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequestTypedDict,
@@ -19,6 +24,10 @@ if TYPE_CHECKING:
     from .dbr_api_memberships_userinfo import (
         DbrAPIMembershipsUserInfo,
         DbrAPIMembershipsUserInfoTypedDict,
+    )
+    from .delete_collection_api_v1_collections_collection_id_deleteop import (
+        DeleteCollectionAPIV1CollectionsCollectionIDDeleteRequest,
+        DeleteCollectionAPIV1CollectionsCollectionIDDeleteRequestTypedDict,
     )
     from .delete_membership_api_v1_organizations_org_id_memberships_user_id_deleteop import (
         DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequest,
@@ -43,6 +52,14 @@ if TYPE_CHECKING:
     from .get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop import (
         GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequest,
         GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequestTypedDict,
+    )
+    from .get_collection_api_v1_collections_collection_id_getop import (
+        GetCollectionAPIV1CollectionsCollectionIDGetRequest,
+        GetCollectionAPIV1CollectionsCollectionIDGetRequestTypedDict,
+    )
+    from .get_collections_api_v1_collections_getop import (
+        GetCollectionsAPIV1CollectionsGetRequest,
+        GetCollectionsAPIV1CollectionsGetRequestTypedDict,
     )
     from .get_membership_api_v1_organizations_org_id_memberships_user_id_getop import (
         GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequest,
@@ -112,6 +129,10 @@ if TYPE_CHECKING:
     from .taskcreate import TaskCreate, TaskCreateTypedDict
     from .taskresponse import TaskResponse, TaskResponseTypedDict
     from .taskupdate import TaskUpdate, TaskUpdateTypedDict
+    from .update_collection_api_v1_collections_collection_id_putop import (
+        UpdateCollectionAPIV1CollectionsCollectionIDPutRequest,
+        UpdateCollectionAPIV1CollectionsCollectionIDPutRequestTypedDict,
+    )
     from .update_membership_api_v1_organizations_org_id_memberships_user_id_putop import (
         UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequest,
         UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequestTypedDict,
@@ -156,12 +177,22 @@ __all__ = [
     "AdvanceTimeUnitAPIV1SystemAdvanceTimeUnitPostRequestTypedDict",
     "BoardAnalytics",
     "BoardAnalyticsTypedDict",
+    "CollectionCreate",
+    "CollectionCreateTypedDict",
+    "CollectionResponse",
+    "CollectionResponseTypedDict",
+    "CollectionStatus",
+    "CollectionType",
+    "CollectionUpdate",
+    "CollectionUpdateTypedDict",
     "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest",
     "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequestTypedDict",
     "DbrAPIAuthUserInfo",
     "DbrAPIAuthUserInfoTypedDict",
     "DbrAPIMembershipsUserInfo",
     "DbrAPIMembershipsUserInfoTypedDict",
+    "DeleteCollectionAPIV1CollectionsCollectionIDDeleteRequest",
+    "DeleteCollectionAPIV1CollectionsCollectionIDDeleteRequestTypedDict",
     "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequest",
     "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequestTypedDict",
     "DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequest",
@@ -174,6 +205,10 @@ __all__ = [
     "DeleteWorkItemAPIV1WorkitemsWorkItemIDDeleteRequestTypedDict",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequest",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequestTypedDict",
+    "GetCollectionAPIV1CollectionsCollectionIDGetRequest",
+    "GetCollectionAPIV1CollectionsCollectionIDGetRequestTypedDict",
+    "GetCollectionsAPIV1CollectionsGetRequest",
+    "GetCollectionsAPIV1CollectionsGetRequestTypedDict",
     "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequest",
     "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequestTypedDict",
     "GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequest",
@@ -234,6 +269,8 @@ __all__ = [
     "TaskResponseTypedDict",
     "TaskUpdate",
     "TaskUpdateTypedDict",
+    "UpdateCollectionAPIV1CollectionsCollectionIDPutRequest",
+    "UpdateCollectionAPIV1CollectionsCollectionIDPutRequestTypedDict",
     "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequest",
     "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequestTypedDict",
     "UpdateOrganizationAPIV1OrganizationsOrgIDPutRequest",
@@ -269,12 +306,22 @@ _dynamic_imports: dict[str, str] = {
     "AdvanceTimeResponseTypedDict": ".advancetimeresponse",
     "BoardAnalytics": ".boardanalytics",
     "BoardAnalyticsTypedDict": ".boardanalytics",
+    "CollectionCreate": ".collectioncreate",
+    "CollectionCreateTypedDict": ".collectioncreate",
+    "CollectionResponse": ".collectionresponse",
+    "CollectionResponseTypedDict": ".collectionresponse",
+    "CollectionStatus": ".collectionstatus",
+    "CollectionType": ".collectiontype",
+    "CollectionUpdate": ".collectionupdate",
+    "CollectionUpdateTypedDict": ".collectionupdate",
     "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest": ".create_membership_api_v1_organizations_org_id_memberships_postop",
     "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequestTypedDict": ".create_membership_api_v1_organizations_org_id_memberships_postop",
     "DbrAPIAuthUserInfo": ".dbr_api_auth_userinfo",
     "DbrAPIAuthUserInfoTypedDict": ".dbr_api_auth_userinfo",
     "DbrAPIMembershipsUserInfo": ".dbr_api_memberships_userinfo",
     "DbrAPIMembershipsUserInfoTypedDict": ".dbr_api_memberships_userinfo",
+    "DeleteCollectionAPIV1CollectionsCollectionIDDeleteRequest": ".delete_collection_api_v1_collections_collection_id_deleteop",
+    "DeleteCollectionAPIV1CollectionsCollectionIDDeleteRequestTypedDict": ".delete_collection_api_v1_collections_collection_id_deleteop",
     "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequest": ".delete_membership_api_v1_organizations_org_id_memberships_user_id_deleteop",
     "DeleteMembershipAPIV1OrganizationsOrgIDMembershipsUserIDDeleteRequestTypedDict": ".delete_membership_api_v1_organizations_org_id_memberships_user_id_deleteop",
     "DeleteOrganizationAPIV1OrganizationsOrgIDDeleteRequest": ".delete_organization_api_v1_organizations_org_id_deleteop",
@@ -287,6 +334,10 @@ _dynamic_imports: dict[str, str] = {
     "DeleteWorkItemAPIV1WorkitemsWorkItemIDDeleteRequestTypedDict": ".delete_work_item_api_v1_workitems_work_item_id_deleteop",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequest": ".get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop",
     "GetBoardAnalyticsAPIV1SchedulesBoardBoardConfigIDAnalyticsGetRequestTypedDict": ".get_board_analytics_api_v1_schedules_board_board_config_id_analytics_getop",
+    "GetCollectionAPIV1CollectionsCollectionIDGetRequest": ".get_collection_api_v1_collections_collection_id_getop",
+    "GetCollectionAPIV1CollectionsCollectionIDGetRequestTypedDict": ".get_collection_api_v1_collections_collection_id_getop",
+    "GetCollectionsAPIV1CollectionsGetRequest": ".get_collections_api_v1_collections_getop",
+    "GetCollectionsAPIV1CollectionsGetRequestTypedDict": ".get_collections_api_v1_collections_getop",
     "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequest": ".get_membership_api_v1_organizations_org_id_memberships_user_id_getop",
     "GetMembershipAPIV1OrganizationsOrgIDMembershipsUserIDGetRequestTypedDict": ".get_membership_api_v1_organizations_org_id_memberships_user_id_getop",
     "GetMembershipsAPIV1OrganizationsOrgIDMembershipsGetRequest": ".get_memberships_api_v1_organizations_org_id_memberships_getop",
@@ -345,6 +396,8 @@ _dynamic_imports: dict[str, str] = {
     "TaskResponseTypedDict": ".taskresponse",
     "TaskUpdate": ".taskupdate",
     "TaskUpdateTypedDict": ".taskupdate",
+    "UpdateCollectionAPIV1CollectionsCollectionIDPutRequest": ".update_collection_api_v1_collections_collection_id_putop",
+    "UpdateCollectionAPIV1CollectionsCollectionIDPutRequestTypedDict": ".update_collection_api_v1_collections_collection_id_putop",
     "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequest": ".update_membership_api_v1_organizations_org_id_memberships_user_id_putop",
     "UpdateMembershipAPIV1OrganizationsOrgIDMembershipsUserIDPutRequestTypedDict": ".update_membership_api_v1_organizations_org_id_memberships_user_id_putop",
     "UpdateOrganizationAPIV1OrganizationsOrgIDPutRequest": ".update_organization_api_v1_organizations_org_id_putop",

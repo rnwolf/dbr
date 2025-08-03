@@ -16,6 +16,7 @@ import weakref
 if TYPE_CHECKING:
     from dbrsdk.apihealth import APIHealth
     from dbrsdk.authentication import Authentication
+    from dbrsdk.collections import Collections
     from dbrsdk.health import Health
     from dbrsdk.memberships import Memberships
     from dbrsdk.organizations import Organizations
@@ -30,6 +31,7 @@ class Dbrsdk(BaseSDK):
     r"""DBR Buffer Management System API: API for managing Collections, Work Items, and Schedules within a Drum Buffer Rope (DBR) system"""
 
     work_items: "WorkItems"
+    collections: "Collections"
     schedules: "Schedules"
     system: "System"
     authentication: "Authentication"
@@ -41,6 +43,7 @@ class Dbrsdk(BaseSDK):
     api_health: "APIHealth"
     _sub_sdk_map = {
         "work_items": ("dbrsdk.workitems", "WorkItems"),
+        "collections": ("dbrsdk.collections", "Collections"),
         "schedules": ("dbrsdk.schedules", "Schedules"),
         "system": ("dbrsdk.system", "System"),
         "authentication": ("dbrsdk.authentication", "Authentication"),
