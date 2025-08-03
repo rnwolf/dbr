@@ -76,7 +76,7 @@ Feature: Collection Management
     And the estimated profit should be calculated correctly
 
   Scenario: Collection with target completion date
-    When I create a collection with name "Time-bound Project", target completion date "2024-12-31T23:59:59Z", timezone "UTC"
+    When I create a collection with name "Time-bound Project", target completion date "2024-12-31T23:59:59Z", timezone "Europe/London"
     Then the collection should be created successfully
     And the collection should have the correct target completion date
     And the timezone should be properly stored
