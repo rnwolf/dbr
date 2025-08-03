@@ -10,12 +10,11 @@ from .pages.user_management_page import UserManagementPage
 from utils.config import AppConfig
 
 
-class MainWindow(ctk.CTk):
+class MainWindow:
     """Main application window with menu bar, tab navigation, and content area."""
 
-    def __init__(self, dbr_service: DBRService):
-        super().__init__()
-
+    def __init__(self, root: ctk.CTk, dbr_service: DBRService):
+        self.root = root
         self.dbr_service = dbr_service
 
         self._setup_window()
@@ -25,32 +24,32 @@ class MainWindow(ctk.CTk):
 
     def _setup_window(self) -> None:
         """Configure the main window."""
-        self.title(AppConfig.WINDOW_TITLE)
-        self.geometry(f"{AppConfig.WINDOW_SIZE[0]}x{AppConfig.WINDOW_SIZE[1]}")
-        self.minsize(*AppConfig.MIN_WINDOW_SIZE)
+        self.root.title(AppConfig.WINDOW_TITLE)
+        self.root.geometry(f"{AppConfig.WINDOW_SIZE[0]}x{AppConfig.WINDOW_SIZE[1]}")
+        self.root.minsize(*AppConfig.MIN_WINDOW_SIZE)
 
         # Center window on screen
         self._center_window()
 
     def _center_window(self) -> None:
         """Center the window on the screen."""
-        self.update_idletasks()
-        width = self.winfo_width()
-        height = self.winfo_height()
-        x = (self.winfo_screenwidth() // 2) - (width // 2)
-        y = (self.winfo_screenheight() // 2) - (height // 2)
-        self.geometry(f"{width}x{height}+{x}+{y}")
+        self.root.update_idletasks()
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
 
     def _create_widgets(self) -> None:
         """Create all widgets."""
         # Menu bar
-        self.menu_bar = MenuBar(self)
+        self.menu_bar = MenuBar(self.root)
 
         # User context header
         self._create_user_context_header()
 
         # Tab navigation with role-based pages
-        self.tab_navigation = TabNavigation(self)
+        self.tab_navigation = TabNavigation(self.root)
 
         # Create role-based navigation
         self._create_role_based_navigation()
@@ -60,7 +59,7 @@ class MainWindow(ctk.CTk):
 
     def _create_user_context_header(self) -> None:
         """Create user context display header."""
-        self.header_frame = ctk.CTkFrame(self, height=80)
+        self.header_frame = ctk.CTkFrame(self.root, height=80)
 
         # User context widget
         user_info = self.dbr_service.get_user_info() or {}
@@ -206,7 +205,7 @@ class MainWindow(ctk.CTk):
 
     def _create_status_bar(self) -> None:
         """Create status bar with connection info."""
-        self.status_frame = ctk.CTkFrame(self, height=30, corner_radius=0)
+        self.status_frame = ctk.CTkFrame(self.root, height=30, corner_radius=0)
 
         # Connection status
         connection_status = self.dbr_service.get_connection_status()
@@ -229,7 +228,7 @@ class MainWindow(ctk.CTk):
 
     def _bind_events(self) -> None:
         """Bind event handlers."""
-        self.protocol("WM_DELETE_WINDOW", self._on_closing)
+        self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
 
         # Bind tab change events
         self.tab_navigation.bind_tab_change(self._on_tab_changed)
@@ -245,7 +244,7 @@ class MainWindow(ctk.CTk):
         from tkinter import messagebox
 
         result = messagebox.askyesno(
-            "Logout", "Are you sure you want to logout?", parent=self
+            "Logout", "Are you sure you want to logout?", parent=self.root
         )
 
         if result:
@@ -261,12 +260,12 @@ class MainWindow(ctk.CTk):
         if self.dbr_service.is_authenticated():
             self.dbr_service.logout()
 
-        self.quit()
-        self.destroy()
+        self.root.quit()
+        self.root.destroy()
 
     def run(self) -> None:
         """Start the application main loop."""
-        self.mainloop()
+        self.root.mainloop()
 
     def update_status(self, message: str) -> None:
         """Update the status bar message."""

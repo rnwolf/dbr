@@ -1,101 +1,91 @@
-"""Page for user management tasks."""
-
+from tkinter import ttk, messagebox
 import customtkinter as ctk
-from frontend.components.create_user_dialog import CreateUserDialog
-from frontend.components.edit_user_dialog import EditUserDialog
-
 
 class UserManagementPage(ctk.CTkFrame):
-    """User management page."""
-
     def __init__(self, parent, dbr_service):
         super().__init__(parent)
         self.dbr_service = dbr_service
 
         self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
 
-        self.title_label = ctk.CTkLabel(
-            self, text="User Management", font=ctk.CTkFont(size=20, weight="bold")
-        )
+        self.title_label = ctk.CTkLabel(self, text="User Management", font=ctk.CTkFont(size=20, weight="bold"))
         self.title_label.grid(row=0, column=0, padx=20, pady=20, sticky="w")
 
-        self.create_user_button = ctk.CTkButton(
-            self, text="Create New User", command=self.open_create_user_dialog
-        )
-        self.create_user_button.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+        self.add_user_button = ctk.CTkButton(self, text="Add User", command=self.open_add_user_dialog)
+        self.add_user_button.grid(row=0, column=1, padx=20, pady=20, sticky="e")
 
         self.user_list_frame = ctk.CTkFrame(self)
-        self.user_list_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
-        self.grid_rowconfigure(2, weight=1)
+        self.user_list_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=20, sticky="nsew")
 
-        self.refresh_user_list()
+        self.load_users()
 
-    def open_create_user_dialog(self):
-        """Opens the dialog to create a new user."""
-        dialog = CreateUserDialog(self, self.dbr_service)
-        dialog.grab_set()
-
-    def refresh_user_list(self):
-        """Refreshes the list of users."""
-        # Clear existing user widgets
+    def load_users(self):
+        # Clear existing user list
         for widget in self.user_list_frame.winfo_children():
             widget.destroy()
 
-        # Create table headers
-        headers = ["Username", "Role", "Status", "Actions"]
-        for i, header in enumerate(headers):
-            header_label = ctk.CTkLabel(
-                self.user_list_frame, text=header, font=ctk.CTkFont(weight="bold")
-            )
-            header_label.grid(row=0, column=i, padx=10, pady=5)
-
-        # Fetch and display users
         users = self.dbr_service.get_users()
-        for i, user in enumerate(users, start=1):
-            username_label = ctk.CTkLabel(self.user_list_frame, text=user["username"])
-            username_label.grid(row=i, column=0, padx=10, pady=5)
 
-            role_label = ctk.CTkLabel(self.user_list_frame, text=user["role"])
-            role_label.grid(row=i, column=1, padx=10, pady=5)
+        # Create table headers
+        headers = ["Username", "Email", "Role", "Status"]
+        for i, header in enumerate(headers):
+            header_label = ctk.CTkLabel(self.user_list_frame, text=header, font=ctk.CTkFont(weight="bold"))
+            header_label.grid(row=0, column=i, padx=10, pady=10)
 
-            status_label = ctk.CTkLabel(self.user_list_frame, text=user["status"])
-            status_label.grid(row=i, column=2, padx=10, pady=5)
+        # Populate user data
+        for i, user in enumerate(users):
+            ctk.CTkLabel(self.user_list_frame, text=user.get("username")).grid(row=i + 1, column=0, padx=10, pady=5)
+            ctk.CTkLabel(self.user_list_frame, text=user.get("email")).grid(row=i + 1, column=1, padx=10, pady=5)
+            ctk.CTkLabel(self.user_list_frame, text=user.get("role")).grid(row=i + 1, column=2, padx=10, pady=5)
+            ctk.CTkLabel(self.user_list_frame, text=user.get("status")).grid(row=i + 1, column=3, padx=10, pady=5)
 
-            actions_frame = ctk.CTkFrame(self.user_list_frame)
-            actions_frame.grid(row=i, column=3, padx=10, pady=5)
+    def open_add_user_dialog(self):
+        dialog = CreateUserDialog(self, self.dbr_service)
+        self.wait_window(dialog)
+        self.load_users()
 
-            edit_button = ctk.CTkButton(
-                actions_frame, text="Edit", command=lambda u=user: self.edit_user(u)
-            )
-            edit_button.pack(side="left", padx=5)
+    def refresh_user_list(self):
+        self.load_users()
 
-            remove_button = ctk.CTkButton(
-                actions_frame, text="Remove", command=lambda u=user: self.remove_user(u)
-            )
-            remove_button.pack(side="left", padx=5)
+class CreateUserDialog(ctk.CTkToplevel):
+    def __init__(self, parent, dbr_service):
+        super().__init__(parent)
+        self.dbr_service = dbr_service
+        self.title("Create New User")
+        self.geometry("400x300")
 
-    def edit_user(self, user):
-        """Callback to edit a user."""
-        print(f"Editing user: {user['username']}")
-        # Create and show edit dialog
-        dialog = EditUserDialog(self, self.dbr_service, user)
-        dialog.grab_set()
+        self.username_label = ctk.CTkLabel(self, text="Username")
+        self.username_label.pack(pady=(20, 5))
+        self.username_entry = ctk.CTkEntry(self)
+        self.username_entry.pack(pady=5, padx=20, fill="x")
 
-    def remove_user(self, user):
-        """Callback to remove a user."""
-        from tkinter import messagebox
-        
-        # Confirm deletion
-        result = messagebox.askyesno(
-            "Confirm Deletion",
-            f"Are you sure you want to remove user '{user['username']}'?\n\nThis action cannot be undone.",
-            parent=self
-        )
-        
-        if result:
-            success, message = self.dbr_service.remove_user(user['id'])
-            if success:
-                messagebox.showinfo("Success", message, parent=self)
-                self.refresh_user_list()
-            else:
-                messagebox.showerror("Error", message, parent=self)
+        self.password_label = ctk.CTkLabel(self, text="Temporary Password")
+        self.password_label.pack(pady=(10, 5))
+        self.password_entry = ctk.CTkEntry(self, show="*")
+        self.password_entry.pack(pady=5, padx=20, fill="x")
+
+        self.role_label = ctk.CTkLabel(self, text="Role")
+        self.role_label.pack(pady=(10, 5))
+        self.role_combobox = ctk.CTkComboBox(self, values=["Planner", "Worker", "Viewer"])
+        self.role_combobox.pack(pady=5, padx=20, fill="x")
+
+        self.create_button = ctk.CTkButton(self, text="Create User", command=self.create_user)
+        self.create_button.pack(pady=20)
+
+    def create_user(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        role = self.role_combobox.get()
+
+        if not username or not password:
+            messagebox.showerror("Validation Error", "Username and password are required.")
+            return
+
+        success, message = self.dbr_service.create_user(username, password, role)
+
+        if success:
+            messagebox.showinfo("Success", message)
+            self.destroy()
+        else:
+            messagebox.showerror("Error", message)

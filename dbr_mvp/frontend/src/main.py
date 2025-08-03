@@ -37,7 +37,7 @@ def main():
                 # The MainWindow will create its own window and the root will be unused
 
                 # Create and run the main application
-                app = MainWindow(authenticated_service)
+                app = MainWindow(root, authenticated_service)
                 app.run()
 
                 # Clean up the hidden root after main app closes

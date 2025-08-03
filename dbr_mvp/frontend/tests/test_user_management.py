@@ -4,8 +4,7 @@ import pytest
 from unittest.mock import Mock, patch
 
 # Import the classes to be tested
-from frontend.components.create_user_dialog import CreateUserDialog
-from frontend.pages.user_management_page import UserManagementPage
+from frontend.pages.user_management_page import UserManagementPage, CreateUserDialog
 
 
 # --- Fixtures for CreateUserDialog ---
@@ -17,21 +16,22 @@ def mocked_create_user_dialog(mocker):
     mock_dbr_service = Mock()
     mock_dbr_service.get_available_roles.return_value = ["Planner", "Worker", "Viewer"]
 
-    mocker.patch(
-        "frontend.components.create_user_dialog.CreateUserDialog.__init__",
-        return_value=None,
-    )
-    mock_messagebox = mocker.patch("frontend.components.create_user_dialog.messagebox")
+    with patch("frontend.pages.user_management_page.CreateUserDialog.__init__", return_value=None), \
+         patch("frontend.pages.user_management_page.ctk.CTkLabel"), \
+         patch("frontend.pages.user_management_page.ctk.CTkEntry"), \
+         patch("frontend.pages.user_management_page.ctk.CTkComboBox"), \
+         patch("frontend.pages.user_management_page.ctk.CTkButton"):
 
-    dialog = CreateUserDialog(mock_parent, mock_dbr_service)
-    dialog.parent = mock_parent
-    dialog.dbr_service = mock_dbr_service
-    dialog.username_entry = Mock()
-    dialog.password_entry = Mock()
-    dialog.role_combobox = Mock()
-    dialog.destroy = Mock()
+        dialog = CreateUserDialog(mock_parent, mock_dbr_service)
+        dialog.parent = mock_parent
+        dialog.dbr_service = mock_dbr_service
+        dialog.username_entry = Mock()
+        dialog.password_entry = Mock()
+        dialog.role_combobox = Mock()
+        dialog.destroy = Mock()
 
-    return dialog, mock_parent, mock_dbr_service, mock_messagebox
+        yield dialog, mock_parent, mock_dbr_service, mocker.patch("frontend.pages.user_management_page.messagebox")
+
 
 
 # --- Fixtures for UserManagementPage ---
@@ -133,7 +133,7 @@ class TestUserManagementPage:
 
         # Two users are returned from the service, so we expect 2 username labels, 2 role labels, etc.
         # Plus the header labels
-        assert mock_label.call_count == 10  # Header(4) + User1(3) + User2(3)
+        assert mock_label.call_count == 12  # Header(4) + User1(4) + User2(4)
         assert mock_button.call_count == 4  # User1(Edit, Remove) + User2(Edit, Remove)
 
     @patch("frontend.pages.user_management_page.ctk.CTkFrame")

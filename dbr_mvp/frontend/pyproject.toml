@@ -10,6 +10,8 @@ dependencies = [
     "pillow>=10.0.0",
     "pytest>=8.4.1",
     "tk>=0.1.0",
+    "pytest-bdd>=8.1.0",
+    "requests>=2.32.4",
 ]
 
 

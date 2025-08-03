@@ -1,7 +1,5 @@
-"""Tests for MainWindow class."""
-
 import pytest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 
 @pytest.fixture
@@ -22,17 +20,37 @@ def mock_dbr_service():
     service.has_permission.return_value = True
     return service
 
+@pytest.fixture
+def mocked_main_window_dependencies(mocker):
+    """Provides mocked dependencies for MainWindow."""
+    with patch("customtkinter.CTk"), \
+         patch("frontend.main_window.MenuBar") as mock_menu_bar, \
+         patch("frontend.main_window.TabNavigation") as mock_tab_navigation, \
+         patch("frontend.main_window.UserContextWidget") as mock_user_context, \
+         patch("customtkinter.CTkLabel") as mock_label, \
+         patch("customtkinter.CTkFrame") as mock_frame, \
+         patch("customtkinter.CTkButton") as mock_button:
+        
+        mocks = {
+            "MenuBar": mock_menu_bar,
+            "TabNavigation": mock_tab_navigation,
+            "UserContextWidget": mock_user_context,
+            "CTkLabel": mock_label,
+            "CTkFrame": mock_frame,
+            "CTkButton": mock_button,
+        }
+        yield mocks
 
 class TestMainWindow:
     """Test cases for MainWindow."""
 
     def test_window_initialization(
-        self, mock_dbr_service, mocked_main_window_dependencies
+        self, root_app, mock_dbr_service, mocked_main_window_dependencies
     ):
         """Test that MainWindow initializes correctly."""
         from frontend.main_window import MainWindow
 
-        window = MainWindow(mock_dbr_service)
+        window = MainWindow(dbr_service=mock_dbr_service)
 
         assert window is not None
         assert window.dbr_service is mock_dbr_service
@@ -41,12 +59,12 @@ class TestMainWindow:
         assert hasattr(window, "pages")
 
     def test_role_based_navigation_creation(
-        self, mock_dbr_service, mocked_main_window_dependencies
+        self, root_app, mock_dbr_service, mocked_main_window_dependencies
     ):
         """Test that role-based navigation is created correctly for a Planner."""
         from frontend.main_window import MainWindow
 
-        MainWindow(mock_dbr_service)
+        MainWindow(dbr_service=mock_dbr_service)
 
         added_tabs = [
             call.args[0]
@@ -70,23 +88,23 @@ class TestMainWindow:
             )
 
     def test_user_context_integration(
-        self, mock_dbr_service, mocked_main_window_dependencies
+        self, root_app, mock_dbr_service, mocked_main_window_dependencies
     ):
         """Test that user context is properly integrated."""
         from frontend.main_window import MainWindow
 
-        window = MainWindow(mock_dbr_service)
+        window = MainWindow(dbr_service=mock_dbr_service)
 
         assert hasattr(window, "user_context")
         assert hasattr(window, "header_frame")
         assert hasattr(window, "logout_button")
         mocked_main_window_dependencies["UserContextWidget"].assert_called_once()
 
-    def test_status_update(self, mock_dbr_service, mocked_main_window_dependencies):
+    def test_status_update(self, root_app, mock_dbr_service, mocked_main_window_dependencies):
         """Test status bar update."""
         from frontend.main_window import MainWindow
 
-        window = MainWindow(mock_dbr_service)
+        window = MainWindow(dbr_service=mock_dbr_service)
 
         mock_status_label = window.status_bar
 
@@ -96,15 +114,16 @@ class TestMainWindow:
         mock_status_label.configure.assert_called_with(text=test_message)
 
     def test_dbr_service_integration(
-        self, mock_dbr_service, mocked_main_window_dependencies
+        self, root_app, mock_dbr_service, mocked_main_window_dependencies
     ):
         """Test that DBR service is properly integrated."""
         from frontend.main_window import MainWindow
 
-        window = MainWindow(mock_dbr_service)
+        window = MainWindow(dbr_service=mock_dbr_service)
 
         assert window.dbr_service is mock_dbr_service
 
         mock_dbr_service.get_user_info.assert_called()
         mock_dbr_service.get_user_role.assert_called()
         mock_dbr_service.get_current_organization.assert_called()
+
