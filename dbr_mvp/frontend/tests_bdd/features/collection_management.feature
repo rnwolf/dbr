@@ -8,12 +8,14 @@ Feature: Collection Management
     And an authenticated planner user
     And a default organization exists
 
+  @investigate
   Scenario: Create a new collection
     When I create a collection with name "Q4 Product Release", description "Major product release for Q4", type "Release"
     Then the collection should be created successfully
     And the collection should have status "planning"
     And the collection should be assigned to my organization
 
+  @investigate
   Scenario: List collections by type
     Given there are collections with various types
     When I request collections with type "Project"

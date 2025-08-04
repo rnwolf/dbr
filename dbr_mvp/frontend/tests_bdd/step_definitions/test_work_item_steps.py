@@ -1,6 +1,6 @@
 from pytest_bdd import scenarios, given, when, then, parsers
 from dbrsdk import Dbrsdk
-from dbrsdk.models import WorkItemCreate, WorkItemUpdate, TaskCreate
+from dbrsdk.models import WorkItemUpdate, TaskCreate
 import pytest
 
 # Constants
@@ -19,16 +19,18 @@ def running_backend_server(backend_server):
 @given('an authenticated planner user')
 def authenticated_planner(test_data_manager, context):
     """Create and authenticate a planner user."""
+    import uuid
+    unique_id = str(uuid.uuid4())[:8]
     planner_user = test_data_manager.create_user(
-        username="planner_user_workitems",
+        username=f"planner_user_wi_{unique_id}",
         password="planner_password",
-        email="planner_workitems@example.com",
+        email=f"planner_wi_{unique_id}@example.com",
         display_name="Planner User"
     )
     
     # Authenticate and get token
     response = test_data_manager.sdk.authentication.login(
-        username="planner_user_workitems",
+        username=f"planner_user_wi_{unique_id}",
         password="planner_password"
     )
     
@@ -50,18 +52,18 @@ def create_work_item(context, title, description, priority):
     sdk = context["planner_sdk"]
     org_id = context["organization_id"]
     
-    work_item_data = WorkItemCreate(
-        organization_id=org_id,
-        title=title,
-        description=description,
-        priority=priority,
-        status="Backlog",  # Default status
-        estimated_total_hours=8.0,  # Default estimate
-        ccr_hours_required={"development": 6.0, "testing": 2.0}  # Example CCR hours
-    )
+    
     
     try:
-        created_work_item = sdk.work_items.create_work_item(work_item_data)
+        created_work_item = sdk.work_items.create(
+            organization_id=org_id,
+            title=title,
+            description=description,
+            priority=priority,
+            status="Backlog",
+            estimated_total_hours=8.0,
+            ccr_hours_required={"development": 6.0, "testing": 2.0}
+        )
         context["created_work_item"] = created_work_item
         context["work_item_creation_success"] = True
     except Exception as e:
@@ -230,7 +232,7 @@ def work_item_exists(context):
         ccr_hours_required={"development": 6.0, "testing": 2.0}
     )
     
-    work_item = sdk.work_items.create_work_item(work_item_data)
+    work_item = sdk.work_items.create(work_item_data)
     context["base_work_item"] = work_item
 
 
@@ -293,7 +295,15 @@ def multiple_work_items_different_priorities(context):
             ccr_hours_required={"development": 3.0, "testing": 1.0}
         )
         
-        work_item = sdk.work_items.create_work_item(work_item_data)
+        work_item = sdk.work_items.create(
+            organization_id=org_id,
+            title=f"Work Item {i+1}",
+            description=f"Description for work item {i+1}",
+            priority="medium",
+            status=status,
+            estimated_total_hours=4.0,
+            ccr_hours_required={"development": 3.0, "testing": 1.0}
+        )
         created_items.append(work_item)
     
     context["priority_work_items"] = created_items
@@ -462,11 +472,14 @@ def authenticated_as_worker_user(test_data_manager, context):
     """Authenticate as a worker user."""
     import uuid
     unique_id = str(uuid.uuid4())[:8]
-    worker_user = test_data_manager.create_user(
+    
+    # Create worker user with correct WORKER role ID
+    worker_user = test_data_manager.create_user_with_role(
         username=f"worker_user_wi_{unique_id}",
         password="worker_password",
         email=f"worker_wi_{unique_id}@example.com",
-        display_name="Worker User"
+        display_name="Worker User",
+        role_id="1334ab62-7f0b-4c70-925a-9b5f6019d030"  # WORKER role ID
     )
     
     # Authenticate and get token
@@ -582,11 +595,14 @@ def authenticated_as_viewer_user(test_data_manager, context):
     """Authenticate as a viewer user."""
     import uuid
     unique_id = str(uuid.uuid4())[:8]
-    viewer_user = test_data_manager.create_user(
+    
+    # Create viewer user with correct VIEWER role ID
+    viewer_user = test_data_manager.create_user_with_role(
         username=f"viewer_user_wi_{unique_id}",
         password="viewer_password",
         email=f"viewer_wi_{unique_id}@example.com",
-        display_name="Viewer User"
+        display_name="Viewer User",
+        role_id="c2d4f664-7a53-41f7-8354-0afed1c5a523"  # VIEWER role ID
     )
     
     # Authenticate and get token

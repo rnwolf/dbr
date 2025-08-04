@@ -43,6 +43,7 @@ markers = [
     "slow: marks tests as slow",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
+    "investigate: mark scenario for investigation",
 ]
 
 [tool.uv.sources]

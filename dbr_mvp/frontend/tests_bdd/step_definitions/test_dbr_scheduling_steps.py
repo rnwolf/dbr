@@ -10,6 +10,30 @@ BASE_URL = "http://127.0.0.1:8002"
 scenarios('../features/dbr_scheduling.feature')
 
 
+@given('an authenticated planner user')
+def authenticated_planner(test_data_manager, context):
+    """Create and authenticate a planner user."""
+    import uuid
+    unique_id = str(uuid.uuid4())[:8]
+    planner_user = test_data_manager.create_user(
+        username=f"planner_user_sched_{unique_id}",
+        password="planner_password",
+        email=f"planner_sched_{unique_id}@example.com",
+        display_name="Planner User"
+    )
+    
+    # Authenticate and get token
+    response = test_data_manager.sdk.authentication.login(
+        username=f"planner_user_sched_{unique_id}",
+        password="planner_password"
+    )
+    
+    context["planner_sdk"] = Dbrsdk(server_url=BASE_URL, http_bearer=response.access_token)
+    context["planner_user"] = planner_user
+    # Get organization_id from the test_data_manager's default_org
+    context["organization_id"] = test_data_manager.default_org.id
+
+
 @given('a running backend server')
 def running_backend_server(backend_server):
     """Check that the backend server is running."""
@@ -22,6 +46,32 @@ def default_org_with_board_config(context):
     # For now, we'll assume the default organization has a board config
     # In a real implementation, you might need to create one
     context["board_config_id"] = "default-board-config-id"
+
+
+@given('work items are available for scheduling')
+def work_items_available_for_scheduling(context):
+    """Create work items that are ready for scheduling."""
+    sdk = context["planner_sdk"]
+    org_id = context["organization_id"]
+    
+    # Create several work items in "Ready" status
+    work_items = []
+    for i in range(3):
+        try:
+            work_item = sdk.work_items.create(
+                organization_id=org_id,
+                title=f"Schedulable Work Item {i+1}",
+                description=f"Work item {i+1} ready for scheduling",
+                priority="medium",
+                status="Ready",
+                estimated_total_hours=8.0,
+                ccr_hours_required={"development": 6.0, "testing": 2.0}
+            )
+            work_items.append(work_item)
+        except Exception as e:
+            print(f"Failed to create schedulable work item {i+1}: {e}")
+    
+    context["schedulable_work_items"] = work_items
 
 
 @given('work items are available for scheduling')
