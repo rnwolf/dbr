@@ -11,7 +11,6 @@ class CollectionResponseTypedDict(TypedDict):
     organization_id: str
     name: str
     description: Nullable[str]
-    type: str
     status: str
     estimated_sales_price: Nullable[float]
     estimated_variable_cost: Nullable[float]
@@ -28,8 +27,6 @@ class CollectionResponse(BaseModel):
     name: str
 
     description: Nullable[str]
-
-    type: str
 
     status: str
 

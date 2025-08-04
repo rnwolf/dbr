@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: fab7d25f-d11a-41b6-92bb-ecf4cef91e4c
 management:
-  docChecksum: e411fa1210afa84dddc819df4da5f182
+  docChecksum: 314946f86cfc778be7142f5de1db2f3a
   docVersion: 1.0.0
   speakeasyVersion: 1.596.0
   generationVersion: 2.672.0
-  releaseVersion: 0.3.2
-  configChecksum: 208f9aac6791b59eb7c790a2e4b8082a
+  releaseVersion: 0.3.3
+  configChecksum: 506c0779b3300a2208e6c5ccd501f484
 features:
   python:
     additionalDependencies: 1.0.0
@@ -49,7 +49,6 @@ generatedFiles:
   - docs/models/collectioncreate.md
   - docs/models/collectionresponse.md
   - docs/models/collectionstatus.md
-  - docs/models/collectiontype.md
   - docs/models/collectionupdate.md
   - docs/models/createmembershipapiv1organizationsorgidmembershipspostrequest.md
   - docs/models/dbrapiauthuserinfo.md
@@ -156,7 +155,6 @@ generatedFiles:
   - src/dbrsdk/models/collectioncreate.py
   - src/dbrsdk/models/collectionresponse.py
   - src/dbrsdk/models/collectionstatus.py
-  - src/dbrsdk/models/collectiontype.py
   - src/dbrsdk/models/collectionupdate.py
   - src/dbrsdk/models/create_membership_api_v1_organizations_org_id_memberships_postop.py
   - src/dbrsdk/models/dbr_api_auth_userinfo.py
@@ -789,7 +787,7 @@ examples:
           organization_id: "<id>"
       responses:
         "200":
-          application/json: [{"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "useless afore gadzooks lest pale permafrost notarize", "type": "<value>", "status": "<value>", "estimated_sales_price": 7359.21, "estimated_variable_cost": 9950.35, "throughput": 8041.72, "created_date": "<value>", "updated_date": "<value>"}]
+          application/json: [{"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "useless afore gadzooks lest pale permafrost notarize", "status": "<value>", "estimated_sales_price": 7359.21, "estimated_variable_cost": 9950.35, "throughput": 8041.72, "created_date": "<value>", "updated_date": "<value>"}]
         "422":
           application/json: {}
   create_collection_api_v1_collections__post:
@@ -798,7 +796,7 @@ examples:
         application/json: {"organization_id": "<id>", "name": "<value>"}
       responses:
         "201":
-          application/json: {"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "cloudy ick furthermore the inasmuch", "type": "<value>", "status": "<value>", "estimated_sales_price": 485.62, "estimated_variable_cost": 8650.63, "throughput": 9322.03, "created_date": "<value>", "updated_date": "<value>"}
+          application/json: {"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "cloudy ick furthermore the inasmuch", "status": "<value>", "estimated_sales_price": 485.62, "estimated_variable_cost": 8650.63, "throughput": 9322.03, "created_date": "<value>", "updated_date": "<value>"}
         "422":
           application/json: {}
   get_collection_api_v1_collections__collection_id__get:
@@ -810,7 +808,7 @@ examples:
           organization_id: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "joyfully who anenst farmer hello", "type": "<value>", "status": "<value>", "estimated_sales_price": 574.19, "estimated_variable_cost": 4972.98, "throughput": 589.02, "created_date": "<value>", "updated_date": "<value>"}
+          application/json: {"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "joyfully who anenst farmer hello", "status": "<value>", "estimated_sales_price": 574.19, "estimated_variable_cost": 4972.98, "throughput": 589.02, "created_date": "<value>", "updated_date": "<value>"}
         "422":
           application/json: {}
   update_collection_api_v1_collections__collection_id__put:
@@ -824,7 +822,7 @@ examples:
         application/json: {}
       responses:
         "200":
-          application/json: {"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "hmph unnecessarily clinking whereas clearly oh violently scarily throughout punctually", "type": "<value>", "status": "<value>", "estimated_sales_price": 2957.6, "estimated_variable_cost": null, "throughput": 2112.03, "created_date": "<value>", "updated_date": "<value>"}
+          application/json: {"id": "<id>", "organization_id": "<id>", "name": "<value>", "description": "hmph unnecessarily clinking whereas clearly oh violently scarily throughout punctually", "status": "<value>", "estimated_sales_price": 2957.6, "estimated_variable_cost": null, "throughput": 2112.03, "created_date": "<value>", "updated_date": "<value>"}
         "422":
           application/json: {}
   delete_collection_api_v1_collections__collection_id__delete:

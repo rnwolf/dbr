@@ -144,12 +144,6 @@ updated_collection = sdk.collections.update(
 ### Key Fields
 - **CollectionResponse**: `id`, `organization_id`, `name`, `description`, `type`, `status`, `owner_user_id`, `target_completion_date`, `estimated_sales_price`, `estimated_variable_cost`, `url`
 
-### Collection Types
-- `Project` - Standard project container
-- `Epic` - Large feature or initiative
-- `Release` - Product release container
-- `MOVE` - Strategic business move
-
 ### Collection Statuses
 - `planning` - Initial planning phase
 - `active` - Currently in progress

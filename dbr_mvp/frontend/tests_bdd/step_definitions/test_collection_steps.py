@@ -49,10 +49,10 @@ def default_organization_exists(context):
 
 @when(
     parsers.parse(
-        'I create a collection with name "{name}", description "{description}", type "{collection_type}"'
+        'I create a collection with name "{name}", description "{description}"'
     )
 )
-def create_collection(context, name, description, collection_type):
+def create_collection(context, name, description):
     """Create a collection through the SDK."""
     sdk = context["planner_sdk"]
     org_id = context["organization_id"]
@@ -62,7 +62,6 @@ def create_collection(context, name, description, collection_type):
             organization_id=org_id,
             name=name,
             description=description,
-            type_=collection_type,
             status="planning",  # Default status
         )
         context["created_collection"] = collection
@@ -115,7 +114,6 @@ def collections_with_various_types(context):
                 organization_id=org_id,
                 name=f"{collection_type} Collection {i+1}",
                 description=f"Description for {collection_type} collection {i+1}",
-                type_=collection_type,
                 status="planning",
             )
             created_collections.append(collection)
@@ -179,7 +177,6 @@ def collection_exists_planning_status(context):
         organization_id=org_id,
         name="Planning Collection",
         description="A collection in planning status",
-        type="Project",
         status="planning",
     )
     context["target_collection"] = collection
@@ -260,7 +257,6 @@ def collections_exist_in_org(context):
             organization_id=org_id,
             name="Test Collection for Workers",
             description="Collection for testing worker access",
-            type="Project",
             status="active",
         )
         context["existing_collection"] = collection
@@ -307,7 +303,6 @@ def try_create_collection_as_worker(context):
             organization_id=org_id,
             name="Worker Collection",
             description="This should fail",
-            type="Project",
             status="planning",
         )
         context["unauthorized_creation_success"] = True
@@ -475,7 +470,6 @@ def collections_in_multiple_orgs(context):
                 organization_id=org_id,
                 name=f"Org Collection {i+1}",
                 description=f"Collection {i+1} in our organization",
-                type="Project",
                 status="planning",
             )
         except Exception as e:
@@ -536,7 +530,6 @@ def collections_with_various_statuses(context):
                 organization_id=org_id,
                 name=f"Status {status.title()} Collection",
                 description=f"Collection with {status} status",
-                type="Project",
                 status=status,
             )
             created_collections.append(collection)
@@ -606,7 +599,6 @@ def create_collection_with_financials(context, name, sales_price, variable_cost)
             organization_id=org_id,
             name=name,
             description="Collection with financial data",
-            type="Project",
             status="planning",
             estimated_sales_price=float(sales_price),
             estimated_variable_cost=float(variable_cost),
@@ -661,7 +653,6 @@ def create_collection_with_target_date(context, name, completion_date, timezone)
             organization_id=org_id,
             name=name,
             description="Collection with target date",
-            type="Project",
             status="planning",
             target_completion_date=completion_date,
             target_completion_date_timezone=timezone,

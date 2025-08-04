@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 from .collectionstatus import CollectionStatus
-from .collectiontype import CollectionType
 from dbrsdk.types import BaseModel, Nullable, OptionalNullable, UNSET, UNSET_SENTINEL
 from pydantic import model_serializer
-from typing import Optional
 from typing_extensions import NotRequired, TypedDict
 
 
@@ -16,8 +14,6 @@ class CollectionCreateTypedDict(TypedDict):
     r"""Collection name"""
     description: NotRequired[Nullable[str]]
     r"""Collection description"""
-    type: NotRequired[CollectionType]
-    r"""Collection type enumeration"""
     status: NotRequired[Nullable[CollectionStatus]]
     r"""Collection status"""
     estimated_sales_price: NotRequired[Nullable[float]]
@@ -36,9 +32,6 @@ class CollectionCreate(BaseModel):
     description: OptionalNullable[str] = UNSET
     r"""Collection description"""
 
-    type: Optional[CollectionType] = None
-    r"""Collection type enumeration"""
-
     status: OptionalNullable[CollectionStatus] = UNSET
     r"""Collection status"""
 
@@ -52,7 +45,6 @@ class CollectionCreate(BaseModel):
     def serialize_model(self, handler):
         optional_fields = [
             "description",
-            "type",
             "status",
             "estimated_sales_price",
             "estimated_variable_cost",

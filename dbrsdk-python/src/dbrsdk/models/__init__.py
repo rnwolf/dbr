@@ -14,7 +14,6 @@ if TYPE_CHECKING:
     from .collectioncreate import CollectionCreate, CollectionCreateTypedDict
     from .collectionresponse import CollectionResponse, CollectionResponseTypedDict
     from .collectionstatus import CollectionStatus
-    from .collectiontype import CollectionType
     from .collectionupdate import CollectionUpdate, CollectionUpdateTypedDict
     from .create_membership_api_v1_organizations_org_id_memberships_postop import (
         CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest,
@@ -182,7 +181,6 @@ __all__ = [
     "CollectionResponse",
     "CollectionResponseTypedDict",
     "CollectionStatus",
-    "CollectionType",
     "CollectionUpdate",
     "CollectionUpdateTypedDict",
     "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest",
@@ -311,7 +309,6 @@ _dynamic_imports: dict[str, str] = {
     "CollectionResponse": ".collectionresponse",
     "CollectionResponseTypedDict": ".collectionresponse",
     "CollectionStatus": ".collectionstatus",
-    "CollectionType": ".collectiontype",
     "CollectionUpdate": ".collectionupdate",
     "CollectionUpdateTypedDict": ".collectionupdate",
     "CreateMembershipAPIV1OrganizationsOrgIDMembershipsPostRequest": ".create_membership_api_v1_organizations_org_id_memberships_postop",

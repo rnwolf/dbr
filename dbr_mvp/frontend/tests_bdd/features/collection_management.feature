@@ -10,16 +10,16 @@ Feature: Collection Management
 
   @investigate
   Scenario: Create a new collection
-    When I create a collection with name "Q4 Product Release", description "Major product release for Q4", type "Release"
+    When I create a collection with name "Q4 Product Release", description "Major product release for Q4"
     Then the collection should be created successfully
     And the collection should have status "planning"
     And the collection should be assigned to my organization
 
   @investigate
-  Scenario: List collections by type
-    Given there are collections with various types
-    When I request collections with type "Project"
-    Then I should receive only collections with "Project" type
+  Scenario: List collections
+    Given there are collections with various names
+    When I request all collections
+    Then I should receive a list of collections
     And all collections should belong to my organization
 
   Scenario: Update collection status
@@ -52,7 +52,7 @@ Feature: Collection Management
 
   Scenario: Organization Admin can manage collections
     Given I am authenticated as an organization admin user
-    When I create a collection with name "Admin Collection", description "Created by admin", type "Epic"
+    When I create a collection with name "Admin Collection", description "Created by admin"
     Then the collection should be created successfully
     And when I update the collection name to "Updated Admin Collection"
     Then the collection should be updated successfully

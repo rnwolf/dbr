@@ -208,7 +208,6 @@ class Collections(BaseSDK):
         organization_id: str,
         name: str,
         description: OptionalNullable[str] = UNSET,
-        type_: Optional[models.CollectionType] = None,
         status: OptionalNullable[models.CollectionStatus] = UNSET,
         estimated_sales_price: OptionalNullable[float] = UNSET,
         estimated_variable_cost: OptionalNullable[float] = UNSET,
@@ -224,7 +223,6 @@ class Collections(BaseSDK):
         :param organization_id: Organization ID
         :param name: Collection name
         :param description: Collection description
-        :param type: Collection type enumeration
         :param status: Collection status
         :param estimated_sales_price: Estimated sales price
         :param estimated_variable_cost: Estimated variable cost
@@ -247,7 +245,6 @@ class Collections(BaseSDK):
             organization_id=organization_id,
             name=name,
             description=description,
-            type=type_,
             status=status,
             estimated_sales_price=estimated_sales_price,
             estimated_variable_cost=estimated_variable_cost,
@@ -322,7 +319,6 @@ class Collections(BaseSDK):
         organization_id: str,
         name: str,
         description: OptionalNullable[str] = UNSET,
-        type_: Optional[models.CollectionType] = None,
         status: OptionalNullable[models.CollectionStatus] = UNSET,
         estimated_sales_price: OptionalNullable[float] = UNSET,
         estimated_variable_cost: OptionalNullable[float] = UNSET,
@@ -338,7 +334,6 @@ class Collections(BaseSDK):
         :param organization_id: Organization ID
         :param name: Collection name
         :param description: Collection description
-        :param type: Collection type enumeration
         :param status: Collection status
         :param estimated_sales_price: Estimated sales price
         :param estimated_variable_cost: Estimated variable cost
@@ -361,7 +356,6 @@ class Collections(BaseSDK):
             organization_id=organization_id,
             name=name,
             description=description,
-            type=type_,
             status=status,
             estimated_sales_price=estimated_sales_price,
             estimated_variable_cost=estimated_variable_cost,
@@ -629,7 +623,6 @@ class Collections(BaseSDK):
         organization_id: str,
         name: OptionalNullable[str] = UNSET,
         description: OptionalNullable[str] = UNSET,
-        type_: OptionalNullable[models.CollectionType] = UNSET,
         status: OptionalNullable[models.CollectionStatus] = UNSET,
         estimated_sales_price: OptionalNullable[float] = UNSET,
         estimated_variable_cost: OptionalNullable[float] = UNSET,
@@ -646,7 +639,6 @@ class Collections(BaseSDK):
         :param organization_id: Organization ID to scope the request
         :param name: Collection name
         :param description: Collection description
-        :param type: Collection type
         :param status: Collection status
         :param estimated_sales_price: Estimated sales price
         :param estimated_variable_cost: Estimated variable cost
@@ -671,7 +663,6 @@ class Collections(BaseSDK):
             collection_update=models.CollectionUpdate(
                 name=name,
                 description=description,
-                type=type_,
                 status=status,
                 estimated_sales_price=estimated_sales_price,
                 estimated_variable_cost=estimated_variable_cost,
@@ -748,7 +739,6 @@ class Collections(BaseSDK):
         organization_id: str,
         name: OptionalNullable[str] = UNSET,
         description: OptionalNullable[str] = UNSET,
-        type_: OptionalNullable[models.CollectionType] = UNSET,
         status: OptionalNullable[models.CollectionStatus] = UNSET,
         estimated_sales_price: OptionalNullable[float] = UNSET,
         estimated_variable_cost: OptionalNullable[float] = UNSET,
@@ -765,7 +755,6 @@ class Collections(BaseSDK):
         :param organization_id: Organization ID to scope the request
         :param name: Collection name
         :param description: Collection description
-        :param type: Collection type
         :param status: Collection status
         :param estimated_sales_price: Estimated sales price
         :param estimated_variable_cost: Estimated variable cost
@@ -790,7 +779,6 @@ class Collections(BaseSDK):
             collection_update=models.CollectionUpdate(
                 name=name,
                 description=description,
-                type=type_,
                 status=status,
                 estimated_sales_price=estimated_sales_price,
                 estimated_variable_cost=estimated_variable_cost,

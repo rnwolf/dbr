@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, ConfigDict
 from dbr.core.database import get_db
-from dbr.models.collection import Collection, CollectionStatus, CollectionType
+from dbr.models.collection import Collection, CollectionStatus
 from dbr.models.organization import Organization
 from dbr.models.organization_membership import OrganizationMembership, InvitationStatus
 from dbr.models.user import User
@@ -26,7 +26,6 @@ class CollectionCreate(BaseModel):
     organization_id: str = Field(..., description="Organization ID")
     name: str = Field(..., description="Collection name")
     description: Optional[str] = Field(None, description="Collection description")
-    type: CollectionType = Field(CollectionType.PROJECT, description="Collection type")
     status: Optional[CollectionStatus] = Field(CollectionStatus.PLANNING, description="Collection status")
     estimated_sales_price: Optional[float] = Field(0.0, description="Estimated sales price")
     estimated_variable_cost: Optional[float] = Field(0.0, description="Estimated variable cost")
@@ -35,7 +34,6 @@ class CollectionCreate(BaseModel):
 class CollectionUpdate(BaseModel):
     name: Optional[str] = Field(None, description="Collection name")
     description: Optional[str] = Field(None, description="Collection description")
-    type: Optional[CollectionType] = Field(None, description="Collection type")
     status: Optional[CollectionStatus] = Field(None, description="Collection status")
     estimated_sales_price: Optional[float] = Field(None, description="Estimated sales price")
     estimated_variable_cost: Optional[float] = Field(None, description="Estimated variable cost")
@@ -48,7 +46,6 @@ class CollectionResponse(BaseModel):
     organization_id: str
     name: str
     description: Optional[str]
-    type: str  # String representation of enum
     status: str  # String representation of enum
     estimated_sales_price: Optional[float]
     estimated_variable_cost: Optional[float]
@@ -108,7 +105,6 @@ def _convert_collection_to_response(collection: Collection) -> Dict[str, Any]:
         "organization_id": collection.organization_id,
         "name": collection.name,
         "description": collection.description,
-        "type": collection.type.value,
         "status": collection.status.value,
         "estimated_sales_price": collection.estimated_sales_price,
         "estimated_variable_cost": collection.estimated_variable_cost,
@@ -169,7 +165,6 @@ def create_collection(
         organization_id=collection_data.organization_id,
         name=collection_data.name,
         description=collection_data.description,
-        type=collection_data.type,
         status=collection_data.status or CollectionStatus.PLANNING,
         estimated_sales_price=collection_data.estimated_sales_price,
         estimated_variable_cost=collection_data.estimated_variable_cost
@@ -238,18 +233,12 @@ def update_collection(
     update_data = collection_data.model_dump(exclude_unset=True)
     
     for field, value in update_data.items():
-        if field in ["type", "status"] and value is not None:
-            # Handle enum conversions
-            if field == "type":
-                try:
-                    collection.type = CollectionType(value)
-                except ValueError:
-                    raise HTTPException(status_code=422, detail=f"Invalid type: {value}")
-            elif field == "status":
-                try:
-                    collection.status = CollectionStatus(value)
-                except ValueError:
-                    raise HTTPException(status_code=422, detail=f"Invalid status: {value}")
+        if field == "status" and value is not None:
+            # Handle enum conversion
+            try:
+                collection.status = CollectionStatus(value)
+            except ValueError:
+                raise HTTPException(status_code=422, detail=f"Invalid status: {value}")
         else:
             setattr(collection, field, value)
     
@@ -296,4 +285,3 @@ def delete_collection(
     # Delete collection
     session.delete(collection)
     session.commit()
-

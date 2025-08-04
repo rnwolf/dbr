@@ -2321,11 +2321,6 @@
             "title": "Description",
             "description": "Collection description"
           },
-          "type": {
-            "$ref": "#/components/schemas/CollectionType",
-            "description": "Collection type",
-            "default": "Project"
-          },
           "status": {
             "anyOf": [
               {
@@ -2397,10 +2392,6 @@
             ],
             "title": "Description"
           },
-          "type": {
-            "type": "string",
-            "title": "Type"
-          },
           "status": {
             "type": "string",
             "title": "Status"
@@ -2446,7 +2437,6 @@
           "organization_id",
           "name",
           "description",
-          "type",
           "status",
           "estimated_sales_price",
           "estimated_variable_cost",
@@ -2466,17 +2456,6 @@
         ],
         "title": "CollectionStatus",
         "description": "Collection status enumeration"
-      },
-      "CollectionType": {
-        "type": "string",
-        "enum": [
-          "Project",
-          "MOVE",
-          "Epic",
-          "Release"
-        ],
-        "title": "CollectionType",
-        "description": "Collection type enumeration"
       },
       "CollectionUpdate": {
         "properties": {
@@ -2503,17 +2482,6 @@
             ],
             "title": "Description",
             "description": "Collection description"
-          },
-          "type": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CollectionType"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Collection type"
           },
           "status": {
             "anyOf": [

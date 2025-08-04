@@ -1647,7 +1647,6 @@ components:
             - type: "null"
           title: "Description"
           description: "Collection description"
-        "type": {"$ref": "#/components/schemas/CollectionType", "description": "Collection type", "default": "Project"}
         "status":
           anyOf:
             - {"$ref": "#/components/schemas/CollectionStatus"}
@@ -1689,9 +1688,6 @@ components:
             - type: "string"
             - type: "null"
           title: "Description"
-        "type":
-          type: "string"
-          title: "Type"
         "status":
           type: "string"
           title: "Status"
@@ -1720,7 +1716,6 @@ components:
         - "organization_id"
         - "name"
         - "description"
-        - "type"
         - "status"
         - "estimated_sales_price"
         - "estimated_variable_cost"
@@ -1737,15 +1732,6 @@ components:
         - "completed"
       title: "CollectionStatus"
       description: "Collection status enumeration"
-    "CollectionType":
-      type: "string"
-      enum:
-        - "Project"
-        - "MOVE"
-        - "Epic"
-        - "Release"
-      title: "CollectionType"
-      description: "Collection type enumeration"
     "CollectionUpdate":
       properties:
         "name":
@@ -1760,11 +1746,6 @@ components:
             - type: "null"
           title: "Description"
           description: "Collection description"
-        "type":
-          anyOf:
-            - {"$ref": "#/components/schemas/CollectionType"}
-            - type: "null"
-          description: "Collection type"
         "status":
           anyOf:
             - {"$ref": "#/components/schemas/CollectionStatus"}
