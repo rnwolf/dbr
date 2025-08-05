@@ -225,4 +225,4 @@ def viewer_user(created_user):
 @pytest.fixture
 def org_admin_user_fixture(created_user):
     """Create an organization admin user."""
-    return created_user("admin")
+    return created_user("organization_admin")
