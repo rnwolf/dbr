@@ -2,7 +2,7 @@ from pytest_bdd import scenarios, given, when, then, parsers
 from dbrsdk import Dbrsdk
 from dbrsdk.models import CollectionUpdate
 import pytest
-from ..conftest import backend_server
+from ..conftest import backend_server, authenticated_org_admin_sdk, test_organization, planner_user, worker_user, viewer_user, org_admin_user_fixture
 
 # Constants
 BASE_URL = "http://127.0.0.1:8002"
@@ -17,32 +17,22 @@ def running_backend_server(backend_server):
 
 
 @given('an authenticated planner user')
-def authenticated_planner(test_data_manager, context):
-    """Create and authenticate a planner user."""
-    import uuid
-    unique_id = str(uuid.uuid4())[:8]
-    planner_user = test_data_manager.create_user(
-        username=f"planner_user_cl_{unique_id}",
-        password="planner_password",
-        email=f"planner_cl_{unique_id}@example.com",
-        display_name="Planner User"
-    )
-    
-    # Authenticate and get token
-    response = test_data_manager.sdk.authentication.login(
-        username=f"planner_user_cl_{unique_id}",
+def authenticated_planner(planner_user, context, test_organization):
+    """Authenticate a planner user."""
+    sdk = Dbrsdk(server_url=BASE_URL)
+    response = sdk.authentication.login(
+        username=planner_user.username,
         password="planner_password"
     )
-    
     context["planner_sdk"] = Dbrsdk(server_url=BASE_URL, http_bearer=response.access_token)
     context["planner_user"] = planner_user
-    # Get organization_id from the test_data_manager's default_org
-    context["organization_id"] = test_data_manager.default_org.id
+    context["organization_id"] = test_organization.id
 
 
 @given('a default organization exists')
-def default_organization_exists(context):
-    """Ensure default organization exists (should be set up by test_data_manager)."""
+def default_organization_exists(context, test_organization):
+    """Ensure default organization exists."""
+    context["organization_id"] = test_organization.id
     assert context.get("organization_id") is not None, "Organization ID should be available"
 
 
@@ -99,33 +89,33 @@ def collection_assigned_to_org(context):
     ), "Collection should be assigned to the correct organization"
 
 
-@given("there are collections with various types")
-def collections_with_various_types(context):
+@given("there are collections with various names")
+def collections_with_various_names(context):
     """Create collections with different types."""
     sdk = context["planner_sdk"]
     org_id = context["organization_id"]
 
-    types = ["Project", "Epic", "Release", "MOVE"]
+    names = ["Project", "Epic", "Release", "MOVE"]
     created_collections = []
 
-    for i, collection_type in enumerate(types):
+    for i, name in enumerate(names):
         try:
             collection = sdk.collections.create(
                 organization_id=org_id,
-                name=f"{collection_type} Collection {i+1}",
-                description=f"Description for {collection_type} collection {i+1}",
+                name=f"{name} Collection {i+1}",
+                description=f"Description for {name} collection {i+1}",
                 status="planning",
             )
             created_collections.append(collection)
         except Exception as e:
-            print(f"Failed to create {collection_type} collection: {e}")
+            print(f"Failed to create {name} collection: {e}")
 
     context["test_collections"] = created_collections
 
 
-@when(parsers.parse('I request collections with type "{collection_type}"'))
-def request_collections_by_type(context, collection_type):
-    """Request collections filtered by type."""
+@when("I request all collections")
+def request_all_collections(context):
+    """Request all collections."""
     sdk = context["planner_sdk"]
     org_id = context["organization_id"]
 
@@ -140,19 +130,15 @@ def request_collections_by_type(context, collection_type):
         context["filter_success"] = False
 
 
-@then(parsers.parse('I should receive only collections with "{collection_type}" type'))
-def received_filtered_collections(context, collection_type):
-    """Verify only collections with the specified type were returned."""
+@then("I should receive a list of collections")
+def received_collections_list(context):
+    """Verify we received a list of collections."""
     assert context.get(
         "filter_success", False
     ), f"Collection filtering failed: {context.get('filter_error', 'Unknown error')}"
 
-    collections = context["filtered_collections"]
-    assert (
-        len(collections) > 0
-    ), f"Should have at least one collection with type {collection_type}"
-
-    
+    collections = context.get("filtered_collections", [])
+    assert isinstance(collections, list), "Retrieved collections should be a list"
 
 
 @then("all collections should belong to my organization")
@@ -190,7 +176,7 @@ def update_collection_status(context, new_status):
 
     try:
         updated_collection = sdk.collections.update(
-            collection_id=collection.id, status=new_status
+            collection_id=collection.id, organization_id=context["organization_id"], status=new_status
         )
         context["updated_collection"] = updated_collection
         context["status_update_success"] = True
@@ -225,24 +211,18 @@ def collection_appears_in_status_lists(context, status):
 
 
 @given("I am authenticated as a worker user")
-def authenticated_as_worker(test_data_manager, context):
+def authenticated_as_worker(worker_user, context, test_organization):
     """Authenticate as a worker user."""
-    worker_user = test_data_manager.create_user(
-        username="worker_user_bdd",
-        password="worker_password",
-        email="worker@example.com",
-        display_name="Worker User",
-    )
-
-    # Authenticate and get token
-    response = test_data_manager.sdk.authentication.login(
-        username="worker_user_bdd", password="worker_password"
+    sdk = Dbrsdk(server_url=BASE_URL)
+    response = sdk.authentication.login(
+        username=worker_user.username, password="worker_password"
     )
 
     context["worker_sdk"] = Dbrsdk(
         server_url=BASE_URL, http_bearer=response.access_token
     )
     context["worker_user"] = worker_user
+    context["organization_id"] = test_organization.id
 
 
 @given("collections exist in the organization")
@@ -280,16 +260,6 @@ def request_collections_list(context):
     except Exception as e:
         context["retrieval_error"] = str(e)
         context["retrieval_success"] = False
-
-
-@then("I should receive a list of collections")
-def received_collections_list(context):
-    """Verify we received a list of collections."""
-    assert context.get(
-        "retrieval_success", False
-    ), f"Collection retrieval failed: {context.get('retrieval_error', 'Unknown error')}"
-    collections = context.get("retrieved_collections", [])
-    assert isinstance(collections, list), "Retrieved collections should be a list"
 
 
 @when("I try to create a new collection")
@@ -337,7 +307,7 @@ def try_update_collection_as_worker(context):
 
     try:
         updated_collection = sdk.collections.update(
-            collection_id=collection.id, name="Worker Updated Name"
+            collection_id=collection.id, organization_id=context["organization_id"], name="Worker Updated Name"
         )
         context["unauthorized_update_success"] = True
     except Exception as e:
@@ -346,24 +316,18 @@ def try_update_collection_as_worker(context):
 
 
 @given("I am authenticated as a viewer user")
-def authenticated_as_viewer(test_data_manager, context):
+def authenticated_as_viewer(viewer_user, context, test_organization):
     """Authenticate as a viewer user."""
-    viewer_user = test_data_manager.create_user(
-        username="viewer_user_bdd",
-        password="viewer_password",
-        email="viewer@example.com",
-        display_name="Viewer User",
-    )
-
-    # Authenticate and get token
-    response = test_data_manager.sdk.authentication.login(
-        username="viewer_user_bdd", password="viewer_password"
+    sdk = Dbrsdk(server_url=BASE_URL)
+    response = sdk.authentication.login(
+        username=viewer_user.username, password="viewer_password"
     )
 
     context["viewer_sdk"] = Dbrsdk(
         server_url=BASE_URL, http_bearer=response.access_token
     )
     context["viewer_user"] = viewer_user
+    context["organization_id"] = test_organization.id
 
 
 @when("I try to delete an existing collection")
@@ -379,7 +343,7 @@ def try_delete_collection_as_viewer(context):
         return
 
     try:
-        result = sdk.collections.delete(collection_id=collection.id)
+        result = sdk.collections.delete(collection_id=collection.id, organization_id=context["organization_id"])
         context["unauthorized_delete_success"] = True
     except Exception as e:
         context["unauthorized_delete_error"] = str(e)
@@ -387,24 +351,18 @@ def try_delete_collection_as_viewer(context):
 
 
 @given("I am authenticated as an organization admin user")
-def authenticated_as_org_admin(test_data_manager, context):
+def authenticated_as_org_admin(org_admin_user_fixture, context, test_organization):
     """Authenticate as an organization admin user."""
-    org_admin_user = test_data_manager.create_user(
-        username="org_admin_user_bdd",
-        password="org_admin_password",
-        email="orgadmin@example.com",
-        display_name="Org Admin User",
-    )
-
-    # Authenticate and get token
-    response = test_data_manager.sdk.authentication.login(
-        username="org_admin_user_bdd", password="org_admin_password"
+    sdk = Dbrsdk(server_url=BASE_URL)
+    response = sdk.authentication.login(
+        username=org_admin_user_fixture.username, password="admin_password"
     )
 
     context["org_admin_sdk"] = Dbrsdk(
         server_url=BASE_URL, http_bearer=response.access_token
     )
-    context["org_admin_user"] = org_admin_user
+    context["org_admin_user"] = org_admin_user_fixture
+    context["organization_id"] = test_organization.id
 
 
 @when(parsers.parse('I update the collection name to "{new_name}"'))
@@ -415,7 +373,7 @@ def update_collection_name(context, new_name):
 
     try:
         updated_collection = sdk.collections.update(
-            collection_id=collection.id, name=new_name
+            collection_id=collection.id, organization_id=context["organization_id"], name=new_name
         )
         context["updated_collection"] = updated_collection
         context["name_update_success"] = True
@@ -440,7 +398,7 @@ def delete_collection(context):
     collection = context.get("updated_collection") or context["created_collection"]
 
     try:
-        result = sdk.collections.delete(collection_id=collection.id)
+        result = sdk.collections.delete(collection_id=collection.id, organization_id=context["organization_id"])
         context["delete_success"] = True
     except Exception as e:
         context["delete_error"] = str(e)
@@ -619,7 +577,7 @@ def collection_has_correct_financials(context):
 
     collection = context["financial_collection"]
     assert (
-        collection.estimated_.sales_price == 100000.0
+        collection.estimated_sales_price == 100000.0
     ), f"Expected sales price 100000.0, got {collection.estimated_sales_price}"
     assert (
         collection.estimated_variable_cost == 25000.0

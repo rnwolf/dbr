@@ -3,6 +3,8 @@
 Run the FastAPI application from within the dbr_mvp/backend directory using the following command:
 
 `uv run uvicorn dbr.main:app --reload`
+or on an specific port use
+`uv run uvicorn dbr.main:app --reload --port 8002`
 
 ## Documentation of the OpenAPI based Swagger UI
 
