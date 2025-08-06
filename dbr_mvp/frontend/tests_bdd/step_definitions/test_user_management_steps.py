@@ -3,6 +3,7 @@ from dbrsdk import Dbrsdk
 from dbrsdk.models import UserCreate, UserUpdate
 import pytest
 import uuid
+from ..conftest import backend_server, test_data_manager, context, roles
 
 # Constants
 BASE_URL = "http://127.0.0.1:8002"
@@ -24,29 +25,35 @@ def authenticated_org_admin(test_data_manager, context):
     unique_username = f"admin_user_bdd_{str(uuid.uuid4())[:8]}"
     unique_email = f"admin_{str(uuid.uuid4())[:8]}@example.com"
     
-    # Create admin user
-    admin_user = test_data_manager.create_user(
-        username=unique_username,
-        password="admin_password",
-        email=unique_email,
-        display_name="Admin User"
-    )
-    
-    # Authenticate and get token
-    response = test_data_manager.sdk.authentication.login(
-        username=unique_username, 
-        password="admin_password"
-    )
-    
-    # Store authenticated SDK and user info in context
-    context["admin_sdk"] = Dbrsdk(server_url=BASE_URL, http_bearer=response.access_token)
-    context["admin_user"] = admin_user
-    # Use organization ID from test_data_manager since UserResponse doesn't have organization_id field
-    context["organization_id"] = test_data_manager.default_org.id
+    try:
+        # Create admin user using the correct method
+        admin_user = test_data_manager.create_user_with_role(
+            username=unique_username,
+            password="admin_password",
+            email=unique_email,
+            display_name="Admin User",
+            role_name="organization_admin"
+        )
+        
+        # Authenticate and get token
+        response = test_data_manager.sdk.authentication.login(
+            username=unique_username, 
+            password="admin_password"
+        )
+        
+        # Store authenticated SDK and user info in context
+        context["admin_sdk"] = Dbrsdk(server_url=BASE_URL, http_bearer=response.access_token)
+        context["admin_user"] = admin_user
+        context["organization_id"] = test_data_manager.org_id
+        context["admin_auth_success"] = True
+    except Exception as e:
+        context["admin_auth_error"] = str(e)
+        context["admin_auth_success"] = False
+        pytest.fail(f"Failed to create/authenticate admin user: {e}")
 
 
 @when(parsers.parse('I create a new user with username "{username}", email "{email}", display name "{display_name}" and role "{role}"'))
-def create_new_user(context, username, email, display_name, role):
+def create_new_user(context, username, email, display_name, role, roles):
     """Create a new user through the SDK."""
     sdk = context["admin_sdk"]
     org_id = context["organization_id"]
@@ -55,21 +62,21 @@ def create_new_user(context, username, email, display_name, role):
     unique_username = f"{username}_{str(uuid.uuid4())[:8]}"
     unique_email = f"{str(uuid.uuid4())[:8]}_{email}"
     
-    # Map role names to role IDs (these should match your backend's role system)
-    role_mapping = {
-        "Planner": "7abed579-aaf0-4f8a-b94a-6dfb64423516",  # Actual Planner role ID
-        "Worker": "1334ab62-7f0b-4c70-925a-9b5f6019d030",   # Actual Worker role ID
-        "Viewer": "c2d4f664-7a53-41f7-8354-0afed1c5a523"    # Actual Viewer role ID
-    }
-    
     try:
+        # Use actual role IDs from the backend roles fixture
+        role_key = role.upper()
+        if role_key not in roles:
+            # Fallback to PLANNER if role not found
+            role_key = "PLANNER"
+        
+        # Use SDK with correct parameters and actual role ID
         created_user = sdk.users.create(
             organization_id=org_id,
             username=unique_username,
             email=unique_email,
             display_name=display_name,
             password="temp_password_123",
-            system_role_id=role_mapping.get(role, role_mapping["Planner"])
+            system_role_id=roles[role_key]
         )
         context["created_user"] = created_user
         context["creation_success"] = True
@@ -118,11 +125,12 @@ def existing_users_in_org(test_data_manager, context):
     unique_username = f"existing_user_bdd_{str(uuid.uuid4())[:8]}"
     unique_email = f"existing_{str(uuid.uuid4())[:8]}@example.com"
     
-    test_user = test_data_manager.create_user(
+    test_user = test_data_manager.create_user_with_role(
         username=unique_username,
         password="password",
         email=unique_email,
-        display_name="Existing User"
+        display_name="Existing User",
+        role_name="planner"
     )
     context["existing_users"] = [context["admin_user"], test_user]
 
@@ -182,11 +190,12 @@ def user_exists_with_role(test_data_manager, context, username, role):
     unique_username = f"{username}_{str(uuid.uuid4())[:8]}"
     unique_email = f"{username}_{str(uuid.uuid4())[:8]}@example.com"
     
-    user = test_data_manager.create_user(
+    user = test_data_manager.create_user_with_role(
         username=unique_username,
         password="password",
         email=unique_email,
-        display_name=f"Test User {username}"
+        display_name=f"Test User {username}",
+        role_name=role.lower()
     )
     context["target_user"] = user
     context["target_username"] = unique_username  # Store for later use
@@ -194,29 +203,27 @@ def user_exists_with_role(test_data_manager, context, username, role):
 
 
 @when(parsers.parse('I update the user\'s role to "{new_role}"'))
-def update_user_role(context, new_role):
+def update_user_role(context, new_role, roles):
     """Update a user's role."""
     sdk = context["admin_sdk"]
     target_user = context["target_user"]
-    
-    # Map role names to role IDs
-    role_mapping = {
-        "Planner": "7abed579-aaf0-4f8a-b94a-6dfb64423516",  # Actual Planner role ID
-        "Worker": "1334ab62-7f0b-4c70-925a-9b5f6019d030",   # Actual Worker role ID
-        "Viewer": "c2d4f664-7a53-41f7-8354-0afed1c5a523"    # Actual Viewer role ID
-    }
-    
-    update_data = UserUpdate(
-        system_role_id=role_mapping.get(new_role, role_mapping["Planner"])
-    )
+    org_id = context["organization_id"]
     
     try:
+        # Use actual role IDs from the backend roles fixture
+        role_key = new_role.upper()
+        if role_key not in roles:
+            # Fallback to PLANNER if role not found
+            role_key = "PLANNER"
+        
+        # Use SDK to update user role with correct parameter and actual role ID
         updated_user = sdk.users.update(
             user_id=target_user.id,
-            system_role_id=role_mapping.get(new_role, role_mapping["Planner"])
+            system_role_id=roles[role_key]
         )
         context["updated_user"] = updated_user
         context["update_success"] = True
+        context["expected_new_role"] = new_role
     except Exception as e:
         context["update_error"] = str(e)
         context["update_success"] = False
@@ -244,11 +251,12 @@ def active_user_exists(test_data_manager, context, username):
     unique_username = f"{username}_{str(uuid.uuid4())[:8]}"
     unique_email = f"{username}_{str(uuid.uuid4())[:8]}@example.com"
     
-    user = test_data_manager.create_user(
+    user = test_data_manager.create_user_with_role(
         username=unique_username,
         password="password",
         email=unique_email,
-        display_name=f"Active User {username}"
+        display_name=f"Active User {username}",
+        role_name="planner"
     )
     context["target_user"] = user
     context["target_username"] = unique_username  # Store for later use
