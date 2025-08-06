@@ -1,4 +1,6 @@
 from pytest_bdd import scenarios, given, when, then, parsers
+import pytest
+from ..conftest import backend_server, test_data_manager, context
 from dbrsdk import Dbrsdk
 from dbrsdk.models import WorkItemUpdate, TaskCreate
 import pytest
@@ -21,23 +23,30 @@ def authenticated_planner(test_data_manager, context):
     """Create and authenticate a planner user."""
     import uuid
     unique_id = str(uuid.uuid4())[:8]
-    planner_user = test_data_manager.create_user(
-        username=f"planner_user_wi_{unique_id}",
-        password="planner_password",
-        email=f"planner_wi_{unique_id}@example.com",
-        display_name="Planner User"
-    )
     
-    # Authenticate and get token
-    response = test_data_manager.sdk.authentication.login(
-        username=f"planner_user_wi_{unique_id}",
-        password="planner_password"
-    )
-    
-    context["planner_sdk"] = Dbrsdk(server_url=BASE_URL, http_bearer=response.access_token)
-    context["planner_user"] = planner_user
-    # Get organization_id from the test_data_manager's default_org
-    context["organization_id"] = test_data_manager.default_org.id
+    try:
+        planner_user = test_data_manager.create_user_with_role(
+            username=f"planner_user_wi_{unique_id}",
+            password="planner_password",
+            email=f"planner_wi_{unique_id}@example.com",
+            display_name="Planner User",
+            role_name="planner"
+        )
+        
+        # Authenticate and get token
+        response = test_data_manager.sdk.authentication.login(
+            username=f"planner_user_wi_{unique_id}",
+            password="planner_password"
+        )
+        
+        context["planner_sdk"] = Dbrsdk(server_url=BASE_URL, http_bearer=response.access_token)
+        context["planner_user"] = planner_user
+        context["organization_id"] = test_data_manager.org_id
+        context["planner_auth_success"] = True
+    except Exception as e:
+        context["planner_auth_error"] = str(e)
+        context["planner_auth_success"] = False
+        pytest.fail(f"Failed to create/authenticate planner user: {e}")
 
 
 @given('a default organization exists')
@@ -107,7 +116,7 @@ def work_items_with_various_statuses(test_data_manager, context):
             organization_id=org_id,
             title=f"Work Item {i+1}",
             description=f"Description for work item {i+1}",
-            priority=priority,
+            priority="medium",
             status=status,
             estimated_total_hours=4.0,
             ccr_hours_required={"development": 3.0, "testing": 1.0}
@@ -473,13 +482,13 @@ def authenticated_as_worker_user(test_data_manager, context):
     import uuid
     unique_id = str(uuid.uuid4())[:8]
     
-    # Create worker user with correct WORKER role ID
+    # Create worker user with correct role
     worker_user = test_data_manager.create_user_with_role(
         username=f"worker_user_wi_{unique_id}",
         password="worker_password",
         email=f"worker_wi_{unique_id}@example.com",
         display_name="Worker User",
-        role_id="1334ab62-7f0b-4c70-925a-9b5f6019d030"  # WORKER role ID
+        role_name="worker"
     )
     
     # Authenticate and get token
@@ -596,13 +605,13 @@ def authenticated_as_viewer_user(test_data_manager, context):
     import uuid
     unique_id = str(uuid.uuid4())[:8]
     
-    # Create viewer user with correct VIEWER role ID
+    # Create viewer user with correct role
     viewer_user = test_data_manager.create_user_with_role(
         username=f"viewer_user_wi_{unique_id}",
         password="viewer_password",
         email=f"viewer_wi_{unique_id}@example.com",
         display_name="Viewer User",
-        role_id="c2d4f664-7a53-41f7-8354-0afed1c5a523"  # VIEWER role ID
+        role_name="viewer"
     )
     
     # Authenticate and get token
