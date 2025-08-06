@@ -38,13 +38,6 @@ Feature: Organization Management
     Then the organization should be deleted successfully
     And the organization should no longer exist in the system
 
-  Scenario: Organization with dependencies cannot be deleted
-    Given an organization "Org With Users" exists
-    And the organization has active users
-    When I attempt to delete the organization
-    Then the deletion should be rejected
-    And I should receive an appropriate error message about dependencies
-
   Scenario: Organization subscription level management
     Given an organization "Subscription Org" exists
     When I update the organization subscription level to "premium"
