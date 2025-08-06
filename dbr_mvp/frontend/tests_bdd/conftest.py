@@ -10,7 +10,7 @@ BASE_URL = "http://127.0.0.1:8002"
 @pytest.fixture(scope="session")
 def backend_server():
     """Connect to existing backend server (assumes server is already running)."""
-    print(f"\nChecking for existing backend server at {BASE_URL}")
+    print(f"Checking for existing backend server at {BASE_URL}")
     for attempt in range(10):
         try:
             test_sdk = Dbrsdk(server_url=BASE_URL)
