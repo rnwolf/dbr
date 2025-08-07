@@ -1,9 +1,34 @@
 # DBR Database Seed Data Expansion Plan
 
-## Current Seed Data (Already Implemented)
+## **Regenerating Test Data**
+
+To reset the test data:
+1. Delete the `dbr.db` file
+2. Restart the backend server
+3. Database initialization will recreate all default data
+
+```bash
+ rm -force dbr.db
+ uv run uvicorn dbr.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+## Enhanced Database Query Script to list ket database seed data
+
+The following Python script can be used to inspect all seed data and generate actual test values for scenario development:
+
+`dbr\dbr_mvp\backend\dbr_seed_data_inspector.py`
+
+```bash
+cd dbr_mvp/backend
+uv run python python dbr_seed_data_inspector.py
+```
+
+## Existing seed data
 
 ### 🏢 Organizations
+
 - **Default Organization**
+
   - Name: "Default Organization"
   - Description: "Default organization for MVP testing and development"
   - Status: ACTIVE
@@ -11,7 +36,10 @@
   - Country: US
   - Subscription Level: basic
 
+
+
 ### 👥 Users (5 test users)
+
 | Username | Email | Password | Role | System Role ID |
 |----------|-------|----------|------|----------------|
 | `admin` | admin@test.com | `admin123` | Super Admin | (role_id) |
@@ -21,6 +49,7 @@
 | `viewer` | viewer@test.com | `viewer123` | Viewer | (role_id) |
 
 ### 🎭 Roles (5 system roles)
+
 | Role Name | Description |
 |-----------|-------------|
 | Super Admin | System administrator with full access to all features and organizations |
@@ -30,6 +59,7 @@
 | Viewer | Read-only access to view reports and dashboards |
 
 ### 🔗 Organization Memberships
+
 - All 5 users are members of "Default Organization"
 - Each user's organization role matches their system role
 - All memberships are ACCEPTED status
@@ -39,6 +69,7 @@
 ## Proposed Additional Seed Data
 
 ### 🏢 Additional Organizations
+
 ```python
 additional_organization_definitions = [
     {
@@ -53,7 +84,7 @@ additional_organization_definitions = [
         "name": "StartupVenture Inc",
         "description": "Early-stage startup focused on innovative solutions",
         "status": OrganizationStatus.ACTIVE,
-        "contact_email": "founder@startupventure.com", 
+        "contact_email": "founder@startupventure.com",
         "country": "CA",
         "subscription_level": "basic"
     }
@@ -61,6 +92,7 @@ additional_organization_definitions = [
 ```
 
 ### 👥 Additional Users (Multi-Organization Testing)
+
 ```python
 additional_user_definitions = [
     # TechCorp Solutions Users
@@ -70,23 +102,23 @@ additional_user_definitions = [
     ("techcorp_worker2", "worker2@techcorp.com", "techcorp123", "TechCorp Frontend Developer", RoleName.WORKER),
     ("techcorp_worker3", "worker3@techcorp.com", "techcorp123", "TechCorp Backend Developer", RoleName.WORKER),
     ("techcorp_worker4", "worker4@techcorp.com", "techcorp123", "TechCorp QA Engineer", RoleName.WORKER),
-    
-    # StartupVenture Inc Users  
+
+    # StartupVenture Inc Users
     ("startup_founder", "founder@startupventure.com", "startup123", "Startup Founder", RoleName.ORGANIZATION_ADMIN),
     ("startup_dev", "dev@startupventure.com", "startup123", "Startup Lead Developer", RoleName.PLANNER),
     ("startup_worker1", "worker1@startupventure.com", "startup123", "Startup Full-Stack Dev", RoleName.WORKER),
     ("startup_worker2", "worker2@startupventure.com", "startup123", "Startup UI/UX Designer", RoleName.WORKER),
-    
+
     # Default Organization Additional Workers (to supplement existing worker@test.com)
     ("default_worker2", "worker2@test.com", "default123", "Default Frontend Developer", RoleName.WORKER),
     ("default_worker3", "worker3@test.com", "default123", "Default Backend Developer", RoleName.WORKER),
     ("default_worker4", "worker4@test.com", "default123", "Default QA Tester", RoleName.WORKER),
     ("default_worker5", "worker5@test.com", "default123", "Default DevOps Engineer", RoleName.WORKER),
-    
+
     # Cross-Organization Users (for testing multi-org membership)
     ("consultant", "consultant@freelance.com", "consultant123", "External Consultant", RoleName.WORKER),
     ("contractor", "contractor@external.com", "contractor123", "External Contractor", RoleName.WORKER),
-    
+
     # Users with NO organization membership (for testing access denial)
     ("outsider", "outsider@external.com", "outsider123", "External User", RoleName.VIEWER),
     ("prospect", "prospect@potential.com", "prospect123", "Potential Client", RoleName.VIEWER),
@@ -94,22 +126,23 @@ additional_user_definitions = [
 ```
 
 ### 🔗 Multi-Organization Membership Matrix
+
 ```python
 # Organization membership definitions
 membership_definitions = [
     # Default Organization (PRESERVE EXISTING - DO NOT CHANGE)
     # admin, orgadmin, planner, worker, viewer (already exists)
-    
+
     # TechCorp Solutions memberships
     ("TechCorp Solutions", "admin@test.com", RoleName.SUPER_ADMIN),  # Super admin has access
     ("TechCorp Solutions", "admin@techcorp.com", RoleName.ORGANIZATION_ADMIN),
-    ("TechCorp Solutions", "planner@techcorp.com", RoleName.PLANNER), 
+    ("TechCorp Solutions", "planner@techcorp.com", RoleName.PLANNER),
     ("TechCorp Solutions", "worker1@techcorp.com", RoleName.WORKER),
     ("TechCorp Solutions", "worker2@techcorp.com", RoleName.WORKER),
     ("TechCorp Solutions", "worker3@techcorp.com", RoleName.WORKER),
     ("TechCorp Solutions", "worker4@techcorp.com", RoleName.WORKER),
     ("TechCorp Solutions", "consultant@freelance.com", RoleName.WORKER),  # Cross-org user
-    
+
     # StartupVenture Inc memberships
     ("StartupVenture Inc", "admin@test.com", RoleName.SUPER_ADMIN),  # Super admin has access
     ("StartupVenture Inc", "founder@startupventure.com", RoleName.ORGANIZATION_ADMIN),
@@ -117,20 +150,21 @@ membership_definitions = [
     ("StartupVenture Inc", "worker1@startupventure.com", RoleName.WORKER),
     ("StartupVenture Inc", "worker2@startupventure.com", RoleName.WORKER),
     ("StartupVenture Inc", "contractor@external.com", RoleName.WORKER),  # Cross-org user
-    
+
     # Default Organization additional memberships
     ("Default Organization", "worker2@test.com", RoleName.WORKER),
     ("Default Organization", "worker3@test.com", RoleName.WORKER),
     ("Default Organization", "worker4@test.com", RoleName.WORKER),
     ("Default Organization", "worker5@test.com", RoleName.WORKER),
     ("Default Organization", "consultant@freelance.com", RoleName.WORKER),  # Cross-org user
-    
+
     # NO MEMBERSHIPS for outsider@external.com and prospect@potential.com
     # These users should be denied access to any organization data
 ]
 ```
 
 ### 🏭 Organization-Scoped CCRs (Capacity Constrained Resources)
+
 ```python
 ccr_definitions = [
     # Default Organization CCRs
@@ -166,7 +200,7 @@ ccr_definitions = [
         "capacity_per_time_unit": 15.0,  # 15 hours per week
         "time_unit": "week"
     },
-    
+
     # TechCorp Solutions CCRs
     {
         "organization_id": "techcorp_org_id",
@@ -192,7 +226,7 @@ ccr_definitions = [
         "capacity_per_time_unit": 12.0,  # 12 hours per week
         "time_unit": "week"
     },
-    
+
     # StartupVenture Inc CCRs
     {
         "organization_id": "startup_org_id",
@@ -214,6 +248,7 @@ ccr_definitions = [
 ```
 
 ### 🎛️ Organization-Scoped Board Configurations
+
 ```python
 board_config_definitions = [
     # Default Organization Boards
@@ -229,7 +264,7 @@ board_config_definitions = [
     },
     {
         "organization_id": "default_org_id",
-        "name": "QA Testing Board", 
+        "name": "QA Testing Board",
         "description": "DBR board focused on QA testing workflow",
         "ccr_id": "qa_testing_ccr_id",  # References QA Testing CCR
         "pre_constraint_buffer_size": 3,
@@ -237,7 +272,7 @@ board_config_definitions = [
         "time_unit": "week",
         "is_active": True
     },
-    
+
     # TechCorp Solutions Boards
     {
         "organization_id": "techcorp_org_id",
@@ -259,7 +294,7 @@ board_config_definitions = [
         "time_unit": "week",
         "is_active": True
     },
-    
+
     # StartupVenture Inc Boards
     {
         "organization_id": "startup_org_id",
@@ -275,6 +310,7 @@ board_config_definitions = [
 ```
 
 ### 📁 Organization-Scoped Collections (Projects/MOVEs)
+
 ```python
 collection_definitions = [
     # Default Organization Collections
@@ -318,7 +354,7 @@ collection_definitions = [
         "estimated_variable_cost": 8000.0,
         "url": "https://github.com/defaultorg/security-audit"
     },
-    
+
     # TechCorp Solutions Collections
     {
         "organization_id": "techcorp_org_id",
@@ -350,7 +386,7 @@ collection_definitions = [
         "estimated_variable_cost": 120000.0,
         "url": "https://github.com/techcorp/microservices"
     },
-    
+
     # StartupVenture Inc Collections
     {
         "organization_id": "startup_org_id",
@@ -386,6 +422,7 @@ collection_definitions = [
 ```
 
 ### 📋 Organization-Scoped Work Items with User Assignments
+
 ```python
 work_item_definitions = [
     # Default Organization Work Items
@@ -479,7 +516,7 @@ work_item_definitions = [
             {"id": 5, "title": "Handle error cases", "completed": True, "assigned_user_id": "worker3@test.com"}
         ]
     },
-    
+
     # TechCorp Solutions Work Items
     {
         "organization_id": "techcorp_org_id",
@@ -547,7 +584,7 @@ work_item_definitions = [
             {"id": 3, "title": "Configure backup strategies", "completed": False, "assigned_user_id": "consultant@freelance.com"}
         ]
     },
-    
+
     # StartupVenture Inc Work Items
     {
         "organization_id": "startup_org_id",
@@ -614,7 +651,7 @@ work_item_definitions = [
             {"id": 3, "title": "Implement progress tracking", "completed": False, "assigned_user_id": "worker1@startupventure.com"}
         ]
     },
-    
+
     # API Integration Project Collection
     {
         "collection_id": "api_integration_collection_id",
@@ -656,7 +693,7 @@ work_item_definitions = [
             {"id": 3, "title": "Add email sending logic", "completed": False}
         ]
     },
-    
+
     # Security Audit Implementation Collection
     {
         "collection_id": "security_audit_collection_id",
@@ -682,6 +719,7 @@ work_item_definitions = [
 ```
 
 ### 📅 Schedules
+
 ```python
 schedule_definitions = [
     {
@@ -693,7 +731,7 @@ schedule_definitions = [
         "total_ccr_hours": 12.0
     },
     {
-        "board_config_id": "main_dev_board_id", 
+        "board_config_id": "main_dev_board_id",
         "capability_channel_id": "development_team_ccr_id",
         "status": ScheduleStatus.PRE_CONSTRAINT,
         "time_unit_position": -1,  # 1 position before CCR
@@ -702,7 +740,7 @@ schedule_definitions = [
     },
     {
         "board_config_id": "qa_testing_board_id",
-        "capability_channel_id": "qa_testing_ccr_id", 
+        "capability_channel_id": "qa_testing_ccr_id",
         "status": ScheduleStatus.PLANNING,
         "time_unit_position": -3,  # 3 positions before CCR
         "work_item_ids": ["advanced_search_work_item_id"],
@@ -711,18 +749,30 @@ schedule_definitions = [
 ]
 ```
 
-## Implementation Strategy
+## Implementation Status ✅ COMPLETED
 
-### 1. Database Initialization Function Updates
-- Extend `init_db()` function in `database.py`
-- Add new seed creation functions:
-  - `_create_test_ccrs()`
-  - `_create_test_board_configs()`
-  - `_create_test_collections()`
-  - `_create_test_work_items()`
-  - `_create_test_schedules()`
+### 1. Database Initialization Function Updates ✅ IMPLEMENTED
+
+- ✅ Extended `init_db()` function in `database.py`
+- ✅ Added new seed creation functions:
+  - `_create_additional_organizations()` - Returns organization IDs
+  - `_create_additional_users()` - Creates 14 new users across organizations
+  - `_create_multi_organization_memberships_by_id()` - Cross-org memberships
+  - `_create_test_ccrs_by_id()` - Organization-scoped CCRs
+  - `_create_test_board_configs_by_id()` - Stub (ready for implementation)
+  - `_create_test_collections_by_id()` - Stub (ready for implementation)
+  - `_create_test_work_items_by_id()` - Stub (ready for implementation)
+  - `_create_test_schedules_by_id()` - Stub (ready for implementation)
+
+### 2. Key Implementation Lessons Learned
+
+- **SQLAlchemy Session Management**: Must pass IDs instead of objects between functions to avoid DetachedInstanceError
+- **Database Flush Strategy**: Use `db.flush()` to get IDs before commit when needed immediately
+- **Incremental Implementation**: Core multi-org infrastructure first, then detailed seed data
+- **Function Naming**: Added `_by_id` suffix to distinguish ID-based functions from object-based ones
 
 ### 2. Seed Data Benefits
+
 - **Realistic Testing**: Multiple collections with varying statuses
 - **CCR Scenarios**: Different CCR types and capacity constraints
 - **Workflow Testing**: Work items in different statuses across the DBR flow
@@ -732,6 +782,7 @@ schedule_definitions = [
 - **Role-based Testing**: Different users owning different collections
 
 ### 3. Data Relationships
+
 - All data scoped to "Default Organization"
 - CCRs referenced by board configurations
 - Collections owned by different users (planner, orgadmin)
@@ -740,6 +791,7 @@ schedule_definitions = [
 - Realistic CCR hour requirements across work items
 
 ### 4. Testing Scenarios Enabled
+
 - **Buffer Management**: Schedules in pre/post constraint buffers
 - **Capacity Planning**: CCR utilization and bottleneck identification
 - **Time Progression**: Advancing schedules through the DBR flow
@@ -750,12 +802,14 @@ schedule_definitions = [
 ## Security Testing Scenarios Enabled
 
 ### 🔒 **Multi-Tenant Security Testing**
+
 1. **Organization Isolation**: Users can only see data from their organizations
 2. **Cross-Organization Access**: Test users with multiple organization memberships
 3. **Access Denial**: Users with no organization membership cannot access any data
 4. **Super Admin Override**: Super admin can access all organizations (preserved)
 
 ### 👥 **User Access Matrix**
+
 | User | Default Org | TechCorp | StartupVenture | Expected Access |
 |------|-------------|----------|----------------|-----------------|
 | admin@test.com | ✅ Super Admin | ✅ Super Admin | ✅ Super Admin | All organizations |
@@ -783,6 +837,7 @@ schedule_definitions = [
 | prospect@potential.com | ❌ | ❌ | ❌ | **NO ACCESS** |
 
 ### 🧪 **Critical Security Tests**
+
 1. **Organization Scoping**: Verify work items are filtered by organization_id
 2. **Collection Access**: Users can only see collections from their organizations
 3. **Schedule Isolation**: Schedules are organization-specific
@@ -792,11 +847,13 @@ schedule_definitions = [
 7. **Multi-Org Users**: Consultant can see Default + TechCorp data only
 
 ## Database Size Impact
+
 - **Current**: ~15 records (5 users, 5 roles, 1 org, 5 memberships)
 - **Proposed Addition**: ~65 records (9 users, 2 orgs, 14 memberships, 9 CCRs, 5 boards, 10 collections, 15+ work items, 5+ schedules)
 - **Total**: ~80 records (still very lightweight for development)
 
 ## Key Benefits
+
 1. **Comprehensive Security Testing**: Multi-tenant isolation and access control
 2. **Realistic Multi-Organization Environment**: 3 organizations with different characteristics
 3. **Cross-Organization User Testing**: Users with multiple memberships
@@ -809,8 +866,20 @@ schedule_definitions = [
 10. **Scalable**: Comprehensive test environment while remaining lightweight
 
 ## Implementation Files to Modify
+
 1. `dbr_mvp/backend/src/dbr/core/database.py` - Add seed functions
 2. Test the seed data with existing API endpoints
 3. Verify frontend can display the rich test data
 
 This expansion provides a comprehensive testing environment while maintaining the lightweight nature of the MVP.
+
+## Enhanced Database Query Script
+
+The following Python script can be used to inspect all seed data and generate actual test values for scenario development:
+
+`dbr\dbr_mvp\backend\dbr_seed_data_inspector.py`
+
+```bash
+cd dbr_mvp/backend
+uv run python python dbr_seed_data_inspector.py
+```
