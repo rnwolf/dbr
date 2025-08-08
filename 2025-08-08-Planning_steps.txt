@@ -1,0 +1,102 @@
+# Next Steps Planning
+
+
+There was a mismatch. The SDK already included responsible_user_id (and url), but the backend
+model/database and FastAPI responses didn’t, so the field always came back as None. I’ve implemented a complete fix
+and laid out a plan to validate and extend it.
+
+What I changed now
+
+ • Database/ORM
+    • Added responsible_user_id (nullable FK to users.id) and url (nullable string) to
+      dbr.models.work_item.WorkItem.
+    • Added relationship WorkItem.responsible_user -> User and inverse User.assigned_work_items -> WorkItem.
+    • Added a lightweight SQLite “online migration” in create_tables() to add the new columns to existing work_items
+      tables if missing (so you don’t lose data in an existing local DB).
+ • FastAPI API
+    • WorkItemCreate/Update/Response schemas already had responsible_user_id and url defined; I wired them through
+      the handlers and converter:
+       • POST /workitems: now stores responsible_user_id and url.
+       • PUT /workitems/{id}: now updates responsible_user_id and url.
+       • GET responses: now return the actual responsible_user_id and url values (previously hard-coded to None).
+    • Validation:
+       • On create and update, if responsible_user_id is provided, the API validates that the user exists. (We can
+         later harden validation to enforce organization membership/role-based assignment; see “Next enhancements”
+         below.)
+ • Seed data
+    • Updated _create_test_work_items_by_id to create representative work items for the default org when none exist,
+      covering:
+       • responsible_user_id set to known test users (planner@test.com / worker@test.com)
+       • url populated
+       • tasks populated
+       • sales/costs/ccr_hours set, priorities/status varied
+ • Non-destructive migration (SQLite)
+    • In dbr.core.database.create_tables(): checks PRAGMA table_info(work_items) and issues ALTER TABLE to add
+      responsible_user_id and url if missing. This means existing local SQLite DBs will be updated in-place when the
+      app starts.
+
+Why this addresses the core issue
+
+ • The SDK expects responsible_user_id in requests/responses; the backend now persists and returns it, so the
+   contract is satisfied and front-end BDD tests depending on it should stop failing.
+ • The seed data now exercises these fields end-to-end so plumbing is verified on startup.
+
+Validation and rollout plan
+
+ 1 Local verification
+    • Start backend:
+       • cd dbr_mvp/backend
+       • uv run uvicorn dbr.main:app --reload
+    • On startup, the DB will be initialized, the migration will run (if needed), and seed data will be created for
+      the default organization when empty.
+    • Check OpenAPI docs:
+       • http://127.0.0.1:8000/docs or /scalar
+       • Confirm that WorkItemCreate/Update/Response contain responsible_user_id and url.
+ 2 CRUD sanity checks (via SDK or curl)
+    • Create a work item with responsible_user_id set to an existing user (e.g., worker@test.com). Confirm GET shows
+      the same responsible_user_id.
+    • Update a work item and change responsible_user_id; confirm persisted.
+    • Create and update url; confirm persisted.
+ 3 Test suite targeting
+    • Backend tests: add a minimal new test to assert:
+       • POST /workitems with responsible_user_id persists correctly.
+       • GET includes responsible_user_id and url.
+       • PUT can change responsible_user_id.
+    • Frontend/BDD: rerun work item tests that previously asserted responsible_user_id; they should now pass (since
+      response won’t be None anymore).
+ 4 SDK alignment
+    • The SDK already supports responsible_user_id and url. No regeneration required for that field.
+    • Note: the SDK currently doesn’t include due_date and due_date_timezone (grep confirms). See “Next
+      enhancements” to close that gap.
+
+Next enhancements (optional but recommended)
+
+ • Enforce organization scoping for responsible_user_id:
+    • On create/update, verify that the responsible_user_id belongs to the same organization (has a membership) and
+      that the current user has permission to assign users (Planner/Org Admin).
+ • Add due_date and due_date_timezone to API schemas and OpenAPI:
+    • Backend model already has due_date and due_date_timezone.
+    • Add these to WorkItemCreate/Update/Response in dbr.api.work_items and handle validation/serialization
+      (timezone-aware).
+    • Regenerate SDK from updated OpenAPI to expose these fields to the frontend.
+ • Expand seed data coverage:
+    • Populate due_date and due_date_timezone.
+    • Add examples with/without responsible_user_id and url.
+    • Include items across multiple organizations for multi-tenant testing.
+ • Tests:
+    • Add backend API tests covering due_date handling.
+    • Add a test for access control when assigning responsible_user_id (once enforced).
+
+Summary of key files touched
+
+ • dbr_mvp/backend/src/dbr/models/work_item.py: added columns + relationship.
+ • dbr_mvp/backend/src/dbr/models/user.py: added assigned_work_items relationship.
+ • dbr_mvp/backend/src/dbr/api/work_items.py: wired responsible_user_id/url through create, update, and responses;
+   added validation.
+ • dbr_mvp/backend/src/dbr/core/database.py: lightweight SQLite migration; seeded representative work items.
+
+Would you like me to:
+
+ • Run a targeted backend test for responsible_user_id to confirm end-to-end behavior?
+ • Add due_date and due_date_timezone to the API schemas and regenerate the SDK?
+ • Tighten validation to require organization membership for the assigned responsible user?

@@ -35,10 +35,10 @@ class Collection(BaseModel):
     # External reference
     url = Column(String(500), nullable=True)
     
-    # Relationships (can be added later when needed)
-    # organization = relationship("Organization", back_populates="collections")
-    # owner = relationship("User", back_populates="owned_collections")
-    # work_items = relationship("WorkItem", back_populates="collection")
+    # Relationships
+    organization = relationship("Organization", back_populates="collections")
+    owner = relationship("User", back_populates="owned_collections")
+    work_items = relationship("WorkItem", back_populates="collection")
     
     def calculate_throughput(self) -> float:
         """Calculate collection throughput (sales_price - variable_cost)"""

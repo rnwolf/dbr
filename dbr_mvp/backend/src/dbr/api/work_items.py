@@ -134,8 +134,8 @@ def _convert_work_item_to_response(work_item: WorkItem) -> Dict[str, Any]:
         "throughput": work_item.calculate_throughput(),
         "tasks": tasks,
         "progress_percentage": round(work_item.calculate_progress() * 100, 2),
-        "responsible_user_id": None,  # TODO: Add when user assignment is implemented
-        "url": None,  # TODO: Add when URL field is implemented
+        "responsible_user_id": work_item.responsible_user_id,
+        "url": work_item.url,
         "created_date": work_item.created_date.isoformat(),
         "updated_date": work_item.updated_date.isoformat()
     }
@@ -220,6 +220,12 @@ def create_work_item(
         raise HTTPException(status_code=422, detail=f"Invalid priority: {work_item_data.priority}")
     
     # Create work item
+    # Validate responsible_user_id if provided
+    if work_item_data.responsible_user_id:
+        user = session.query(User).filter_by(id=work_item_data.responsible_user_id).first()
+        if not user:
+            raise HTTPException(status_code=422, detail=f"User not found: {work_item_data.responsible_user_id}")
+
     work_item = WorkItem(
         organization_id=work_item_data.organization_id,
         collection_id=work_item_data.collection_id,
@@ -227,6 +233,8 @@ def create_work_item(
         description=work_item_data.description,
         status=status_enum,
         priority=priority_enum,
+        responsible_user_id=work_item_data.responsible_user_id,
+        url=work_item_data.url,
         estimated_total_hours=work_item_data.estimated_total_hours,
         ccr_hours_required=work_item_data.ccr_hours_required,
         estimated_sales_price=work_item_data.estimated_sales_price,
@@ -298,6 +306,12 @@ def update_work_item(
     update_data = work_item_data.model_dump(exclude_unset=True)
     
     for field, value in update_data.items():
+        if field == "responsible_user_id" and value is not None:
+            # Optionally validate that the user exists and is in the same organization
+            user = session.query(User).filter_by(id=value).first()
+            if not user:
+                raise HTTPException(status_code=422, detail=f"User not found: {value}")
+
         if field == "status" and value is not None:
             try:
                 work_item.status = WorkItemStatus(value)

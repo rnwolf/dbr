@@ -1,5 +1,5 @@
 # src/dbr/core/database.py
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 from dbr.models.base import Base
@@ -24,8 +24,28 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def create_tables():
-    """Create all database tables"""
+    """Create all database tables and perform lightweight migrations for SQLite"""
     Base.metadata.create_all(bind=engine)
+    # Lightweight migrations: add columns if missing (SQLite online)
+    if DATABASE_URL.startswith("sqlite"):
+        with engine.connect() as conn:
+            # Check existing columns in work_items
+            try:
+                cols = [row[1] for row in conn.execute(text("PRAGMA table_info(work_items);")).fetchall()]
+            except Exception:
+                cols = []
+            # Add responsible_user_id if missing
+            if "responsible_user_id" not in cols:
+                try:
+                    conn.execute(text("ALTER TABLE work_items ADD COLUMN responsible_user_id TEXT"))
+                except Exception:
+                    pass
+            # Add url if missing
+            if "url" not in cols:
+                try:
+                    conn.execute(text("ALTER TABLE work_items ADD COLUMN url TEXT"))
+                except Exception:
+                    pass
 
 
 def get_db():
@@ -711,9 +731,81 @@ def _create_test_collections_by_id(default_org_id, additional_org_ids):
 
 
 def _create_test_work_items_by_id(default_org_id, additional_org_ids):
-    """Create work items for testing - simplified implementation"""
-    # Implementing as stub for now to avoid session complexity
-    return []
+    """Create work items for testing with representative fields including responsible_user_id and url"""
+    from dbr.models.work_item import WorkItem, WorkItemStatus, WorkItemPriority
+    from dbr.models.user import User
+    from dbr.models.collection import Collection
+
+    db = SessionLocal()
+    try:
+        if not default_org_id:
+            return []
+        # Pick some users to assign
+        planner_user = db.query(User).filter_by(email="planner@test.com").first()
+        worker_user = db.query(User).filter_by(email="worker@test.com").first()
+        # Create a couple of sample work items if none exist yet
+        existing = db.query(WorkItem).filter_by(organization_id=default_org_id).count()
+        created_items = []
+        if existing == 0:
+            wi_defs = [
+                {
+                    "organization_id": default_org_id,
+                    "collection_id": None,
+                    "title": "Implement user authentication",
+                    "description": "Add JWT-based auth and session handling",
+                    "status": WorkItemStatus.READY,
+                    "priority": WorkItemPriority.HIGH,
+                    "responsible_user_id": planner_user.id if planner_user else None,
+                    "url": "https://github.com/example/repo/issues/1",
+                    "estimated_total_hours": 16.0,
+                    "ccr_hours_required": {"Development Team": 12.0, "QA Testing": 4.0},
+                    "estimated_sales_price": 5000.0,
+                    "estimated_variable_cost": 1500.0,
+                    "tasks": [
+                        {"id": 1, "title": "Design login page", "completed": True},
+                        {"id": 2, "title": "Implement backend endpoints", "completed": False},
+                    ],
+                },
+                {
+                    "organization_id": default_org_id,
+                    "collection_id": None,
+                    "title": "Create documentation site",
+                    "description": "Set up docs with MkDocs",
+                    "status": WorkItemStatus.BACKLOG,
+                    "priority": WorkItemPriority.MEDIUM,
+                    "responsible_user_id": worker_user.id if worker_user else None,
+                    "url": "https://example.com/docs",
+                    "estimated_total_hours": 8.0,
+                    "ccr_hours_required": {"Development Team": 6.0, "QA Testing": 2.0},
+                    "estimated_sales_price": 2000.0,
+                    "estimated_variable_cost": 600.0,
+                    "tasks": [
+                        {"id": 1, "title": "Create docs skeleton", "completed": False},
+                    ],
+                },
+            ]
+            for d in wi_defs:
+                wi = WorkItem(
+                    organization_id=d["organization_id"],
+                    collection_id=d["collection_id"],
+                    title=d["title"],
+                    description=d["description"],
+                    status=d["status"],
+                    priority=d["priority"],
+                    responsible_user_id=d["responsible_user_id"],
+                    url=d["url"],
+                    estimated_total_hours=d["estimated_total_hours"],
+                    ccr_hours_required=d["ccr_hours_required"],
+                    estimated_sales_price=d["estimated_sales_price"],
+                    estimated_variable_cost=d["estimated_variable_cost"],
+                    tasks=d["tasks"],
+                )
+                db.add(wi)
+                created_items.append(wi)
+            db.commit()
+        return created_items
+    finally:
+        db.close()
 
 
 def _create_test_schedules_by_id(default_org_id, additional_org_ids):

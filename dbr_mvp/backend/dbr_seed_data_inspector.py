@@ -253,7 +253,7 @@ def query_work_items(cursor, org_map, user_map):
                 tasks = json.loads(item[10])
                 print(f"Tasks ({len(tasks)}):")
                 for task in tasks:
-                    status = "✓" if task.get("completed", False) else "○"
+                    status = "Y" if task.get("completed", False) else "N"
                     print(f"  {status} {task.get('title', 'Untitled Task')}")
             except json.JSONDecodeError:
                 print("Tasks: Invalid JSON format")

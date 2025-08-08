@@ -1,5 +1,6 @@
 # src/dbr/models/organization.py
 from sqlalchemy import Column, String, Enum
+from sqlalchemy.orm import relationship
 from dbr.models.base import BaseModel
 import enum
 
@@ -29,6 +30,10 @@ class Organization(BaseModel):
     
     # Default board reference (will be added later when we create BoardConfig)
     default_board_id = Column(String(36), nullable=True)
+    
+    # Relationships
+    work_items = relationship("WorkItem", back_populates="organization")
+    collections = relationship("Collection", back_populates="organization")
     
     def __repr__(self):
         return f"<Organization(id={self.id}, name='{self.name}', status='{self.status.value}')>"

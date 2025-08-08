@@ -21,8 +21,10 @@ class User(BaseModel):
     # Role relationship
     system_role_id = Column(String(36), ForeignKey('roles.id'), nullable=False)
     
-    # Relationship to role (will be loaded when needed)
+    # Relationships
     # role = relationship("Role", back_populates="users")
+    owned_collections = relationship("Collection", back_populates="owner")
+    assigned_work_items = relationship("WorkItem", back_populates="responsible_user")
     
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"

@@ -1,5 +1,5 @@
 # src/dbr/models/work_item.py
-from sqlalchemy import Column, String, Enum, Float, DateTime, Text, JSON
+from sqlalchemy import Column, String, Enum, Float, DateTime, Text, JSON, ForeignKey
 from sqlalchemy.orm import relationship
 from dbr.models.base import BaseModel
 import enum
@@ -29,8 +29,8 @@ class WorkItem(BaseModel):
     __tablename__ = "work_items"
     
     # Basic work item information
-    organization_id = Column(String(36), nullable=False)
-    collection_id = Column(String(36), nullable=True)  # Can be null for standalone items
+    organization_id = Column(String(36), ForeignKey('organizations.id'), nullable=False)
+    collection_id = Column(String(36), ForeignKey('collections.id'), nullable=True)  # Can be null for standalone items
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     
@@ -39,6 +39,10 @@ class WorkItem(BaseModel):
     due_date_timezone = Column(String(50), nullable=True, default="UTC")
     status = Column(Enum(WorkItemStatus), nullable=False, default=WorkItemStatus.BACKLOG)
     priority = Column(Enum(WorkItemPriority), nullable=False, default=WorkItemPriority.MEDIUM)
+    
+    # Assignment and external reference
+    responsible_user_id = Column(String(36), ForeignKey('users.id'), nullable=True)
+    url = Column(String(500), nullable=True)
     
     # Effort estimation
     estimated_total_hours = Column(Float, nullable=True, default=0.0)
@@ -51,9 +55,10 @@ class WorkItem(BaseModel):
     # Task management (JSON field)
     tasks = Column(JSON, nullable=True, default=list)
     
-    # Relationships (can be added later when needed)
-    # organization = relationship("Organization", back_populates="work_items")
-    # collection = relationship("Collection", back_populates="work_items")
+    # Relationships
+    organization = relationship("Organization", back_populates="work_items")
+    collection = relationship("Collection", back_populates="work_items")
+    responsible_user = relationship("User", back_populates="assigned_work_items", foreign_keys=[responsible_user_id])
     
     def calculate_throughput(self) -> float:
         """Calculate work item throughput (sales_price - variable_cost)"""
